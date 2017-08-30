@@ -57,7 +57,7 @@ public abstract class DAOFactory {
 	 * 
 	 * @param type the type of the data source
 	 * @return DAOFactory implementation
-	 * @throws DAOException
+	 * @throws DAOException if specified database type is unknown
 	 */
 	public static DAOFactory getDAOFactory(String type) throws DAOException { 
 		DBType dbType = DBType.valueOf(type.toUpperCase());

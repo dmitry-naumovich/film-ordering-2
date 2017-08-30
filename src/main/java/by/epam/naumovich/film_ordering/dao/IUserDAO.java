@@ -29,10 +29,10 @@ public interface IUserDAO {
 	 * Updates user in the data source
 	 * 
 	 * @param id user ID
-	 * @param updatedUser user entity with edited fields
+	 * @param user user entity with edited fields
 	 * @throws DAOException
 	 */
-	void updateUser(int id, User updatedUser) throws DAOException;
+	void updateUser(int id, User user) throws DAOException;
 	
 	/**
 	 * Deletes user from the data source by ID

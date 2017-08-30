@@ -8,15 +8,19 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Types;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import by.epam.naumovich.film_ordering.bean.Discount;
 import by.epam.naumovich.film_ordering.bean.User;
 import by.epam.naumovich.film_ordering.dao.IUserDAO;
 import by.epam.naumovich.film_ordering.dao.exception.DAOException;
+import by.epam.naumovich.film_ordering.dao.mapper.UserRowMapper;
 import by.epam.naumovich.film_ordering.dao.util.ExceptionMessages;
 import by.epam.naumovich.film_ordering.dao.pool.ConnectionPool;
 import by.epam.naumovich.film_ordering.dao.pool.exception.ConnectionPoolException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * IUserDAO interface implementation that works with MySQL database
@@ -50,7 +54,10 @@ public class MySQLUserDAO implements IUserDAO {
 	
 	public static final String SELECT_CURRENT_BAN_REASON_BY_ID = "SELECT b_reason FROM bans WHERE b_user = ? AND ((CURDATE() = b_stdate AND CURTIME() > b_sttime) OR (CURDATE() = DATE_ADD(b_stdate, INTERVAL b_length DAY) AND CURTIME() < b_sttime) OR (CURDATE() > b_stdate AND CURDATE() < DATE_ADD(b_stdate, INTERVAL b_length DAY))) AND b_active = 1";
 	public static final String SELECT_CURRENT_BAN_END_BY_ID = "SELECT DATE_ADD(b_stdate, INTERVAL b_length DAY), b_sttime FROM bans WHERE b_user = ?  AND b_active = 1 AND ((CURDATE() = b_stdate AND CURTIME() > b_sttime) OR (CURDATE() = DATE_ADD(b_stdate, INTERVAL b_length DAY) AND CURTIME() < b_sttime) OR (CURDATE() > b_stdate AND CURDATE() < DATE_ADD(b_stdate, INTERVAL b_length DAY)))";
-	
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
 	/**
 	 * Singleton MySQLUserDAO instance
 	 */
@@ -66,293 +73,54 @@ public class MySQLUserDAO implements IUserDAO {
 	
 	@Override
 	public int addUser(User user) throws DAOException {
-		ConnectionPool pool = null;
-		Connection con = null;
-		PreparedStatement st = null;
-		PreparedStatement st2 = null;		
-		try {
-			pool = ConnectionPool.getInstance();
-			con = pool.getConnection();
-			st = con.prepareStatement(INSERT_NEW_USER);
-			st.setString(1, user.getLogin());
-			st.setString(2, user.getName());
-			st.setString(3, user.getSurname());
-			st.setString(4, user.getPassword());
-			st.setString(5, String.valueOf(user.getSex()));
-			st.setString(6, String.valueOf(user.getType()));
-			st.setDate(7, user.getRegDate());
-			st.setTime(8, user.getRegTime());
-			if (user.getBirthDate() == null){
-				st.setNull(9, Types.DATE);
-			}
-			else {
-				st.setDate(9, user.getBirthDate());
-			}
-			if (user.getPhone() == null){
-				st.setNull(10, Types.CHAR);
-			}
-			else {
-				st.setString(10, user.getPhone());
-			}
-			
-			st.setString(11, user.getEmail());
-			
-			if (user.getAbout() == null){
-				st.setNull(12, Types.VARCHAR);
-			}
-			else {
-				st.setString(12, user.getAbout());
-			}
-			st.executeUpdate();
-			
-			st2 = con.prepareStatement(SELECT_NEW_USER_ID_BY_LOGIN);
-			st2.setString(1, user.getLogin());
-			ResultSet rs = st2.executeQuery();
-			if (rs.next()) {
-				return rs.getInt(1);
-			}
-			
-		} catch (SQLException e) {
-			throw new DAOException(ExceptionMessages.SQL_INSERT_FAILURE, e);
-		} catch (ConnectionPoolException e) {
-			throw new DAOException(ExceptionMessages.CONNECTION_NOT_TAKEN, e);
-		} finally {
-			try {
-				if (st != null) { st.close(); }
-				if (st2 != null) { st2.close(); }
-			} catch (SQLException e) {
-				throw new DAOException(ExceptionMessages.PREP_STATEMENT_NOT_CLOSED, e);
-			} finally {
-				if (con != null) { pool.closeConnection(con); }
-			}
-		}
-		return 0;
+		Object[] params = new Object[] {user.getLogin(), user.getName(), user.getSurname(), user.getPassword(), String.valueOf(user.getSex()),
+				String.valueOf(user.getType()), user.getRegDate(), user.getRegTime(), user.getBirthDate(), user.getPhone(), user.getEmail(), user.getAbout()};
+
+		int[] types = new int[] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR,
+				Types.DATE, Types.TIME, Types.DATE, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR};
+
+		jdbcTemplate.update(INSERT_NEW_USER, params, types);
+		return getUserByLogin(user.getLogin()).getId();
+
+//		Object[] params = new Object[]{login};
+//		List<Integer> ints = jdbcTemplate.query(SELECT_ID_BY_LOGIN, params, new IntegerRowMapper());
+//		return ints.get(0);
 	}
 
 	@Override
-	public void updateUser(int id, User updatedUser) throws DAOException {
-		ConnectionPool pool = null;
-		Connection con = null;
-		PreparedStatement st = null;
-		try {
-			pool = ConnectionPool.getInstance();
-			con = pool.getConnection();
-			st = con.prepareStatement(UPDATE_USER_BY_ID);
-			st.setString(1, updatedUser.getName());
-			st.setString(2, updatedUser.getSurname());
-			st.setString(3, updatedUser.getPassword());
-			st.setString(4, String.valueOf(updatedUser.getSex()));
-			if (updatedUser.getBirthDate() == null){
-				st.setNull(5, Types.DATE);
-			}
-			else {
-				st.setDate(5, updatedUser.getBirthDate());
-			}
+	public void updateUser(int id, User user) throws DAOException {
+		Object[] params = new Object[] {user.getLogin(), user.getName(), user.getSurname(), user.getPassword(), String.valueOf(user.getSex()),
+				String.valueOf(user.getType()), user.getRegDate(), user.getRegTime(), user.getBirthDate(), user.getPhone(), user.getEmail(), user.getAbout(), id};
 
-			if (updatedUser.getPhone() == null){
-				st.setNull(6, Types.VARCHAR);
-			}
-			else {
-				st.setString(6, updatedUser.getPhone());
-			}
-			
-			st.setString(7, updatedUser.getEmail());
-			
-			
-			if (updatedUser.getAbout() == null){
-				st.setNull(8, Types.VARCHAR);
-			}
-			else {
-				st.setString(8, updatedUser.getAbout());
-			}
-			st.setInt(9, id);
-			st.executeUpdate();
-			
-		} catch (SQLException e) {
-			throw new DAOException(ExceptionMessages.SQL_UPDATE_FAILURE, e);
-		} catch (ConnectionPoolException e) {
-			throw new DAOException(ExceptionMessages.CONNECTION_NOT_TAKEN, e);
-		} finally {
-			try {
-				if (st != null) { st.close(); }
-			} catch (SQLException e) {
-				throw new DAOException(ExceptionMessages.PREP_STATEMENT_NOT_CLOSED, e);
-			} finally {
-				if (con != null) { pool.closeConnection(con); }
-			}
-		}
-		
+		int[] types = new int[] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR,
+				Types.DATE, Types.TIME, Types.DATE, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.INTEGER};
+
+		jdbcTemplate.update(UPDATE_USER_BY_ID, params, types);
 	}
 	
 	@Override
 	public void deleteUser(int id) throws DAOException {
-		ConnectionPool pool = null;
-		Connection con = null;
-		PreparedStatement st = null;
-		try {
-			pool = ConnectionPool.getInstance();
-			con = pool.getConnection();
-			st = con.prepareStatement(DELETE_USER);
-			st.setInt(1, id);
-			st.executeUpdate();
-			
-		} catch (SQLException e) {
-			throw new DAOException(ExceptionMessages.SQL_DELETE_FAILURE, e);
-		} catch (ConnectionPoolException e) {
-			throw new DAOException(ExceptionMessages.CONNECTION_NOT_TAKEN, e);
-		} finally {
-			try {
-				if (st != null) { st.close(); }
-			} catch (SQLException e) {
-				throw new DAOException(ExceptionMessages.PREP_STATEMENT_NOT_CLOSED, e);
-			} finally {
-				if (con != null) { pool.closeConnection(con); }
-			}
-		}
+		Object[] params = new Object[] {id};
+		int[] types = new int[] {Types.INTEGER};
+		jdbcTemplate.update(DELETE_USER, params, types);
 	}
 	
 	@Override
+	//TODO: check it
 	public Set<User> getAllUsers() throws DAOException {
-		Set<User> userSet = new LinkedHashSet<User>();
-		ConnectionPool pool = null;
-		Connection con = null;
-		PreparedStatement st = null;
-		ResultSet rs = null;
-		try {
-			pool = ConnectionPool.getInstance();
-			con = pool.getConnection();
-			st = con.prepareStatement(SELECT_ALL_USERS);
-			rs = st.executeQuery();
-			
-			while (rs.next()) {
-				User user = new User();
-				user.setId(rs.getInt(1));
-				user.setLogin(rs.getString(2));
-				user.setName(rs.getString(3));
-				user.setSurname(rs.getString(4));
-				user.setPassword(rs.getString(5));
-				user.setSex(rs.getString(6).charAt(0));
-				user.setType(rs.getString(7).charAt(0));
-				user.setRegDate(rs.getDate(8));
-				user.setRegTime(rs.getTime(9));
-				user.setBirthDate(rs.getDate(10));
-				user.setPhone(rs.getString(11));
-				user.setEmail(rs.getString(12));
-				user.setAbout(rs.getString(13));
-				
-				userSet.add(user);
-			}
-		} catch (SQLException e) {
-			throw new DAOException(ExceptionMessages.SQL_SELECT_FAILURE, e);
-		} catch (ConnectionPoolException e) {
-			throw new DAOException(ExceptionMessages.CONNECTION_NOT_TAKEN, e);
-		} finally {
-			try {
-				if (rs != null) { rs.close(); }
-				if (st != null) { st.close(); }
-			} catch (SQLException e) {
-				throw new DAOException(ExceptionMessages.RS_OR_STATEMENT_NOT_CLOSED);
-			} finally {
-				if (con != null) { pool.closeConnection(con); }
-			}
-		}
-		return userSet;
+		return new LinkedHashSet<>(jdbcTemplate.query(SELECT_ALL_USERS, new UserRowMapper()));
 	}
 	
 	@Override
 	public User getUserByLogin(String login) throws DAOException {
-		User user = null;
-		ConnectionPool pool = null;
-		Connection con = null;
-		PreparedStatement st = null;
-		ResultSet rs = null;
-		try {
-			
-			pool = ConnectionPool.getInstance();
-			con = pool.getConnection();
-			st = con.prepareStatement(SELECT_USER_BY_LOGIN);
-			st.setString(1, login);
-			rs = st.executeQuery();
-			if (rs.next()) {
-				user = new User();
-				user.setId(rs.getInt(1));
-				user.setLogin(rs.getString(2));
-				user.setName(rs.getString(3));
-				user.setSurname(rs.getString(4));
-				user.setPassword(rs.getString(5));
-				user.setSex(rs.getString(6).charAt(0));
-				user.setType(rs.getString(7).charAt(0));
-				user.setRegDate(rs.getDate(8));
-				user.setRegTime(rs.getTime(9));
-				user.setBirthDate(rs.getDate(10));
-				user.setPhone(rs.getString(11));
-				user.setEmail(rs.getString(12));
-				user.setAbout(rs.getString(13));
-			}
-			
-		} catch (SQLException e) {
-			throw new DAOException(ExceptionMessages.SQL_SELECT_FAILURE, e);
-		} catch (ConnectionPoolException e) {
-			throw new DAOException(ExceptionMessages.CONNECTION_NOT_TAKEN, e);
-		} finally {
-			try {
-				if (rs != null) { rs.close(); }
-				if (st != null) { st.close(); }
-			} catch (SQLException e) {
-				throw new DAOException(ExceptionMessages.RS_OR_STATEMENT_NOT_CLOSED);
-			} finally {
-				if (con != null) { pool.closeConnection(con); }
-			}
-		}
-		return user;
+		Object[] params = new Object[] {login};
+		List<User> users = jdbcTemplate.query(SELECT_USER_BY_LOGIN, params, new UserRowMapper());
+		return users.get(0);
 	}
 
 	@Override
 	public Set<User> getUsersInBan() throws DAOException {
-		Set<User> userSet = new LinkedHashSet<User>();
-		ConnectionPool pool = null;
-		Connection con = null;
-		PreparedStatement st = null;
-		ResultSet rs = null;
-		try {
-			pool = ConnectionPool.getInstance();
-			con = pool.getConnection();
-			st = con.prepareStatement(SELECT_USERS_IN_BAN);
-			rs = st.executeQuery();
-			
-			while (rs.next()) {
-				User user = new User();
-				user.setId(rs.getInt(1));
-				user.setLogin(rs.getString(2));
-				user.setName(rs.getString(3));
-				user.setSurname(rs.getString(4));
-				user.setPassword(rs.getString(5));
-				user.setSex(rs.getString(6).charAt(0));
-				user.setType(rs.getString(7).charAt(0));
-				user.setRegDate(rs.getDate(8));
-				user.setRegTime(rs.getTime(9));
-				user.setBirthDate(rs.getDate(10));
-				user.setPhone(rs.getString(11));
-				user.setEmail(rs.getString(12));
-				user.setAbout(rs.getString(13));
-				
-				userSet.add(user);
-			}
-		} catch (SQLException e) {
-			throw new DAOException(ExceptionMessages.SQL_SELECT_FAILURE, e);
-		} catch (ConnectionPoolException e) {
-			throw new DAOException(ExceptionMessages.CONNECTION_NOT_TAKEN, e);
-		} finally {
-			try {
-				if (rs != null) { rs.close(); }
-				if (st != null) { st.close(); }
-			} catch (SQLException e) {
-				throw new DAOException(ExceptionMessages.RS_OR_STATEMENT_NOT_CLOSED);
-			} finally {
-				if (con != null) { pool.closeConnection(con); }
-			}
-		}
-		return userSet;
+		return new LinkedHashSet<>(jdbcTemplate.query(SELECT_USERS_IN_BAN, new UserRowMapper()));
 	}
 
 	@Override
@@ -423,51 +191,9 @@ public class MySQLUserDAO implements IUserDAO {
 
 	@Override
 	public User getUserByID(int id) throws DAOException {
-		User user = null;
-		ConnectionPool pool = null;
-		Connection con = null;
-		PreparedStatement st = null;
-		ResultSet rs = null;
-		try {
-			
-			pool = ConnectionPool.getInstance();
-			con = pool.getConnection();
-			st = con.prepareStatement(SELECT_USER_BY_ID);
-			
-			st.setInt(1, id);
-			rs = st.executeQuery();
-			if (rs.next()) {
-				user = new User();
-				user.setId(rs.getInt(1));
-				user.setLogin(rs.getString(2));
-				user.setName(rs.getString(3));
-				user.setSurname(rs.getString(4));
-				user.setPassword(rs.getString(5));
-				user.setSex(rs.getString(6).charAt(0));
-				user.setType(rs.getString(7).charAt(0));
-				user.setRegDate(rs.getDate(8));
-				user.setRegTime(rs.getTime(9));
-				user.setBirthDate(rs.getDate(10));
-				user.setPhone(rs.getString(11));
-				user.setEmail(rs.getString(12));
-				user.setAbout(rs.getString(13));
-			}
-			
-		} catch (SQLException e) {
-			throw new DAOException(ExceptionMessages.SQL_SELECT_FAILURE, e);
-		} catch (ConnectionPoolException e) {
-			throw new DAOException(ExceptionMessages.CONNECTION_NOT_TAKEN, e);
-		} finally {
-			try {
-				if (rs != null) { rs.close(); }
-				if (st != null) { st.close(); }
-			} catch (SQLException e) {
-				throw new DAOException(ExceptionMessages.RS_OR_STATEMENT_NOT_CLOSED);
-			} finally {
-				if (con != null) { pool.closeConnection(con); }
-			}
-		}
-		return user;
+		Object[] params = new Object[] {id};
+		List<User> users = jdbcTemplate.query(SELECT_USER_BY_ID, params, new UserRowMapper());
+		return users.get(0);
 	}
 
 	@Override
@@ -783,52 +509,8 @@ public class MySQLUserDAO implements IUserDAO {
 
 	@Override
 	public Set<User> getAllUsersPart(int start, int amount) throws DAOException {
-		Set<User> userSet = new LinkedHashSet<User>();
-		ConnectionPool pool = null;
-		Connection con = null;
-		PreparedStatement st = null;
-		ResultSet rs = null;
-		try {
-			pool = ConnectionPool.getInstance();
-			con = pool.getConnection();
-			st = con.prepareStatement(SELECT_ALL_USERS_PART);
-			st.setInt(1, start);
-			st.setInt(2, amount);
-			rs = st.executeQuery();
-			
-			while (rs.next()) {
-				User user = new User();
-				user.setId(rs.getInt(1));
-				user.setLogin(rs.getString(2));
-				user.setName(rs.getString(3));
-				user.setSurname(rs.getString(4));
-				user.setPassword(rs.getString(5));
-				user.setSex(rs.getString(6).charAt(0));
-				user.setType(rs.getString(7).charAt(0));
-				user.setRegDate(rs.getDate(8));
-				user.setRegTime(rs.getTime(9));
-				user.setBirthDate(rs.getDate(10));
-				user.setPhone(rs.getString(11));
-				user.setEmail(rs.getString(12));
-				user.setAbout(rs.getString(13));
-				
-				userSet.add(user);
-			}
-		} catch (SQLException e) {
-			throw new DAOException(ExceptionMessages.SQL_SELECT_FAILURE, e);
-		} catch (ConnectionPoolException e) {
-			throw new DAOException(ExceptionMessages.CONNECTION_NOT_TAKEN, e);
-		} finally {
-			try {
-				if (rs != null) { rs.close(); }
-				if (st != null) { st.close(); }
-			} catch (SQLException e) {
-				throw new DAOException(ExceptionMessages.RS_OR_STATEMENT_NOT_CLOSED);
-			} finally {
-				if (con != null) { pool.closeConnection(con); }
-			}
-		}
-		return userSet;
+		Object[] params = new Object[] {start, amount};
+		return new LinkedHashSet<>(jdbcTemplate.query(SELECT_ALL_USERS_PART, params, new UserRowMapper()));
 	}
 
 	@Override
