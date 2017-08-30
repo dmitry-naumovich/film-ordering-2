@@ -1,5 +1,7 @@
 package by.epam.naumovich.film_ordering.bean;
 
+import lombok.Data;
+
 import java.sql.Date;
 import java.sql.Time;
 
@@ -9,6 +11,7 @@ import java.sql.Time;
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Data
 public class Discount {
 
 	private int id;
@@ -18,50 +21,7 @@ public class Discount {
 	private Time stTime;
 	private Date enDate;
 	private Time enTime;
-	
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public int getUserID() {
-		return userID;
-	}
-	public void setUserID(int userID) {
-		this.userID = userID;
-	}
-	public int getAmount() {
-		return amount;
-	}
-	public void setAmount(int amount) {
-		this.amount = amount;
-	}
-	public Date getStDate() {
-		return stDate;
-	}
-	public void setStDate(Date stDate) {
-		this.stDate = stDate;
-	}
-	public Time getStTime() {
-		return stTime;
-	}
-	public void setStTime(Time stTime) {
-		this.stTime = stTime;
-	}
-	public Date getEnDate() {
-		return enDate;
-	}
-	public void setEnDate(Date enDate) {
-		this.enDate = enDate;
-	}
-	public Time getEnTime() {
-		return enTime;
-	}
-	public void setEnTime(Time enTime) {
-		this.enTime = enTime;
-	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) { 
@@ -128,8 +88,6 @@ public class Discount {
 
 		return result.toString();
 	}
-	
-	
-	
+
 }
 

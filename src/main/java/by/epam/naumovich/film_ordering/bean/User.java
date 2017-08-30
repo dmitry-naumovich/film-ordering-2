@@ -1,5 +1,7 @@
 package by.epam.naumovich.film_ordering.bean;
 
+import lombok.Data;
+
 import java.sql.Date;
 import java.sql.Time;
 
@@ -9,6 +11,7 @@ import java.sql.Time;
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Data
 public class User {
 
 	private int id;
@@ -24,91 +27,6 @@ public class User {
 	private String phone;
 	private String email;
 	private String about;
-	
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public String getLogin() {
-		return login;
-	}
-	public void setLogin(String login) {
-		this.login = login;
-	}
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getSurname() {
-		return surname;
-	}
-
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	public char getSex() {
-		return sex;
-	}
-	public void setSex(char sex) {
-		this.sex = sex;
-	}
-	public char getType() {
-		return type;
-	}
-	public void setType(char type) {
-		this.type = type;
-	}
-	public Date getRegDate() {
-		return regDate;
-	}
-	public void setRegDate(Date regDate) {
-		this.regDate = regDate;
-	}
-	public Time getRegTime() {
-		return regTime;
-	}
-	public void setRegTime(Time regTime) {
-		this.regTime = regTime;
-	}
-	public Date getBirthDate() {
-		return birthDate;
-	}
-	public void setBirthDate(Date birthDate) {
-		this.birthDate = birthDate;
-	}
-	public String getPhone() {
-		return phone;
-	}
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getAbout() {
-		return about;
-	}
-
-	public void setAbout(String about) {
-		this.about = about;
-	}
 
 	@Override
 	public int hashCode() {
