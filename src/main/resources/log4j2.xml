@@ -3,7 +3,7 @@
 <Configuration>
 
 	<Properties>
-		<Property name="log-path">C:/Users/Dzmitry_Naumovich/Documents/epam/film-ordering/logs</Property>
+		<Property name="log-path">/tmp/logs</Property>
 	</Properties>
 
 	<Appenders>
