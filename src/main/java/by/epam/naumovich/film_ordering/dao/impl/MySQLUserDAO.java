@@ -1,26 +1,21 @@
 package by.epam.naumovich.film_ordering.dao.impl;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Types;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import by.epam.naumovich.film_ordering.bean.Discount;
 import by.epam.naumovich.film_ordering.bean.User;
 import by.epam.naumovich.film_ordering.dao.IUserDAO;
 import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 import by.epam.naumovich.film_ordering.dao.mapper.UserRowMapper;
-import by.epam.naumovich.film_ordering.dao.util.ExceptionMessages;
 import by.epam.naumovich.film_ordering.dao.pool.ConnectionPool;
 import by.epam.naumovich.film_ordering.dao.pool.exception.ConnectionPoolException;
+import by.epam.naumovich.film_ordering.dao.util.ExceptionMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import java.sql.*;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * IUserDAO interface implementation that works with MySQL database
@@ -28,6 +23,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Repository
 public class MySQLUserDAO implements IUserDAO {
 
 	public static final String INSERT_NEW_USER = "INSERT INTO users (u_login, u_name, u_surname, u_passw, u_sex, u_type, u_regdate, u_regtime, u_bdate, u_phone, u_email, u_about) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";

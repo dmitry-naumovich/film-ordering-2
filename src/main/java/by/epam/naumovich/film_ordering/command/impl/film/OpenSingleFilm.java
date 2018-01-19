@@ -1,18 +1,5 @@
 package by.epam.naumovich.film_ordering.command.impl.film;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import by.epam.naumovich.film_ordering.bean.Film;
 import by.epam.naumovich.film_ordering.bean.Order;
 import by.epam.naumovich.film_ordering.bean.Review;
@@ -21,14 +8,21 @@ import by.epam.naumovich.film_ordering.command.util.JavaServerPageNames;
 import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.QueryUtil;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
-import by.epam.naumovich.film_ordering.service.IFilmService;
-import by.epam.naumovich.film_ordering.service.IOrderService;
-import by.epam.naumovich.film_ordering.service.IReviewService;
-import by.epam.naumovich.film_ordering.service.IUserService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
+import by.epam.naumovich.film_ordering.service.*;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.order.GetOrderServiceException;
 import by.epam.naumovich.film_ordering.service.exception.review.GetReviewServiceException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Performs the command that gets a single film from the service layer and passes it to the relevant JSP.
