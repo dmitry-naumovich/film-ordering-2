@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+
 
 import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.ErrorMessages;
@@ -20,6 +20,7 @@ import by.epam.naumovich.film_ordering.service.IUserService;
 import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.BanUserServiceException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Performs the command that reads new ban parameters from the JSP and sends them to the relevant service class.
@@ -28,10 +29,10 @@ import by.epam.naumovich.film_ordering.service.exception.user.BanUserServiceExce
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Slf4j
 public class BanUser implements Command {
 
-	private static final Logger LOGGER = LogManager.getLogger(Logger.class.getName());
-	
+
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
@@ -52,16 +53,16 @@ public class BanUser implements Command {
 			try {
 				IUserService userService = ServiceFactory.getInstance().getUserService();
 				userService.banUser(userID, length, reason);
-				LOGGER.debug(String.format(LogMessages.USER_BANNED, userID, reason));
+				log.debug(String.format(LogMessages.USER_BANNED, userID, reason));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.USER_BANNED);
 				Thread.sleep(1000);
 				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
 			} catch (BanUserServiceException e) {
-				LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
 			} catch (ServiceException | InterruptedException e) {
-				LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			}

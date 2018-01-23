@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+
 
 import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.ErrorMessages;
@@ -20,6 +20,7 @@ import by.epam.naumovich.film_ordering.service.IOrderService;
 import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.order.AddOrderServiceException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Performs the command that reads new order parameters from the JSP and sends them to the relevant service class.
@@ -28,10 +29,10 @@ import by.epam.naumovich.film_ordering.service.exception.order.AddOrderServiceEx
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Slf4j
 public class AddOrder implements Command {
 
-	private static final Logger LOGGER = LogManager.getLogger(Logger.class.getName());
-	
+
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
@@ -53,15 +54,15 @@ public class AddOrder implements Command {
 			try {
 				IOrderService orderService = ServiceFactory.getInstance().getOrderService();
 				int orderNum = orderService.addOrder(filmID, userID, price, discount, payment);
-				LOGGER.debug(String.format(LogMessages.ORDER_ADDED, orderNum, payment));
+				log.debug(String.format(LogMessages.ORDER_ADDED, orderNum, payment));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.ORDER_ADDED);
 				request.getRequestDispatcher("/Controller?command=open_single_order&orderNum=" + orderNum).forward(request, response);
 			} catch (AddOrderServiceException e) {
-				LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher("/Controller?command=open_new_order_page&filmID=" + filmID).forward(request, response);
 			} catch (ServiceException e) {
-				LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			}

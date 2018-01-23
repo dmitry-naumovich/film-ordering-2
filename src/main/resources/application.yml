@@ -4,3 +4,8 @@ spring:
     username: root
     password: s1t2a3t4i5c6x7
     driver-class-name: org.gjt.mm.mysql.Driver
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp
+      suffix: .jsp
+    

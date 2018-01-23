@@ -7,8 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import by.epam.naumovich.film_ordering.bean.Review;
 import by.epam.naumovich.film_ordering.command.Command;
@@ -29,10 +28,9 @@ import by.epam.naumovich.film_ordering.service.exception.review.GetReviewService
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Slf4j
 public class OpenSingleReview implements Command {
 
-	private static final Logger LOGGER = LogManager.getLogger(Logger.class.getName());
-	
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
@@ -65,11 +63,11 @@ public class OpenSingleReview implements Command {
 			request.setAttribute(RequestAndSessionAttributes.FILM_NAME, filmName);
 			request.getRequestDispatcher(JavaServerPageNames.SINGLE_REVIEW_PAGE).forward(request, response);
 		} catch (GetReviewServiceException e) {
-			LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+			log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 			request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 		} catch (ServiceException e) {
-			LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+			log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 			request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 		}

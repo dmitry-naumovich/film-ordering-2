@@ -10,11 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+
 
 import by.epam.naumovich.film_ordering.bean.User;
 import by.epam.naumovich.film_ordering.command.Command;
@@ -37,10 +38,10 @@ import by.epam.naumovich.film_ordering.service.exception.user.ServiceSignUpExcep
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Slf4j
 public class SignUp implements Command {
 
-	private static final Logger LOGGER = LogManager.getLogger(Logger.class.getName());
-	
+
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
@@ -118,7 +119,7 @@ public class SignUp implements Command {
 		                File avatar = new File(absoluteFilePath, fileName);
 		                avatarItem.write(avatar);
 					} catch (IOException e) {
-						LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+						log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 						request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 					}
 				}
@@ -128,19 +129,19 @@ public class SignUp implements Command {
 				session.setAttribute(RequestAndSessionAttributes.AUTHORIZED_USER, login);
 				session.setAttribute(RequestAndSessionAttributes.USER_ID, user.getId());
 				session.setAttribute(RequestAndSessionAttributes.IS_ADMIN, 'a' == user.getType());
-				LOGGER.debug(String.format(LogMessages.USER_REGISTRATED, login, userID));
+				log.debug(String.format(LogMessages.USER_REGISTRATED, login, userID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.SUCCESSFULL_SIGN_UP);
 				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
 			} catch (ServiceSignUpException e) {
-				LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher("/Controller?command=open_sign_up_page").forward(request, response);
 			} catch (ServiceException e) {
-				LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			} catch (Exception e) {
-				LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			}

@@ -6,16 +6,14 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import by.epam.naumovich.film_ordering.dao.pool.exception.ConnectionPoolException;
 import by.epam.naumovich.film_ordering.dao.util.ExceptionMessages;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public final class ConnectionPool {
 
-private static final Logger logger = LogManager.getLogger(Logger.class.getName());
-	
+
 	private static ConnectionPool instance;
 	
 	private Queue<Connection> freeConnections;
@@ -49,10 +47,10 @@ private static final Logger logger = LogManager.getLogger(Logger.class.getName()
 			this.poolSize = Integer.parseInt(manager.getValue(DBParameter.DB_POOL_SIZE));
 			Class.forName(driverName);
 		} catch (NumberFormatException e) {
-			logger.error(ExceptionMessages.INVALID_INITIALIZATION_PARAMETER, e);
+			log.error(ExceptionMessages.INVALID_INITIALIZATION_PARAMETER, e);
 			poolSize = 100;
 		} catch (ClassNotFoundException e) {
-			logger.error(ExceptionMessages.INVALID_INITIALIZATION_PARAMETER, e);
+			log.error(ExceptionMessages.INVALID_INITIALIZATION_PARAMETER, e);
 			throw new ConnectionPoolException(ExceptionMessages.SQL_EXCEPTION_IN_POOL, e);
 		}
 		
@@ -61,7 +59,7 @@ private static final Logger logger = LogManager.getLogger(Logger.class.getName()
 			connection = DriverManager.getConnection(url, user, password);
 			freeConnections.add(connection); 
 		} catch (SQLException e) {
-			logger.error(ExceptionMessages.CONNECTION_NOT_ADDED, e);
+			log.error(ExceptionMessages.CONNECTION_NOT_ADDED, e);
 			throw new ConnectionPoolException(ExceptionMessages.CONNECTION_NOT_ADDED);
 		} 
  	 		
@@ -88,7 +86,7 @@ private static final Logger logger = LogManager.getLogger(Logger.class.getName()
 				
 			}
 		} catch (SQLException e) {
-			logger.error(ExceptionMessages.SQL_EXCEPTION_IN_POOL, e);
+			log.error(ExceptionMessages.SQL_EXCEPTION_IN_POOL, e);
 			throw new ConnectionPoolException(ExceptionMessages.SQL_EXCEPTION_IN_POOL, e);
 		}
 	}
@@ -98,7 +96,7 @@ private static final Logger logger = LogManager.getLogger(Logger.class.getName()
 			Connection con = DriverManager.getConnection(url, user, password);
 			freeConnections.add(con);
 		} catch (SQLException e) {
-			logger.error(ExceptionMessages.SQL_EXCEPTION_IN_POOL, e);
+			log.error(ExceptionMessages.SQL_EXCEPTION_IN_POOL, e);
 			throw new ConnectionPoolException(ExceptionMessages.SQL_EXCEPTION_IN_POOL, e);
 		}
 		
@@ -108,7 +106,7 @@ private static final Logger logger = LogManager.getLogger(Logger.class.getName()
 		try {
 			freeConnection(con);
 		} catch (SQLException e) {
-			logger.error(ExceptionMessages.CONNECTION_NOT_CLOSED, e);
+			log.error(ExceptionMessages.CONNECTION_NOT_CLOSED, e);
 		}
 	}
 	

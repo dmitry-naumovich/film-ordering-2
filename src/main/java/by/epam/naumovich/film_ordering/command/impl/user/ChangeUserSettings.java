@@ -10,11 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+
 
 import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.ErrorMessages;
@@ -37,10 +38,10 @@ import by.epam.naumovich.film_ordering.service.exception.user.UserUpdateServiceE
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Slf4j
 public class ChangeUserSettings implements Command {
 
-	private static final Logger LOGGER = LogManager.getLogger(Logger.class.getName());
-	
+
     @Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
@@ -114,19 +115,19 @@ public class ChangeUserSettings implements Command {
 				
 				IUserService userService = ServiceFactory.getInstance().getUserService();
 				userService.updateUser(userID, name, surname, pwd, sex, bDate, phone, email, about);
-				LOGGER.debug(String.format(LogMessages.USER_SETTINGS_EDITED, userID));
+				log.debug(String.format(LogMessages.USER_SETTINGS_EDITED, userID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.SETTINGS_UPDATED);
 				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
 			} catch (UserUpdateServiceException e) {
-				LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher("/Controller?command=open_user_settings&userID=" + userID).forward(request, response);
 			} catch (ServiceException e) {
-				LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			} catch (Exception e) {
-				LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			}

@@ -12,6 +12,7 @@ import by.epam.naumovich.film_ordering.command.util.ErrorMessages;
 import by.epam.naumovich.film_ordering.command.util.JavaServerPageNames;
 import by.epam.naumovich.film_ordering.command.util.QueryUtil;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Performs the command that forwards request and response to the relevant JSP.
@@ -20,6 +21,7 @@ import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Slf4j
 public class OpenNewNewsPage implements Command {
 
 	@Override

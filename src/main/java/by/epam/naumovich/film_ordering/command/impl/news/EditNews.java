@@ -11,11 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+
 
 import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.ErrorMessages;
@@ -38,10 +39,10 @@ import by.epam.naumovich.film_ordering.service.exception.news.EditNewsServiceExc
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Slf4j
 public class EditNews implements Command {
 
-	private static final Logger LOGGER = LogManager.getLogger(Logger.class.getName());
-	
+
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
@@ -105,24 +106,24 @@ public class EditNews implements Command {
 		        		
 					    Files.move(image.toPath(), targetImg.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 					} catch (IOException e) {
-						LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+						log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 						request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 					}
 				}
 				
-				LOGGER.debug(String.format(LogMessages.NEWS_EDITED, newsID));
+				log.debug(String.format(LogMessages.NEWS_EDITED, newsID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.NEWS_EDITED);
 				request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID).forward(request, response);
 			} catch (EditNewsServiceException e) {
-				LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher("/Controller?command=open_news_edit_page&newsID=" + newsID).forward(request, response);
 			} catch (ServiceException e) {
-				LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			} catch (Exception e) {
-				LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			}

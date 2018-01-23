@@ -12,8 +12,8 @@ import by.epam.naumovich.film_ordering.service.*;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.order.GetOrderServiceException;
 import by.epam.naumovich.film_ordering.service.exception.review.GetReviewServiceException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Performs the command that gets a single film from the service layer and passes it to the relevant JSP.
@@ -30,10 +31,10 @@ import java.util.Set;
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Slf4j
 public class OpenSingleFilm implements Command {
 
-	private static final Logger LOGGER = LogManager.getLogger(Logger.class.getName());
-	
+
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
@@ -101,7 +102,7 @@ public class OpenSingleFilm implements Command {
 			request.getRequestDispatcher(JavaServerPageNames.SINGLE_FILM_PAGE).forward(request, response);
 		}
 		catch (ServiceException e) {
-			LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+			log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 			request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 		}

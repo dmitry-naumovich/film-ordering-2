@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+
 
 import by.epam.naumovich.film_ordering.bean.Discount;
 import by.epam.naumovich.film_ordering.bean.User;
@@ -23,6 +23,7 @@ import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.GetDiscountServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.GetUserServiceException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Performs the command that gets a single user from the service layer and passes it to the relevant JSP.
@@ -31,10 +32,10 @@ import by.epam.naumovich.film_ordering.service.exception.user.GetUserServiceExce
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Slf4j
 public class OpenUserProfile implements Command {
 
-	private static final Logger LOGGER = LogManager.getLogger(Logger.class.getName());
-	
+
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
@@ -65,11 +66,11 @@ public class OpenUserProfile implements Command {
 				
 				request.getRequestDispatcher(JavaServerPageNames.PROFILE_PAGE).forward(request, response);	
 			} catch (GetUserServiceException e) {
-				LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.PROFILE_PAGE).forward(request, response);
 			} catch (ServiceException e) {
-				LOGGER.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			}
