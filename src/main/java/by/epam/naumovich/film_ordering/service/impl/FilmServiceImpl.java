@@ -1,7 +1,7 @@
 package by.epam.naumovich.film_ordering.service.impl;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Film;
 import by.epam.naumovich.film_ordering.dao.DAOFactory;
@@ -96,10 +96,10 @@ public class FilmServiceImpl implements IFilmService {
 			newFilm.setDescription(description);
 		}
 		
-		int newFilmID = 0;
+		int newFilmID;
 		try {
 			IFilmDAO filmDAO = DAOFactory.getDAOFactory(MYSQL).getFilmDAO();
-			newFilmID = filmDAO.addFilm(newFilm);
+			newFilmID = filmDAO.create(newFilm);
 			if (newFilmID == 0) {
 				throw new AddFilmServiceException(ExceptionMessages.FILM_NOT_ADDED);
 			}
@@ -121,7 +121,7 @@ public class FilmServiceImpl implements IFilmService {
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IFilmDAO filmDAO = daoFactory.getFilmDAO();
-			filmDAO.deleteFilm(id);
+			filmDAO.delete(id);
 		} catch (DAOException e) {
 			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
 		}	
@@ -201,15 +201,15 @@ public class FilmServiceImpl implements IFilmService {
 		
 		try {
 			IFilmDAO filmDAO = DAOFactory.getDAOFactory(MYSQL).getFilmDAO();
-			filmDAO.editFilm(id, editedFilm);
+			filmDAO.update(id, editedFilm);
 		} catch (DAOException e) {
 			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
 		}
 	}
 	
 	@Override
-	public Set<Film> getTwelveLastAddedFilms(String lang) throws ServiceException {
-		Set<Film> filmSet = new LinkedHashSet<Film>();
+	public List<Film> getTwelveLastAddedFilms(String lang) throws ServiceException {
+		List<Film> filmSet = new ArrayList<Film>();
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IFilmDAO filmDAO = daoFactory.getFilmDAO();
@@ -227,12 +227,12 @@ public class FilmServiceImpl implements IFilmService {
 	}
 
 	@Override
-	public Set<Film> getAllFilms(String lang) throws ServiceException {
-		Set<Film> filmSet = new LinkedHashSet<Film>();
+	public List<Film> getAllFilms(String lang) throws ServiceException {
+		List<Film> filmSet = new ArrayList<>();
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IFilmDAO filmDAO = daoFactory.getFilmDAO();
-			filmSet = filmDAO.getAllFilms(lang);
+			filmSet = filmDAO.getAll(lang);
 			
 			if (filmSet.isEmpty()) {
 				throw new GetFilmServiceException(ExceptionMessages.NO_FILMS_IN_DB);
@@ -253,7 +253,7 @@ public class FilmServiceImpl implements IFilmService {
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IFilmDAO filmDAO = daoFactory.getFilmDAO();
-			film = filmDAO.getFilmByID(id, lang);
+			film = filmDAO.getById(id, lang);
 			if (film == null) {
 				throw new GetFilmServiceException(ExceptionMessages.FILM_NOT_PRESENT);
 			}
@@ -286,17 +286,17 @@ public class FilmServiceImpl implements IFilmService {
 	
 
 	@Override
-	public Set<Film> searchByName(String text, String lang) throws ServiceException {
+	public List<Film> searchByName(String text, String lang) throws ServiceException {
 		if (!Validator.validateStrings(text)) {
 			throw new GetFilmServiceException(ExceptionMessages.NO_FILMS_FOUND);
 		}
 		
-		Set<Film> foundFilms = new LinkedHashSet<Film>();
+		List<Film> foundFilms = new ArrayList<Film>();
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IFilmDAO filmDAO = daoFactory.getFilmDAO();
 			foundFilms.addAll(filmDAO.getFilmsByName(text, lang));
-			Set<Film> allFilms = filmDAO.getAllFilms(lang);
+			List<Film> allFilms = filmDAO.getAll(lang);
 			
 			String searchText = text.toLowerCase();
 			boolean moreThanOneWord = false;
@@ -331,7 +331,7 @@ public class FilmServiceImpl implements IFilmService {
 	}
 
 	@Override
-	public Set<Film> searchWidened(String name, String yearFrom, String yearTo, String[] genres, String[] countries, String lang) throws ServiceException {
+	public List<Film> searchWidened(String name, String yearFrom, String yearTo, String[] genres, String[] countries, String lang) throws ServiceException {
 		int fYearFrom = 0;
 		int fYearTo = 9999;
 		
@@ -359,7 +359,7 @@ public class FilmServiceImpl implements IFilmService {
 			}
 		}
 		
-		Set<Film> foundFilms = new LinkedHashSet<Film>();
+		List<Film> foundFilms = new ArrayList<Film>();
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IFilmDAO filmDAO = daoFactory.getFilmDAO();
@@ -367,7 +367,7 @@ public class FilmServiceImpl implements IFilmService {
 			foundFilms.addAll(filmDAO.getFilmsBetweenYears(fYearFrom, fYearTo, lang));
 			
 			if (Validator.validateObject(genres) && Validator.validateStringArray(genres)) {
-				Set<Film> filmsByGenre = new LinkedHashSet<Film>();
+				List<Film> filmsByGenre = new ArrayList<Film>();
 				for (String genre : genres) {
 					filmsByGenre = filmDAO.getFilmsByGenre(genre, lang);
 					foundFilms.retainAll(filmsByGenre);
@@ -375,7 +375,7 @@ public class FilmServiceImpl implements IFilmService {
 			}
 			
 			if (Validator.validateObject(countries) && Validator.validateStringArray(countries)) {
-				Set<Film> filmsByCountry = new LinkedHashSet<Film>();
+				List<Film> filmsByCountry = new ArrayList<Film>();
 				for (String country : countries) {
 					filmsByCountry = filmDAO.getFilmsByCountry(country, lang);
 					foundFilms.retainAll(filmsByCountry);
@@ -384,7 +384,7 @@ public class FilmServiceImpl implements IFilmService {
 			
 			if (Validator.validateStrings(name)) {
 				try {
-					Set<Film> filmsByName = searchByName(name, lang);
+					List<Film> filmsByName = searchByName(name, lang);
 					foundFilms.retainAll(filmsByName);
 				} catch (GetFilmServiceException e) {
 				}
@@ -431,17 +431,17 @@ public class FilmServiceImpl implements IFilmService {
 	}
 
 	@Override
-	public Set<Film> getAllFilmsPart(int pageNum, String lang) throws ServiceException {
+	public List<Film> getAllFilmsPart(int pageNum, String lang) throws ServiceException {
 		if (!Validator.validateInt(pageNum)) {
 			throw new GetFilmServiceException(ExceptionMessages.CORRUPTED_PAGE_NUM);
 		}
 		int start = (pageNum - 1) * FILMS_AMOUNT_ON_PAGE;
 		
-		Set<Film> filmSet = new LinkedHashSet<Film>();		
+		List<Film> filmSet = new ArrayList<Film>();
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IFilmDAO filmDAO = daoFactory.getFilmDAO();
-			filmSet = filmDAO.getAllFilmsPart(start, FILMS_AMOUNT_ON_PAGE, lang);
+			filmSet = filmDAO.getAllPart(start, FILMS_AMOUNT_ON_PAGE, lang);
 			
 			if (filmSet.isEmpty()) {
 				throw new GetFilmServiceException(ExceptionMessages.NO_FILMS_IN_DB);

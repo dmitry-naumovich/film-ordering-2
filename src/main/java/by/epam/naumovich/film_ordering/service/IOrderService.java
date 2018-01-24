@@ -1,6 +1,6 @@
 package by.epam.naumovich.film_ordering.service;
 
-import java.util.Set;
+import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Order;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
@@ -66,7 +66,7 @@ public interface IOrderService {
 	 * @return a set of found orders
 	 * @throws ServiceException
 	 */
-	Set<Order> getOrdersByUserId(int id) throws ServiceException;
+	List<Order> getOrdersByUserId(int id) throws ServiceException;
 	
 	/**
 	 * Verifies input parameter and passes it to the DAO layer, received a particular set of found orders back and returns it to the Controller layer
@@ -77,7 +77,7 @@ public interface IOrderService {
 	 * @return a set of found orders
 	 * @throws ServiceException
 	 */
-	Set<Order> getOrdersPartByUserId(int id, int pageNum) throws ServiceException;
+	List<Order> getOrdersPartByUserId(int id, int pageNum) throws ServiceException;
 	
 	/**
 	 * Verifies input parameter and passes it to the DAO layer, received a set of found orders back and returns it to the Controller layer
@@ -87,7 +87,7 @@ public interface IOrderService {
 	 * @return a set of found orders
 	 * @throws ServiceException
 	 */
-	Set<Order> getOrdersByFilmId(int id) throws ServiceException;
+	List<Order> getOrdersByFilmId(int id) throws ServiceException;
 	
 	/**
 	 * Verifies input parameter and passes it to the DAO layer, received a particular set of found orders back and returns it to the Controller layer
@@ -98,7 +98,7 @@ public interface IOrderService {
 	 * @return a set of found orders
 	 * @throws ServiceException
 	 */
-	Set<Order> getOrdersPartByFilmId(int id, int pageNum) throws ServiceException;
+	List<Order> getOrdersPartByFilmId(int id, int pageNum) throws ServiceException;
 	
 	/**
 	 * Receives a set of all present orders from the DAO layer and passes it back to the Controller layer or throws an exception if it is empty
@@ -106,7 +106,7 @@ public interface IOrderService {
 	 * @return a set of orders
 	 * @throws ServiceException
 	 */
-	Set<Order> getAllOrders() throws ServiceException;
+	List<Order> getAllOrders() throws ServiceException;
 	
 	/**
 	 * Receives a particular set of all orders from the DAO layer depending on the current page
@@ -115,7 +115,7 @@ public interface IOrderService {
 	 * @return a set of orders
 	 * @throws ServiceException
 	 */
-	Set<Order> getAllOrdersPart(int pageNum) throws ServiceException;
+	List<Order> getAllOrdersPart(int pageNum) throws ServiceException;
 	
 	/**
 	 * Counts the number of pages needed to locate all orders within the pagination.

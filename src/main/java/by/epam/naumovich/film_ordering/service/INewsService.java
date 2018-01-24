@@ -1,6 +1,6 @@
 package by.epam.naumovich.film_ordering.service;
 
-import java.util.Set;
+import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.News;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
@@ -61,7 +61,7 @@ public interface INewsService {
 	 * @return a set of news
 	 * @throws ServiceException
 	 */
-	Set<News> getAllNews() throws ServiceException;
+	List<News> getAllNews() throws ServiceException;
 	
 	/**
 	 * Receives a set of four last news from the DAO layer and passes it back to the Controller layer or throws an exception if it is empty
@@ -69,7 +69,7 @@ public interface INewsService {
 	 * @return a set of news
 	 * @throws ServiceException
 	 */
-	Set<News> getFourLastNews() throws ServiceException;
+	List<News> getFourLastNews() throws ServiceException;
 	
 	/**
 	 * Verifies input parameter and passes it to the DAO layer, received a set of found news back and returns it to the Controller layer
@@ -79,7 +79,7 @@ public interface INewsService {
 	 * @return a set of found news
 	 * @throws ServiceException
 	 */
-	Set<News> getNewsByYear(int year) throws ServiceException;
+	List<News> getNewsByYear(int year) throws ServiceException;
 	
 	/**
 	 * Verifies input parameter and passes it to the DAO layer, received a set of found news back and returns it to the Controller layer
@@ -90,7 +90,7 @@ public interface INewsService {
 	 * @return a set of found news
 	 * @throws ServiceException
 	 */
-	Set<News> getNewsByMonth(int month, int year) throws ServiceException;
+	List<News> getNewsByMonth(int month, int year) throws ServiceException;
 	
 	/**
 	 * Receives a particular set of all news from the DAO layer depending on the current page
@@ -99,7 +99,7 @@ public interface INewsService {
 	 * @return a set of news
 	 * @throws ServiceException
 	 */
-	Set<News> getAllNewsPart(int pageNum) throws ServiceException;
+	List<News> getAllNewsPart(int pageNum) throws ServiceException;
 	
 	/**
 	 * Counts the number of pages needed to locate all news within the pagination.

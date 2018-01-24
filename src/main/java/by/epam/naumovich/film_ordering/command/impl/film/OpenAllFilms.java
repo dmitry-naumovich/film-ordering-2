@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.List;
 
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
@@ -59,7 +59,7 @@ public class OpenAllFilms implements Command {
 			IFilmService filmService = ServiceFactory.getInstance().getFilmService();
 			IOrderService orderService = ServiceFactory.getInstance().getOrderService();
 			
-			Set<Film> films = filmService.getAllFilmsPart(pageNum, lang);
+			List<Film> films = filmService.getAllFilmsPart(pageNum, lang);
 			request.setAttribute(RequestAndSessionAttributes.FILMS, films);
 			
 			int totalPageAmount = filmService.getNumberOfAllFilmsPages();
@@ -70,7 +70,7 @@ public class OpenAllFilms implements Command {
 				if (!Boolean.parseBoolean(session.getAttribute(RequestAndSessionAttributes.IS_ADMIN).toString())) {
 					int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
 					try {
-						Set<Order> orders = orderService.getOrdersByUserId(userID);
+						List<Order> orders = orderService.getOrdersByUserId(userID);
 						List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
 						request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
 					} catch (GetOrderServiceException e) {

@@ -13,9 +13,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.List;
 
 /**
  * IUserDAO interface implementation that works with MySQL database
@@ -103,8 +103,8 @@ public class MySQLUserDAO implements IUserDAO {
 	
 	@Override
 	//TODO: check it
-	public Set<User> getAllUsers() throws DAOException {
-		return new LinkedHashSet<>(jdbcTemplate.query(SELECT_ALL_USERS, new UserRowMapper()));
+	public List<User> getAllUsers() throws DAOException {
+		return new ArrayList<>(jdbcTemplate.query(SELECT_ALL_USERS, new UserRowMapper()));
 	}
 	
 	@Override
@@ -115,8 +115,8 @@ public class MySQLUserDAO implements IUserDAO {
 	}
 
 	@Override
-	public Set<User> getUsersInBan() throws DAOException {
-		return new LinkedHashSet<>(jdbcTemplate.query(SELECT_USERS_IN_BAN, new UserRowMapper()));
+	public List<User> getUsersInBan() throws DAOException {
+		return new ArrayList<>(jdbcTemplate.query(SELECT_USERS_IN_BAN, new UserRowMapper()));
 	}
 
 	@Override
@@ -504,9 +504,9 @@ public class MySQLUserDAO implements IUserDAO {
 	}
 
 	@Override
-	public Set<User> getAllUsersPart(int start, int amount) throws DAOException {
+	public List<User> getAllUsersPart(int start, int amount) throws DAOException {
 		Object[] params = new Object[] {start, amount};
-		return new LinkedHashSet<>(jdbcTemplate.query(SELECT_ALL_USERS_PART, params, new UserRowMapper()));
+		return new ArrayList<>(jdbcTemplate.query(SELECT_ALL_USERS_PART, params, new UserRowMapper()));
 	}
 
 	@Override

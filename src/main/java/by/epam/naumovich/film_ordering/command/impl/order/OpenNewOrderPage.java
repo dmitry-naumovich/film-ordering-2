@@ -1,7 +1,7 @@
 package by.epam.naumovich.film_ordering.command.impl.order;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -67,7 +67,7 @@ public class OpenNewOrderPage implements Command {
 			boolean already = false;
 			int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
 			try {
-				Set<Order> orders = orderService.getOrdersByUserId(userID);
+				List<Order> orders = orderService.getOrdersByUserId(userID);
 				for (Order o : orders) {
 					if (o.getFilmId() == filmID) {
 						already = true;

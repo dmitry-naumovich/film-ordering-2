@@ -2,7 +2,7 @@ package by.epam.naumovich.film_ordering.dao;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.util.Set;
+import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Discount;
 import by.epam.naumovich.film_ordering.bean.User;
@@ -48,7 +48,7 @@ public interface IUserDAO {
 	 * @return a set of all users
 	 * @throws DAOException
 	 */
-	Set<User> getAllUsers() throws DAOException;
+	List<User> getAllUsers() throws DAOException;
 	
 	/**
 	 * Returns a necessary part of all users from the data source
@@ -58,7 +58,7 @@ public interface IUserDAO {
 	 * @return a part of the set of all users
 	 * @throws DAOException
 	 */
-	Set<User> getAllUsersPart(int start, int amount) throws DAOException;
+	List<User> getAllUsersPart(int start, int amount) throws DAOException;
 	
 	/**
 	 * Searches for users that are banned at the moment
@@ -66,7 +66,7 @@ public interface IUserDAO {
 	 * @return a set of found users
 	 * @throws DAOException
 	 */
-	Set<User> getUsersInBan() throws DAOException;
+	List<User> getUsersInBan() throws DAOException;
 	
 	/**
 	 * Searches for the user in the data source by its ID

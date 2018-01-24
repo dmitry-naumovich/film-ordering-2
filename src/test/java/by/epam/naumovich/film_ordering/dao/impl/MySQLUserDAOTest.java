@@ -4,8 +4,8 @@ import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -168,7 +168,7 @@ public class MySQLUserDAOTest {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 		IUserDAO dao = daoFactory.getUserDAO();
 		
-		Set<User> usersInBan = dao.getUsersInBan();
+		List<User> usersInBan = dao.getUsersInBan();
 		
 		for (User u : dao.getAllUsers()) {
 			if (dao.userIsInBan(u.getId())) {
@@ -441,7 +441,7 @@ public class MySQLUserDAOTest {
 		IUserDAO userDAO = daoFactory.getUserDAO();
 		
 		int usersNum1 = userDAO.getNumberOfUsers();
-		Set<User> allUsers = userDAO.getAllUsers();
+		List<User> allUsers = userDAO.getAllUsers();
 		int usersNum2 = allUsers.size();
 		
 		Assert.assertEquals(usersNum1, usersNum2);
@@ -457,9 +457,9 @@ public class MySQLUserDAOTest {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 		IUserDAO userDAO = daoFactory.getUserDAO();
 		
-		Set<User> particularUsers1 = userDAO.getAllUsersPart(0, 6);
-		List<User> allUsers = new LinkedList<User>(userDAO.getAllUsers());
-		Set<User> particularUsers2 = new LinkedHashSet<User>(allUsers.subList(0, 6));
+		List<User> particularUsers1 = userDAO.getAllUsersPart(0, 6);
+		List<User> allUsers = new ArrayList<User>(userDAO.getAllUsers());
+		List<User> particularUsers2 = new ArrayList<User>(allUsers.subList(0, 6));
 		
 		Assert.assertEquals(particularUsers1, particularUsers2);	
 	}

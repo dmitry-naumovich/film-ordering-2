@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Review;
 import by.epam.naumovich.film_ordering.dao.IReviewDAO;
@@ -127,8 +127,8 @@ public class MySQLReviewDAO implements IReviewDAO {
 	}
 	
 	@Override
-	public Set<Review> getAllReviews() throws DAOException {
-		Set<Review> reviewSet = new LinkedHashSet<Review>();
+	public List<Review> getAllReviews() throws DAOException {
+		List<Review> reviewSet = new ArrayList<Review>();
 		ConnectionPool pool = null;
 		Connection con = null;
 		PreparedStatement st = null;
@@ -170,8 +170,8 @@ public class MySQLReviewDAO implements IReviewDAO {
 	}
 
 	@Override
-	public Set<Review> getReviewsByUserId(int id) throws DAOException {
-		Set<Review> reviewSet = new LinkedHashSet<Review>();
+	public List<Review> getReviewsByUserId(int id) throws DAOException {
+		List<Review> reviewSet = new ArrayList<Review>();
 		ConnectionPool pool = null;
 		Connection con = null;
 		PreparedStatement st = null;
@@ -214,8 +214,8 @@ public class MySQLReviewDAO implements IReviewDAO {
 	}
 
 	@Override
-	public Set<Review> getReviewsByFilmId(int id) throws DAOException {
-		Set<Review> reviewSet = new LinkedHashSet<Review>();
+	public List<Review> getReviewsByFilmId(int id) throws DAOException {
+		List<Review> reviewSet = new ArrayList<Review>();
 		ConnectionPool pool = null;
 		Connection con = null;
 		PreparedStatement st = null;
@@ -301,8 +301,8 @@ public class MySQLReviewDAO implements IReviewDAO {
 	}
 
 	@Override
-	public Set<Review> getAllReviewsPart(int start, int amount) throws DAOException {
-		Set<Review> reviewSet = new LinkedHashSet<Review>();
+	public List<Review> getAllReviewsPart(int start, int amount) throws DAOException {
+		List<Review> reviewSet = new ArrayList<Review>();
 		ConnectionPool pool = null;
 		Connection con = null;
 		PreparedStatement st = null;
@@ -379,8 +379,8 @@ public class MySQLReviewDAO implements IReviewDAO {
 	}
 
 	@Override
-	public Set<Review> getReviewsPartByUserId(int userID, int start, int amount) throws DAOException {
-		Set<Review> reviewSet = new LinkedHashSet<Review>();
+	public List<Review> getReviewsPartByUserId(int userID, int start, int amount) throws DAOException {
+		List<Review> reviewSet = new ArrayList<Review>();
 		ConnectionPool pool = null;
 		Connection con = null;
 		PreparedStatement st = null;
@@ -425,8 +425,8 @@ public class MySQLReviewDAO implements IReviewDAO {
 	}
 
 	@Override
-	public Set<Review> getReviewsPartByFilmId(int id, int start, int amount) throws DAOException {
-		Set<Review> reviewSet = new LinkedHashSet<Review>();
+	public List<Review> getReviewsPartByFilmId(int id, int start, int amount) throws DAOException {
+		List<Review> reviewSet = new ArrayList<Review>();
 		ConnectionPool pool = null;
 		Connection con = null;
 		PreparedStatement st = null;

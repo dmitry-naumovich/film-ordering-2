@@ -4,8 +4,8 @@ import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -106,8 +106,8 @@ public class MySQLReviewDAOTest {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 		IReviewDAO dao = daoFactory.getReviewDAO();
 		
-		Set<Review> userReviews1 = dao.getReviewsByUserId(1);
-		Set<Review> userReviews2 = new LinkedHashSet<Review>();
+		List<Review> userReviews1 = dao.getReviewsByUserId(1);
+		List<Review> userReviews2 = new ArrayList<Review>();
 		for (Review r : dao.getAllReviews()) {
 			if (r.getAuthor() == 1) {
 				userReviews2.add(r);
@@ -127,8 +127,8 @@ public class MySQLReviewDAOTest {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 		IReviewDAO dao = daoFactory.getReviewDAO();
 		
-		Set<Review> filmReviews1 = dao.getReviewsByFilmId(1);
-		Set<Review> filmReviews2 = new LinkedHashSet<Review>();
+		List<Review> filmReviews1 = dao.getReviewsByFilmId(1);
+		List<Review> filmReviews2 = new ArrayList<Review>();
 		for (Review r : dao.getAllReviews()) {
 			if (r.getFilmId() == 1) {
 				filmReviews2.add(r);
@@ -189,9 +189,9 @@ public class MySQLReviewDAOTest {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 		IReviewDAO reviewDAO = daoFactory.getReviewDAO();
 		
-		Set<Review> particularReviews1 = reviewDAO.getAllReviewsPart(0, 6);
-		List<Review> allReviews = new LinkedList<Review>(reviewDAO.getAllReviews());
-		Set<Review> particularReviews2 = new LinkedHashSet<Review>(allReviews.subList(0, 6));
+		List<Review> particularReviews1 = reviewDAO.getAllReviewsPart(0, 6);
+		List<Review> allReviews = new ArrayList<Review>(reviewDAO.getAllReviews());
+		List<Review> particularReviews2 = new ArrayList<Review>(allReviews.subList(0, 6));
 		
 		Assert.assertEquals(particularReviews1, particularReviews2);	
 	}
@@ -206,15 +206,15 @@ public class MySQLReviewDAOTest {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 		IReviewDAO dao = daoFactory.getReviewDAO();
 		
-		Set<Review> userReviews1 = dao.getReviewsPartByUserId(1, 0, 3);
-		Set<Review> userReviews2 = new LinkedHashSet<Review>();
+		List<Review> userReviews1 = dao.getReviewsPartByUserId(1, 0, 3);
+		List<Review> userReviews2 = new ArrayList<Review>();
 		for (Review o : dao.getAllReviews()) {
 			if (o.getAuthor() == 1) {
 				userReviews2.add(o);
 			}
 		}
-		List<Review> list = new LinkedList<Review>(userReviews2);
-		userReviews2 = new LinkedHashSet<Review>(list.subList(0, 3));
+		List<Review> list = new ArrayList<Review>(userReviews2);
+		userReviews2 = new ArrayList<Review>(list.subList(0, 3));
 		
 		Assert.assertEquals(userReviews1, userReviews2);	
 	}
@@ -229,15 +229,15 @@ public class MySQLReviewDAOTest {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 		IReviewDAO dao = daoFactory.getReviewDAO();
 		
-		Set<Review> filmReviews1 = dao.getReviewsPartByFilmId(1, 0, 3);
-		Set<Review> filmReviews2 = new LinkedHashSet<Review>();
+		List<Review> filmReviews1 = dao.getReviewsPartByFilmId(1, 0, 3);
+		List<Review> filmReviews2 = new ArrayList<Review>();
 		for (Review o : dao.getAllReviews()) {
 			if (o.getFilmId() == 1) {
 				filmReviews2.add(o);
 			}
 		}
-		List<Review> list = new LinkedList<Review>(filmReviews2);
-		filmReviews2 = new LinkedHashSet<Review>(list.subList(0, 3));
+		List<Review> list = new ArrayList<Review>(filmReviews2);
+		filmReviews2 = new ArrayList<Review>(list.subList(0, 3));
 		
 		Assert.assertEquals(filmReviews1, filmReviews2);	
 	}
@@ -253,7 +253,7 @@ public class MySQLReviewDAOTest {
 		IReviewDAO reviewDAO = daoFactory.getReviewDAO();
 		
 		int reviewsNum1 = reviewDAO.getNumberOfUserReviews(4);
-		Set<Review> userReviews = new LinkedHashSet<Review>();
+		List<Review> userReviews = new ArrayList<Review>();
 		for (Review o : reviewDAO.getAllReviews()) {
 			if (o.getAuthor() == 4) {
 				userReviews.add(o);
@@ -275,7 +275,7 @@ public class MySQLReviewDAOTest {
 		IReviewDAO reviewDAO = daoFactory.getReviewDAO();
 		
 		int reviewsNum1 = reviewDAO.getNumberOfFilmReviews(1);
-		Set<Review> filmReviews = new LinkedHashSet<Review>();
+		List<Review> filmReviews = new ArrayList<Review>();
 		for (Review o : reviewDAO.getAllReviews()) {
 			if (o.getFilmId() == 1) {
 				filmReviews.add(o);

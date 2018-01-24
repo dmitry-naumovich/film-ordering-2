@@ -5,7 +5,7 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Calendar;
-import java.util.Set;
+import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Discount;
 import by.epam.naumovich.film_ordering.bean.User;
@@ -311,11 +311,11 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public Set<User> getAllUsers() throws ServiceException {
+	public List<User> getAllUsers() throws ServiceException {
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IUserDAO dao = daoFactory.getUserDAO();
-			Set<User> users = dao.getAllUsers();
+			List<User> users = dao.getAllUsers();
 			if (users == null) {
 				throw new GetUserServiceException(ExceptionMessages.NO_USERS_IN_DB);
 			}
@@ -326,11 +326,11 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public Set<User> getUsersInBanNow() throws ServiceException {
+	public List<User> getUsersInBanNow() throws ServiceException {
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IUserDAO dao = daoFactory.getUserDAO();
-			Set<User> users = dao.getUsersInBan();
+			List<User> users = dao.getUsersInBan();
 			if (users == null) {
 				throw new GetUserServiceException(ExceptionMessages.NO_USERS_IN_BAN_NOW);
 			}
@@ -511,7 +511,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public Set<User> getAllUsersPart(int pageNum) throws ServiceException {
+	public List<User> getAllUsersPart(int pageNum) throws ServiceException {
 		if (!Validator.validateInt(pageNum)) {
 			throw new GetUserServiceException(ExceptionMessages.CORRUPTED_PAGE_NUM);
 		}
@@ -520,7 +520,7 @@ public class UserServiceImpl implements IUserService {
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IUserDAO dao = daoFactory.getUserDAO();
-			Set<User> users = dao.getAllUsersPart(start, USERS_AMOUNT_ON_PAGE);
+			List<User> users = dao.getAllUsersPart(start, USERS_AMOUNT_ON_PAGE);
 			if (users == null) {
 				throw new GetUserServiceException(ExceptionMessages.NO_USERS_IN_DB);
 			}

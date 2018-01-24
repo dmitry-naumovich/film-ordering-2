@@ -5,8 +5,8 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Calendar;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -146,8 +146,8 @@ public class MySQLNewsDAOTest {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 		INewsDAO dao = daoFactory.getNewsDAO();
 		
-		Set<News> allNews1 = dao.getAllNews();
-		Set<News> allNews2 = new LinkedHashSet<News>();
+		List<News> allNews1 = dao.getAllNews();
+		List<News> allNews2 = new ArrayList<News>();
 		for (int i = 2016; i < 2050; i++) {
 			allNews2.addAll(dao.getNewsByYear(i));
 		}
@@ -167,8 +167,8 @@ public class MySQLNewsDAOTest {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 		INewsDAO dao = daoFactory.getNewsDAO();
 		
-		Set<News> yearNews = dao.getNewsByYear(2016);
-		Set<News> allNews = dao.getAllNews();
+		List<News> yearNews = dao.getNewsByYear(2016);
+		List<News> allNews = dao.getAllNews();
 		Calendar calendar = Calendar.getInstance();
 		for (News n : allNews) {
 			calendar.setTime(n.getDate());
@@ -191,8 +191,8 @@ public class MySQLNewsDAOTest {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 		INewsDAO dao = daoFactory.getNewsDAO();
 		
-		Set<News> yearNews = dao.getNewsByMonthAndYear(8, 2016);
-		Set<News> allNews = dao.getAllNews();
+		List<News> yearNews = dao.getNewsByMonthAndYear(8, 2016);
+		List<News> allNews = dao.getAllNews();
 		Calendar calendar = Calendar.getInstance();
 		for (News n : allNews) {
 			
@@ -216,7 +216,7 @@ public class MySQLNewsDAOTest {
 		INewsDAO newsDAO = daoFactory.getNewsDAO();
 		
 		int newsNum1 = newsDAO.getNumberOfNews();
-		Set<News> allNews = newsDAO.getAllNews();
+		List<News> allNews = newsDAO.getAllNews();
 		int newsNum2 = allNews.size();
 		
 		Assert.assertEquals(newsNum1, newsNum2);
@@ -232,9 +232,9 @@ public class MySQLNewsDAOTest {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 		INewsDAO newsDAO = daoFactory.getNewsDAO();
 		
-		Set<News> particularNews1 = newsDAO.getAllNewsPart(0, 6);
-		List<News> allNews = new LinkedList<News>(newsDAO.getAllNews());
-		Set<News> particularNews2 = new LinkedHashSet<News>(allNews.subList(0, 6));
+		List<News> particularNews1 = newsDAO.getAllNewsPart(0, 6);
+		List<News> allNews = new ArrayList<News>(newsDAO.getAllNews());
+		List<News> particularNews2 = new ArrayList<News>(allNews.subList(0, 6));
 		
 		Assert.assertEquals(particularNews1, particularNews2);	
 	}

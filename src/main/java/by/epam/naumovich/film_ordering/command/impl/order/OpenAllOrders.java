@@ -3,7 +3,7 @@ package by.epam.naumovich.film_ordering.command.impl.order;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -67,7 +67,7 @@ public class OpenAllOrders implements Command {
 				IOrderService orderService = ServiceFactory.getInstance().getOrderService();
 				IFilmService filmService = ServiceFactory.getInstance().getFilmService();
 				IUserService userService = ServiceFactory.getInstance().getUserService();
-				Set<Order> orders = orderService.getAllOrdersPart(pageNum);
+				List<Order> orders = orderService.getAllOrdersPart(pageNum);
 				
 				List<String> filmNames = new ArrayList<>();
 				List<String> userLogins = new ArrayList<>();

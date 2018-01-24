@@ -4,8 +4,8 @@ import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -159,8 +159,8 @@ public class MySQLOrderDAOTest {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 		IOrderDAO dao = daoFactory.getOrderDAO();
 		
-		Set<Order> userOrders1 = dao.getOrdersByUserId(1);
-		Set<Order> userOrders2 = new LinkedHashSet<Order>();
+		List<Order> userOrders1 = dao.getOrdersByUserId(1);
+		List<Order> userOrders2 = new ArrayList<Order>();
 		for (Order o : dao.getAllOrders()) {
 			if (o.getUserId() == 1) {
 				userOrders2.add(o);
@@ -180,15 +180,15 @@ public class MySQLOrderDAOTest {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 		IOrderDAO dao = daoFactory.getOrderDAO();
 		
-		Set<Order> userOrders1 = dao.getOrdersPartByUserId(1, 0, 3);
-		Set<Order> userOrders2 = new LinkedHashSet<Order>();
+		List<Order> userOrders1 = dao.getOrdersPartByUserId(1, 0, 3);
+		List<Order> userOrders2 = new ArrayList<Order>();
 		for (Order o : dao.getAllOrders()) {
 			if (o.getUserId() == 1) {
 				userOrders2.add(o);
 			}
 		}
-		List<Order> list = new LinkedList<Order>(userOrders2);
-		userOrders2 = new LinkedHashSet<Order>(list.subList(0, 3));
+		List<Order> list = new ArrayList<Order>(userOrders2);
+		userOrders2 = new ArrayList<Order>(list.subList(0, 3));
 		
 		Assert.assertEquals(userOrders1, userOrders2);	
 	}
@@ -203,8 +203,8 @@ public class MySQLOrderDAOTest {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 		IOrderDAO dao = daoFactory.getOrderDAO();
 		
-		Set<Order> filmOrders1 = dao.getOrdersByFilmId(1);
-		Set<Order> filmOrders2 = new LinkedHashSet<Order>();
+		List<Order> filmOrders1 = dao.getOrdersByFilmId(1);
+		List<Order> filmOrders2 = new ArrayList<Order>();
 		for (Order o : dao.getAllOrders()) {
 			if (o.getFilmId() == 1) {
 				filmOrders2.add(o);
@@ -224,15 +224,15 @@ public class MySQLOrderDAOTest {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 		IOrderDAO dao = daoFactory.getOrderDAO();
 		
-		Set<Order> filmOrders1 = dao.getOrdersPartByFilmId(1, 0, 3);
-		Set<Order> filmOrders2 = new LinkedHashSet<Order>();
+		List<Order> filmOrders1 = dao.getOrdersPartByFilmId(1, 0, 3);
+		List<Order> filmOrders2 = new ArrayList<Order>();
 		for (Order o : dao.getAllOrders()) {
 			if (o.getFilmId() == 1) {
 				filmOrders2.add(o);
 			}
 		}
-		List<Order> list = new LinkedList<Order>(filmOrders2);
-		filmOrders2 = new LinkedHashSet<Order>(list.subList(0, 3));
+		List<Order> list = new ArrayList<Order>(filmOrders2);
+		filmOrders2 = new ArrayList<Order>(list.subList(0, 3));
 		
 		Assert.assertEquals(filmOrders1, filmOrders2);	
 	}
@@ -248,7 +248,7 @@ public class MySQLOrderDAOTest {
 		IOrderDAO orderDAO = daoFactory.getOrderDAO();
 		
 		int ordersNum1 = orderDAO.getNumberOfOrders();
-		Set<Order> allOrders = orderDAO.getAllOrders();
+		List<Order> allOrders = orderDAO.getAllOrders();
 		int ordersNum2 = allOrders.size();
 		
 		Assert.assertEquals(ordersNum1, ordersNum2);
@@ -264,9 +264,9 @@ public class MySQLOrderDAOTest {
 		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 		IOrderDAO orderDAO = daoFactory.getOrderDAO();
 		
-		Set<Order> particularOrders1 = orderDAO.getAllOrdersPart(0, 6);
-		List<Order> allOrders = new LinkedList<Order>(orderDAO.getAllOrders());
-		Set<Order> particularOrders2 = new LinkedHashSet<Order>(allOrders.subList(0, 6));
+		List<Order> particularOrders1 = orderDAO.getAllOrdersPart(0, 6);
+		List<Order> allOrders = new ArrayList<Order>(orderDAO.getAllOrders());
+		List<Order> particularOrders2 = new ArrayList<Order>(allOrders.subList(0, 6));
 		
 		Assert.assertEquals(particularOrders1, particularOrders2);	
 	}
@@ -282,7 +282,7 @@ public class MySQLOrderDAOTest {
 		IOrderDAO orderDAO = daoFactory.getOrderDAO();
 		
 		int ordersNum1 = orderDAO.getNumberOfUserOrders(1);
-		Set<Order> userOrders = new LinkedHashSet<Order>();
+		List<Order> userOrders = new ArrayList<Order>();
 		for (Order o : orderDAO.getAllOrders()) {
 			if (o.getUserId() == 1) {
 				userOrders.add(o);
@@ -304,7 +304,7 @@ public class MySQLOrderDAOTest {
 		IOrderDAO orderDAO = daoFactory.getOrderDAO();
 		
 		int ordersNum1 = orderDAO.getNumberOfFilmOrders(1);
-		Set<Order> filmOrders = new LinkedHashSet<Order>();
+		List<Order> filmOrders = new ArrayList<Order>();
 		for (Order o : orderDAO.getAllOrders()) {
 			if (o.getFilmId() == 1) {
 				filmOrders.add(o);

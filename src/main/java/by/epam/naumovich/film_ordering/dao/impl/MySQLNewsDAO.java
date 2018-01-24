@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.News;
 import by.epam.naumovich.film_ordering.dao.INewsDAO;
@@ -146,8 +146,8 @@ public class MySQLNewsDAO implements INewsDAO {
 	}
 
 	@Override
-	public Set<News> getAllNews() throws DAOException {
-		Set<News> newsSet = new LinkedHashSet<News>();
+	public List<News> getAllNews() throws DAOException {
+		List<News> newsSet = new ArrayList<News>();
 		ConnectionPool pool = null;
 		Connection con = null;
 		PreparedStatement st = null;
@@ -187,8 +187,8 @@ public class MySQLNewsDAO implements INewsDAO {
 	}
 
 	@Override
-	public Set<News> getNewsByYear(int year) throws DAOException {
-		Set<News> newsSet = new LinkedHashSet<News>();
+	public List<News> getNewsByYear(int year) throws DAOException {
+		List<News> newsSet = new ArrayList<News>();
 		ConnectionPool pool = null;
 		Connection con = null;
 		PreparedStatement st = null;
@@ -230,8 +230,8 @@ public class MySQLNewsDAO implements INewsDAO {
 	}
 
 	@Override
-	public Set<News> getNewsByMonthAndYear(int month, int year) throws DAOException {
-		Set<News> newsSet = new LinkedHashSet<News>();
+	public List<News> getNewsByMonthAndYear(int month, int year) throws DAOException {
+		List<News> newsSet = new ArrayList<News>();
 		ConnectionPool pool = null;
 		Connection con = null;
 		PreparedStatement st = null;
@@ -315,8 +315,8 @@ public class MySQLNewsDAO implements INewsDAO {
 	}
 
 	@Override
-	public Set<News> getAllNewsPart(int start, int amount) throws DAOException {
-		Set<News> newsSet = new LinkedHashSet<News>();
+	public List<News> getAllNewsPart(int start, int amount) throws DAOException {
+		List<News> newsSet = new ArrayList<News>();
 		ConnectionPool pool = null;
 		Connection con = null;
 		PreparedStatement st = null;

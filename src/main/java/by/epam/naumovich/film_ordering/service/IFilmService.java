@@ -1,6 +1,6 @@
 package by.epam.naumovich.film_ordering.service;
 
-import java.util.Set;
+import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Film;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
@@ -91,7 +91,7 @@ public interface IFilmService {
 	 * @return a set of films
 	 * @throws ServiceException
 	 */
-	Set<Film> getTwelveLastAddedFilms(String lang) throws ServiceException;
+	List<Film> getTwelveLastAddedFilms(String lang) throws ServiceException;
 	
 	/**
 	 * Receives a set of all present films from the DAO layer and passes it back to the Controller layer or throws an exception if it is empty
@@ -100,7 +100,7 @@ public interface IFilmService {
 	 * @return a set of films
 	 * @throws ServiceException
 	 */
-	Set<Film> getAllFilms(String lang) throws ServiceException;
+	List<Film> getAllFilms(String lang) throws ServiceException;
 	
 	/**
 	 * Receives a particular set of all present films from the DAO layer depending on the page and passes it back to the Controller layer or throws an exception if it is empty
@@ -110,7 +110,7 @@ public interface IFilmService {
 	 * @return a set of films
 	 * @throws ServiceException
 	 */
-	Set<Film> getAllFilmsPart(int pageNum, String lang) throws ServiceException;
+	List<Film> getAllFilmsPart(int pageNum, String lang) throws ServiceException;
 	
 	/**
 	 * Verifies input parameter and passes it to the DAO layer, received a set of found films back and returns it to the Controller layer
@@ -121,7 +121,7 @@ public interface IFilmService {
 	 * @return a set of found films
 	 * @throws ServiceException
 	 */
-	Set<Film> searchByName(String text, String lang) throws ServiceException;
+	List<Film> searchByName(String text, String lang) throws ServiceException;
 	
 	/**
 	 * Performs the logic of searching films by several criteria, verifies input parameters and requests necessary sets of films from the DAO layer,
@@ -136,7 +136,7 @@ public interface IFilmService {
 	 * @return a set of found films or throws an exception if it is empty
 	 * @throws ServiceException
 	 */
-	Set<Film> searchWidened(String name, String yearFrom, String yearTo, String[] genres, String[] countries, String lang) throws ServiceException;
+	List<Film> searchWidened(String name, String yearFrom, String yearTo, String[] genres, String[] countries, String lang) throws ServiceException;
 	
 	/**
 	 * Receives the String array of all available genres from the DAO layer and passes them to the Controller layer

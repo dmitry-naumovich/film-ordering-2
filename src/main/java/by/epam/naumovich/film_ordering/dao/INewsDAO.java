@@ -1,6 +1,6 @@
 package by.epam.naumovich.film_ordering.dao;
 
-import java.util.Set;
+import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.News;
 import by.epam.naumovich.film_ordering.dao.exception.DAOException;
@@ -54,7 +54,7 @@ public interface INewsDAO {
 	 * @return a set of all data source news
 	 * @throws DAOException
 	 */
-	Set<News> getAllNews() throws DAOException;
+	List<News> getAllNews() throws DAOException;
 	
 	/**
 	 * Searches for news in the data source by year
@@ -63,7 +63,7 @@ public interface INewsDAO {
 	 * @return a set of found news
 	 * @throws DAOException
 	 */
-	Set<News> getNewsByYear(int year) throws DAOException;
+	List<News> getNewsByYear(int year) throws DAOException;
 	
 	/**
 	 * Searches for news in the data source by month and year
@@ -73,7 +73,7 @@ public interface INewsDAO {
 	 * @return a set of found news
 	 * @throws DAOException
 	 */
-	Set<News> getNewsByMonthAndYear(int month, int year) throws DAOException;
+	List<News> getNewsByMonthAndYear(int month, int year) throws DAOException;
 	
 	/**
 	 * Returns a necessary part of all news from the data source
@@ -83,7 +83,7 @@ public interface INewsDAO {
 	 * @return a part of the set of all news
 	 * @throws DAOException
 	 */
-	Set<News> getAllNewsPart(int start, int amount) throws DAOException;
+	List<News> getAllNewsPart(int start, int amount) throws DAOException;
 	
 	/**
 	 * Counts the number of all news in the data source

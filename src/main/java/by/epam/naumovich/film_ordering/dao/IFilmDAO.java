@@ -1,9 +1,12 @@
 package by.epam.naumovich.film_ordering.dao;
 
-import java.util.Set;
+import java.util.List;
+import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Film;
 import by.epam.naumovich.film_ordering.dao.exception.DAOException;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
 /**
  * Defines methods for implementing in the DAO layer for the Film entity.
@@ -11,7 +14,7 @@ import by.epam.naumovich.film_ordering.dao.exception.DAOException;
  * @author Dmitry Naumovich
  * @version 1.0
  */
-public interface IFilmDAO {
+public interface IFilmDAO{
 
 	/**
 	 * Adds a new film to the data source
@@ -20,7 +23,7 @@ public interface IFilmDAO {
 	 * @return ID of a newly added film or 0 if it was not added
 	 * @throws DAOException
 	 */
-	int addFilm(Film film) throws DAOException;
+	int create(Film film) throws DAOException;
 	
 	/**
 	 * Deletes a film from the data source
@@ -28,7 +31,7 @@ public interface IFilmDAO {
 	 * @param id ID of a film which will be deleted
 	 * @throws DAOException
 	 */
-	void deleteFilm(int id) throws DAOException;
+	void delete(int id) throws DAOException;
 	
 	/**
 	 * Edits a film in the data source
@@ -37,17 +40,17 @@ public interface IFilmDAO {
 	 * @param editedFilm film entity with edited fields
 	 * @throws DAOException
 	 */
-	void editFilm(int id, Film editedFilm) throws DAOException;
+	void update(int id, Film editedFilm) throws DAOException;
 	
 	/**
-	 * Searches for a film in the data source by its ID
+	 * Searches for a film in the data source by its ID considering language
 	 * 
 	 * @param id ID of a film
 	 * @return found film or null if it was not found
 	 * @throws DAOException
 	 */
-	Film getFilmByID(int id, String lang) throws DAOException;
-	
+	Film getById(int id, String lang) throws DAOException;
+
 	/**
 	 * Returns film name by its ID
 	 * 
@@ -65,7 +68,7 @@ public interface IFilmDAO {
 	 * @return a set of films
 	 * @throws DAOException
 	 */
-	Set<Film> getTwelveLastAddedFilms(String lang) throws DAOException;
+	List<Film> getTwelveLastAddedFilms(String lang) throws DAOException;
 	
 	/**
 	 * Returns all films that a present in the data source
@@ -74,7 +77,7 @@ public interface IFilmDAO {
 	 * @return a set of all films
 	 * @throws DAOException
 	 */
-	Set<Film> getAllFilms(String lang) throws DAOException;
+	List<Film> getAll(String lang) throws DAOException;
 	
 	/**
 	 * Returns a necessary part of all films from the data source
@@ -85,7 +88,7 @@ public interface IFilmDAO {
 	 * @return a part of the set of all films
 	 * @throws DAOException
 	 */
-	Set<Film> getAllFilmsPart(int start, int amount, String lang) throws DAOException;
+	List<Film> getAllPart(int start, int amount, String lang) throws DAOException;
 	
 	/**
 	 * Searches for films in the data source by name 
@@ -95,7 +98,7 @@ public interface IFilmDAO {
 	 * @return a set of found films
 	 * @throws DAOException
 	 */
-	Set<Film> getFilmsByName(String name, String lang) throws DAOException;
+	List<Film> getFilmsByName(String name, String lang) throws DAOException;
 	
 	/**
 	 * Searches for films in the data source by year
@@ -105,7 +108,7 @@ public interface IFilmDAO {
 	 * @return a set of found films
 	 * @throws DAOException
 	 */
-	Set<Film> getFilmsByYear(int year, String lang) throws DAOException;
+	List<Film> getFilmsByYear(int year, String lang) throws DAOException;
 	
 	/**
 	 * Searches for films in the data source by genre
@@ -115,7 +118,7 @@ public interface IFilmDAO {
 	 * @return a set of found films
 	 * @throws DAOException
 	 */
-	Set<Film> getFilmsByGenre(String genre, String lang) throws DAOException;
+	List<Film> getFilmsByGenre(String genre, String lang) throws DAOException;
 	
 	/**
 	 * Searches for films in the data source by country
@@ -125,7 +128,7 @@ public interface IFilmDAO {
 	 * @return a set of found films
 	 * @throws DAOException
 	 */
-	Set<Film> getFilmsByCountry(String country, String lang) throws DAOException;
+	List<Film> getFilmsByCountry(String country, String lang) throws DAOException;
 	
 	/**
 	 * Searches for films in the data source by year range
@@ -136,7 +139,7 @@ public interface IFilmDAO {
 	 * @return a set of found films
 	 * @throws DAOException
 	 */
-	Set<Film> getFilmsBetweenYears(int yearFrom, int yearTo, String lang) throws DAOException;
+	List<Film> getFilmsBetweenYears(int yearFrom, int yearTo, String lang) throws DAOException;
 	
 	/**
 	 * Returns all film genres that are present in the data source

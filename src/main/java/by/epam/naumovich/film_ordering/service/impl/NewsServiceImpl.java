@@ -4,10 +4,10 @@ import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.List;
 
 
 import by.epam.naumovich.film_ordering.bean.News;
@@ -95,8 +95,8 @@ public class NewsServiceImpl implements INewsService {
 	}
 	
 	@Override
-	public Set<News> getAllNews() throws ServiceException {
-		Set<News> set = new LinkedHashSet<News>();
+	public List<News> getAllNews() throws ServiceException {
+		List<News> set = new ArrayList<News>();
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			INewsDAO newsDAO = daoFactory.getNewsDAO();
@@ -114,8 +114,8 @@ public class NewsServiceImpl implements INewsService {
 	}
 
 	@Override
-	public Set<News> getNewsByYear(int year) throws ServiceException {
-		Set<News> set = new LinkedHashSet<News>();
+	public List<News> getNewsByYear(int year) throws ServiceException {
+		List<News> set = new ArrayList<News>();
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			INewsDAO newsDAO = daoFactory.getNewsDAO();
@@ -133,8 +133,8 @@ public class NewsServiceImpl implements INewsService {
 	}
 
 	@Override
-	public Set<News> getNewsByMonth(int month, int year) throws ServiceException {
-		Set<News> set = new LinkedHashSet<News>();
+	public List<News> getNewsByMonth(int month, int year) throws ServiceException {
+		List<News> set = new ArrayList<News>();
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			INewsDAO newsDAO = daoFactory.getNewsDAO();
@@ -152,8 +152,8 @@ public class NewsServiceImpl implements INewsService {
 	}
 
 	@Override
-	public Set<News> getFourLastNews() throws ServiceException {
-		Set<News> set = new LinkedHashSet<News>();
+	public List<News> getFourLastNews() throws ServiceException {
+		List<News> set = new ArrayList<News>();
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			INewsDAO newsDAO = daoFactory.getNewsDAO();
@@ -163,7 +163,7 @@ public class NewsServiceImpl implements INewsService {
 				throw new GetNewsServiceException(ExceptionMessages.NO_NEWS_IN_DB);
 			}
 			List<News> list = new ArrayList<News>(set);
-			set = new LinkedHashSet<News>(list.subList(0, 4));
+			set = new ArrayList<News>(list.subList(0, 4));
 			
 		} catch (DAOException e) {
 			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
@@ -190,7 +190,7 @@ public class NewsServiceImpl implements INewsService {
 	}
 
 	@Override
-	public Set<News> getAllNewsPart(int pageNum) throws ServiceException {
+	public List<News> getAllNewsPart(int pageNum) throws ServiceException {
 		if (!Validator.validateInt(pageNum)) {
 			throw new GetNewsServiceException(ExceptionMessages.CORRUPTED_PAGE_NUM);
 		}
@@ -199,7 +199,7 @@ public class NewsServiceImpl implements INewsService {
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			INewsDAO dao = daoFactory.getNewsDAO();
-			Set<News> news = dao.getAllNewsPart(start, NEWS_AMOUNT_ON_PAGE);
+			List<News> news = dao.getAllNewsPart(start, NEWS_AMOUNT_ON_PAGE);
 			if (news == null) {
 				throw new GetNewsServiceException(ExceptionMessages.NO_NEWS_IN_DB);
 			}

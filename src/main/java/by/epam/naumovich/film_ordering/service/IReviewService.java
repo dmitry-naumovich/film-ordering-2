@@ -1,6 +1,6 @@
 package by.epam.naumovich.film_ordering.service;
 
-import java.util.Set;
+import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Review;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
@@ -43,7 +43,7 @@ public interface IReviewService {
 	 * @return a set of reviews
 	 * @throws ServiceException
 	 */
-	Set<Review> getAllReviews() throws ServiceException;
+	List<Review> getAllReviews() throws ServiceException;
 	
 	/**
 	 * Verifies input parameter and passes it to the DAO layer, received a set of found reviews back and returns it to the Controller layer
@@ -53,7 +53,7 @@ public interface IReviewService {
 	 * @return a set of found reviews
 	 * @throws ServiceException
 	 */
-	Set<Review> getReviewsByUserId(int id) throws ServiceException;
+	List<Review> getReviewsByUserId(int id) throws ServiceException;
 	
 	/**
 	 * Verifies input parameter and passes it to the DAO layer, received a particular set of found reviews back and returns it to the Controller layer
@@ -64,7 +64,7 @@ public interface IReviewService {
 	 * @return a set of found reviews
 	 * @throws ServiceException
 	 */
-	Set<Review> getReviewsPartByUserId(int userID, int pageNum) throws ServiceException;
+	List<Review> getReviewsPartByUserId(int userID, int pageNum) throws ServiceException;
 
 	/**
 	 * Verifies input parameter and passes it to the DAO layer, received a set of found reviews back and returns it to the Controller layer
@@ -74,7 +74,7 @@ public interface IReviewService {
 	 * @return a set of found reviews
 	 * @throws ServiceException
 	 */
-	Set<Review> getReviewsByFilmId(int id) throws ServiceException;
+	List<Review> getReviewsByFilmId(int id) throws ServiceException;
 	
 	/**
 	 * Verifies input parameter and passes it to the DAO layer, received a particular set of found reviews back and returns it to the Controller layer
@@ -85,7 +85,7 @@ public interface IReviewService {
 	 * @return a set of found reviews
 	 * @throws ServiceException
 	 */
-	Set<Review> getReviewsPartByFilmId(int filmID, int pageNum) throws ServiceException;
+	List<Review> getReviewsPartByFilmId(int filmID, int pageNum) throws ServiceException;
 	
 	/**
 	 * Verifies the input parameters and passes them to the DAO layer, receives the review entity, returns it back to the Controller layer
@@ -105,7 +105,7 @@ public interface IReviewService {
 	 * @return a set of reviews
 	 * @throws ServiceException
 	 */
-	Set<Review> getAllReviewsPart(int pageNum) throws ServiceException;
+	List<Review> getAllReviewsPart(int pageNum) throws ServiceException;
 	
 	/**
 	 * Counts the number of pages needed to locate all reviews within the pagination.

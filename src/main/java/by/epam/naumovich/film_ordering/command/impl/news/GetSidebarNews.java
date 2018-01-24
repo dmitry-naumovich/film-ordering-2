@@ -1,7 +1,7 @@
 package by.epam.naumovich.film_ordering.command.impl.news;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +31,7 @@ public class GetSidebarNews implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		try {
 			INewsService newsService = ServiceFactory.getInstance().getNewsService();
-			Set<News> newsSet = newsService.getFourLastNews();
+			List<News> newsSet = newsService.getFourLastNews();
 			//request.setAttribute(RequestAndSessionAttributes.SIDEBAR_NEWS, newsSet);
 			HttpSession session = request.getSession(true);
 			session.setAttribute(RequestAndSessionAttributes.SIDEBAR_NEWS, newsSet);

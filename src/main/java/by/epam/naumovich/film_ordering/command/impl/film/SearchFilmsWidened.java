@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -62,7 +62,7 @@ public class SearchFilmsWidened implements Command {
 		
 		try {
 			IFilmService filmService = ServiceFactory.getInstance().getFilmService();
-			Set<Film> foundFilms = filmService.searchWidened(name, yearFrom, yearTo, genres, countries, lang);
+			List<Film> foundFilms = filmService.searchWidened(name, yearFrom, yearTo, genres, countries, lang);
 			request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.FILMS_FOUND);
 			request.setAttribute(RequestAndSessionAttributes.FILMS, foundFilms);
 			if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) != null) {
@@ -70,7 +70,7 @@ public class SearchFilmsWidened implements Command {
 					int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
 					try {
 						IOrderService orderService = ServiceFactory.getInstance().getOrderService();
-						Set<Order> orders = orderService.getOrdersByUserId(userID);
+						List<Order> orders = orderService.getOrdersByUserId(userID);
 						List<Integer> orderFilmIDs = new ArrayList<Integer>();
 						for (Order o : orders) {
 							orderFilmIDs.add(o.getFilmId());

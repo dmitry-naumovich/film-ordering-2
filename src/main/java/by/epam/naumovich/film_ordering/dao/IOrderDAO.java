@@ -1,6 +1,6 @@
 package by.epam.naumovich.film_ordering.dao;
 
-import java.util.Set;
+import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Order;
 import by.epam.naumovich.film_ordering.dao.exception.DAOException;
@@ -56,7 +56,7 @@ public interface IOrderDAO {
 	 * @return a set of found orders
 	 * @throws DAOException
 	 */
-	Set<Order> getOrdersByUserId(int id) throws DAOException;
+	List<Order> getOrdersByUserId(int id) throws DAOException;
 
 	/**
 	 * Searches for the orders in the data source by user ID and returns the necessary part of them
@@ -67,7 +67,7 @@ public interface IOrderDAO {
 	 * @return a set of found orders
 	 * @throws DAOException
 	 */
-	Set<Order> getOrdersPartByUserId(int id, int start, int amount) throws DAOException;
+	List<Order> getOrdersPartByUserId(int id, int start, int amount) throws DAOException;
 	
 	/**
 	 * Searches for the orders in the data source by film ID
@@ -76,7 +76,7 @@ public interface IOrderDAO {
 	 * @return a set of found orders
 	 * @throws DAOException
 	 */
-	Set<Order> getOrdersByFilmId(int id) throws DAOException;
+	List<Order> getOrdersByFilmId(int id) throws DAOException;
 	
 	/**
 	 * Searches for the orders in the data source by film ID
@@ -87,7 +87,7 @@ public interface IOrderDAO {
 	 * @return a set of found orders
 	 * @throws DAOException
 	 */
-	Set<Order> getOrdersPartByFilmId(int id, int start, int amount) throws DAOException;
+	List<Order> getOrdersPartByFilmId(int id, int start, int amount) throws DAOException;
 	
 	/**
 	 * Returns all orders that are present in the data source
@@ -95,7 +95,7 @@ public interface IOrderDAO {
 	 * @return a set of all orders
 	 * @throws DAOException
 	 */
-	Set<Order> getAllOrders() throws DAOException;
+	List<Order> getAllOrders() throws DAOException;
 	
 	/**
 	 * Returns a necessary part of all orders from the data source
@@ -105,7 +105,7 @@ public interface IOrderDAO {
 	 * @return a part of the set of all orders
 	 * @throws DAOException
 	 */
-	Set<Order> getAllOrdersPart(int start, int amount) throws DAOException;
+	List<Order> getAllOrdersPart(int start, int amount) throws DAOException;
 	
 	/**
 	 * Counts the number of all orders in the data source

@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Order;
 import by.epam.naumovich.film_ordering.dao.IOrderDAO;
@@ -216,8 +216,8 @@ public class MySQLOrderDAO implements IOrderDAO {
 	}
 
 	@Override
-	public Set<Order> getOrdersByUserId(int id) throws DAOException {
-		Set<Order> orderSet = new LinkedHashSet<Order>();
+	public List<Order> getOrdersByUserId(int id) throws DAOException {
+		List<Order> orderSet = new ArrayList<Order>();
 		ConnectionPool pool = null;
 		Connection con = null;
 		PreparedStatement st = null;
@@ -261,8 +261,8 @@ public class MySQLOrderDAO implements IOrderDAO {
 	}
 
 	@Override
-	public Set<Order> getOrdersByFilmId(int id) throws DAOException {
-		Set<Order> orderSet = new LinkedHashSet<Order>();
+	public List<Order> getOrdersByFilmId(int id) throws DAOException {
+		List<Order> orderSet = new ArrayList<Order>();
 		ConnectionPool pool = null;
 		Connection con = null;
 		PreparedStatement st = null;
@@ -306,8 +306,8 @@ public class MySQLOrderDAO implements IOrderDAO {
 	}
 
 	@Override
-	public Set<Order> getAllOrders() throws DAOException {
-		Set<Order> orderSet = new LinkedHashSet<Order>();
+	public List<Order> getAllOrders() throws DAOException {
+		List<Order> orderSet = new ArrayList<Order>();
 		ConnectionPool pool = null;
 		Connection con = null;
 		PreparedStatement st = null;
@@ -350,8 +350,8 @@ public class MySQLOrderDAO implements IOrderDAO {
 	}
 
 	@Override
-	public Set<Order> getAllOrdersPart(int start, int amount) throws DAOException {
-		Set<Order> orderSet = new LinkedHashSet<Order>();
+	public List<Order> getAllOrdersPart(int start, int amount) throws DAOException {
+		List<Order> orderSet = new ArrayList<Order>();
 		ConnectionPool pool = null;
 		Connection con = null;
 		PreparedStatement st = null;
@@ -429,8 +429,8 @@ public class MySQLOrderDAO implements IOrderDAO {
 	}
 
 	@Override
-	public Set<Order> getOrdersPartByUserId(int id, int start, int amount) throws DAOException {
-		Set<Order> orderSet = new LinkedHashSet<Order>();
+	public List<Order> getOrdersPartByUserId(int id, int start, int amount) throws DAOException {
+		List<Order> orderSet = new ArrayList<Order>();
 		ConnectionPool pool = null;
 		Connection con = null;
 		PreparedStatement st = null;
@@ -476,8 +476,8 @@ public class MySQLOrderDAO implements IOrderDAO {
 	}
 
 	@Override
-	public Set<Order> getOrdersPartByFilmId(int id, int start, int amount) throws DAOException {
-		Set<Order> orderSet = new LinkedHashSet<Order>();
+	public List<Order> getOrdersPartByFilmId(int id, int start, int amount) throws DAOException {
+		List<Order> orderSet = new ArrayList<Order>();
 		ConnectionPool pool = null;
 		Connection con = null;
 		PreparedStatement st = null;

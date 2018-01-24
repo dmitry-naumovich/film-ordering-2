@@ -3,7 +3,7 @@ package by.epam.naumovich.film_ordering.command.impl.user;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +55,7 @@ public class OpenAllUsers implements Command {
 		else {
 			try {
 				IUserService userService = ServiceFactory.getInstance().getUserService();
-				Set<User> users = userService.getAllUsersPart(pageNum);
+				List<User> users = userService.getAllUsersPart(pageNum);
 
 				List<Boolean> banList = new ArrayList<>();
 				List<Discount> discountList = new ArrayList<>();

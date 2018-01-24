@@ -4,8 +4,8 @@ import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Review;
 import by.epam.naumovich.film_ordering.dao.DAOFactory;
@@ -86,8 +86,8 @@ public class ReviewServiceImpl implements IReviewService {
 	}
 
 	@Override
-	public Set<Review> getAllReviews() throws ServiceException {
-		Set<Review> set = new LinkedHashSet<Review>();
+	public List<Review> getAllReviews() throws ServiceException {
+		List<Review> set = new ArrayList<Review>();
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IReviewDAO reviewDAO = daoFactory.getReviewDAO();
@@ -104,11 +104,11 @@ public class ReviewServiceImpl implements IReviewService {
 	}
 
 	@Override
-	public Set<Review> getReviewsByUserId(int id) throws ServiceException {
+	public List<Review> getReviewsByUserId(int id) throws ServiceException {
 		if (!Validator.validateInt(id)) {
 			throw new GetReviewServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
-		Set<Review> set = new LinkedHashSet<Review>();
+		List<Review> set = new ArrayList<Review>();
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IReviewDAO reviewDAO = daoFactory.getReviewDAO();
@@ -125,11 +125,11 @@ public class ReviewServiceImpl implements IReviewService {
 	}
 
 	@Override
-	public Set<Review> getReviewsByFilmId(int id) throws ServiceException {
+	public List<Review> getReviewsByFilmId(int id) throws ServiceException {
 		if (!Validator.validateInt(id)) {
 			throw new GetReviewServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
-		Set<Review> set = new LinkedHashSet<Review>();
+		List<Review> set = new ArrayList<Review>();
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IReviewDAO reviewDAO = daoFactory.getReviewDAO();
@@ -167,7 +167,7 @@ public class ReviewServiceImpl implements IReviewService {
 	}
 
 	@Override
-	public Set<Review> getAllReviewsPart(int pageNum) throws ServiceException {
+	public List<Review> getAllReviewsPart(int pageNum) throws ServiceException {
 		if (!Validator.validateInt(pageNum)) {
 			throw new GetReviewServiceException(ExceptionMessages.CORRUPTED_PAGE_NUM);
 		}
@@ -176,7 +176,7 @@ public class ReviewServiceImpl implements IReviewService {
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IReviewDAO reviewDAO = daoFactory.getReviewDAO();
-			Set<Review> set = reviewDAO.getAllReviewsPart(start, REVIEWS_AMOUNT_ON_PAGE);
+			List<Review> set = reviewDAO.getAllReviewsPart(start, REVIEWS_AMOUNT_ON_PAGE);
 			
 			if (set.isEmpty()) {
 				throw new GetReviewServiceException(ExceptionMessages.NO_REVIEWS_IN_DB);
@@ -208,11 +208,11 @@ public class ReviewServiceImpl implements IReviewService {
 	}
 
 	@Override
-	public Set<Review> getReviewsPartByUserId(int userID, int pageNum) throws ServiceException {
+	public List<Review> getReviewsPartByUserId(int userID, int pageNum) throws ServiceException {
 		if (!Validator.validateInt(userID) || !Validator.validateInt(pageNum)) {
 			throw new GetReviewServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
-		Set<Review> set = new LinkedHashSet<Review>();
+		List<Review> set = new ArrayList<Review>();
 		int start = (pageNum - 1) * REVIEWS_AMOUNT_ON_PAGE;
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
@@ -230,12 +230,12 @@ public class ReviewServiceImpl implements IReviewService {
 	}
 
 	@Override
-	public Set<Review> getReviewsPartByFilmId(int filmID, int pageNum) throws ServiceException {
+	public List<Review> getReviewsPartByFilmId(int filmID, int pageNum) throws ServiceException {
 		if (!Validator.validateInt(filmID) || !Validator.validateInt(pageNum)) {
 			throw new GetReviewServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
 		
-		Set<Review> set = new LinkedHashSet<Review>();
+		List<Review> set = new ArrayList<Review>();
 		int start = (pageNum - 1) * REVIEWS_AMOUNT_ON_PAGE;
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);

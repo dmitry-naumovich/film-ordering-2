@@ -4,8 +4,8 @@ import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Order;
 import by.epam.naumovich.film_ordering.dao.DAOFactory;
@@ -124,12 +124,12 @@ public class OrderServiceImpl implements IOrderService {
 	}
 	
 	@Override
-	public Set<Order> getOrdersByUserId(int id) throws ServiceException {
+	public List<Order> getOrdersByUserId(int id) throws ServiceException {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
 		
-		Set<Order> set = new LinkedHashSet<Order>();
+		List<Order> set = new ArrayList<Order>();
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IOrderDAO orderDAO = daoFactory.getOrderDAO();
@@ -147,12 +147,12 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
-	public Set<Order> getOrdersByFilmId(int id) throws ServiceException {
+	public List<Order> getOrdersByFilmId(int id) throws ServiceException {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
 		
-		Set<Order> set = new LinkedHashSet<Order>();
+		List<Order> set = new ArrayList<Order>();
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IOrderDAO orderDAO = daoFactory.getOrderDAO();
@@ -170,8 +170,8 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
-	public Set<Order> getAllOrders() throws ServiceException {
-		Set<Order> set = new LinkedHashSet<Order>();
+	public List<Order> getAllOrders() throws ServiceException {
+		List<Order> set = new ArrayList<Order>();
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IOrderDAO orderDAO = daoFactory.getOrderDAO();
@@ -189,7 +189,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
-	public Set<Order> getAllOrdersPart(int pageNum) throws ServiceException {
+	public List<Order> getAllOrdersPart(int pageNum) throws ServiceException {
 		if (!Validator.validateInt(pageNum)) {
 			throw new GetOrderServiceException(ExceptionMessages.CORRUPTED_PAGE_NUM);
 		}
@@ -198,7 +198,7 @@ public class OrderServiceImpl implements IOrderService {
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			Set<Order> set = orderDAO.getAllOrdersPart(start, ORDERS_AMOUNT_ON_PAGE);
+			List<Order> set = orderDAO.getAllOrdersPart(start, ORDERS_AMOUNT_ON_PAGE);
 			
 			if (set.isEmpty()) {
 				throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
@@ -231,7 +231,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
-	public Set<Order> getOrdersPartByUserId(int id, int pageNum) throws ServiceException {
+	public List<Order> getOrdersPartByUserId(int id, int pageNum) throws ServiceException {
 		if (!Validator.validateInt(pageNum) || !Validator.validateInt(id)) {
 			throw new GetOrderServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
@@ -240,7 +240,7 @@ public class OrderServiceImpl implements IOrderService {
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			Set<Order> set = orderDAO.getOrdersPartByUserId(id, start, ORDERS_AMOUNT_ON_PAGE);
+			List<Order> set = orderDAO.getOrdersPartByUserId(id, start, ORDERS_AMOUNT_ON_PAGE);
 			
 			if (set.isEmpty()) {
 				throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
@@ -254,7 +254,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
-	public Set<Order> getOrdersPartByFilmId(int id, int pageNum) throws ServiceException {
+	public List<Order> getOrdersPartByFilmId(int id, int pageNum) throws ServiceException {
 		if (!Validator.validateInt(pageNum) || !Validator.validateInt(id)) {
 			throw new GetOrderServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
@@ -263,7 +263,7 @@ public class OrderServiceImpl implements IOrderService {
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			Set<Order> set = orderDAO.getOrdersPartByFilmId(id, start, ORDERS_AMOUNT_ON_PAGE);
+			List<Order> set = orderDAO.getOrdersPartByFilmId(id, start, ORDERS_AMOUNT_ON_PAGE);
 			
 			if (set.isEmpty()) {
 				throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);

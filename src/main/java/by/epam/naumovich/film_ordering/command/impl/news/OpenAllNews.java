@@ -1,7 +1,7 @@
 package by.epam.naumovich.film_ordering.command.impl.news;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +42,7 @@ public class OpenAllNews implements Command {
 		
 		try {
 			INewsService newsService = ServiceFactory.getInstance().getNewsService();
-			Set<News> news = newsService.getAllNewsPart(pageNum);
+			List<News> news = newsService.getAllNewsPart(pageNum);
 			
 			int totalPageAmount = newsService.getNumberOfAllNewsPages();
 			request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);

@@ -34,8 +34,8 @@ public final class ConnectionPool {
 	}
 	
 	private ConnectionPool() throws ConnectionPoolException {
-		freeConnections = new LinkedList<Connection>();
-		busyConnections = new LinkedList<Connection>();
+		freeConnections = new LinkedList<>();
+		busyConnections = new LinkedList<>();
 		
 		DBResourceManager manager = DBResourceManager.getInstance();
 		
@@ -54,7 +54,7 @@ public final class ConnectionPool {
 			throw new ConnectionPoolException(ExceptionMessages.SQL_EXCEPTION_IN_POOL, e);
 		}
 		
- 		Connection connection = null;
+ 		Connection connection;
 		try {
 			connection = DriverManager.getConnection(url, user, password);
 			freeConnections.add(connection); 
@@ -79,7 +79,7 @@ public final class ConnectionPool {
 	
 	private void fillEmptyConnectionList() throws ConnectionPoolException {
 		try {
-			Connection con = null;
+			Connection con;
 			for (int i = 0; i < poolSize; i++) {
 				con = DriverManager.getConnection(url, user, password);
 				freeConnections.add(con);

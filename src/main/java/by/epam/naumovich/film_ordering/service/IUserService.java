@@ -1,6 +1,6 @@
 package by.epam.naumovich.film_ordering.service;
 
-import java.util.Set;
+import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Discount;
 import by.epam.naumovich.film_ordering.bean.User;
@@ -151,7 +151,7 @@ public interface IUserService {
 	 * @return a set of users
 	 * @throws ServiceException
 	 */
-	Set<User> getAllUsers() throws ServiceException;
+	List<User> getAllUsers() throws ServiceException;
 	
 	/**
 	 * Receives a particular set of all users from the DAO layer depending on the current page
@@ -160,7 +160,7 @@ public interface IUserService {
 	 * @return a set of users
 	 * @throws ServiceException
 	 */
-	Set<User> getAllUsersPart(int pageNum) throws ServiceException;
+	List<User> getAllUsersPart(int pageNum) throws ServiceException;
 	
 	/**
 	 * Receives a set of all users who are banned at the moment from the DAO layer and passes it back to the Controller layer 
@@ -169,7 +169,7 @@ public interface IUserService {
 	 * @return a set of users
 	 * @throws ServiceException
 	 */
-	Set<User> getUsersInBanNow() throws ServiceException;
+	List<User> getUsersInBanNow() throws ServiceException;
 	
 	/**
 	 * Verifies the input parameter, passes it to the DAO layer, receive boolean value and passes it back to the Controller layer

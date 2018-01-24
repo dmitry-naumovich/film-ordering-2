@@ -22,7 +22,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -83,7 +83,7 @@ public class OpenSingleFilm implements Command {
 				}
 			}
 			
-			Set<Review> reviews = reviewService.getReviewsPartByFilmId(filmID, pageNum);
+			List<Review> reviews = reviewService.getReviewsPartByFilmId(filmID, pageNum);
 			request.setAttribute(RequestAndSessionAttributes.REVIEWS, reviews);
 			request.setAttribute(RequestAndSessionAttributes.REVIEW_VIEW_TYPE, RequestAndSessionAttributes.VIEW_TYPE_FILM);
 			

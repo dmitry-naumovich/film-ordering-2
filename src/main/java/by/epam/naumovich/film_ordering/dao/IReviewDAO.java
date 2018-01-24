@@ -1,6 +1,6 @@
 package by.epam.naumovich.film_ordering.dao;
 
-import java.util.Set;
+import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Review;
 import by.epam.naumovich.film_ordering.dao.exception.DAOException;
@@ -36,7 +36,7 @@ public interface IReviewDAO {
 	 * @return a set of reviews
 	 * @throws DAOException
 	 */
-	Set<Review> getAllReviews() throws DAOException;
+	List<Review> getAllReviews() throws DAOException;
 
 	/**
 	 * Returns a necessary part of all reviews from the data source
@@ -46,7 +46,7 @@ public interface IReviewDAO {
 	 * @return a part of the set of all reviews
 	 * @throws DAOException
 	 */
-	Set<Review> getAllReviewsPart(int start, int amount) throws DAOException;
+	List<Review> getAllReviewsPart(int start, int amount) throws DAOException;
 	
 	/**
 	 * Searches for reviews in the data source by user ID
@@ -55,7 +55,7 @@ public interface IReviewDAO {
 	 * @return a set of found reviews
 	 * @throws DAOException
 	 */
-	Set<Review> getReviewsByUserId(int id) throws DAOException;
+	List<Review> getReviewsByUserId(int id) throws DAOException;
 	
 	/**
 	 * Searches for the reviews in the data source by user ID and returns the necessary part of them
@@ -66,7 +66,7 @@ public interface IReviewDAO {
 	 * @return a set of found reviews
 	 * @throws DAOException
 	 */
-	Set<Review> getReviewsPartByUserId(int userID, int start, int amount) throws DAOException;
+	List<Review> getReviewsPartByUserId(int userID, int start, int amount) throws DAOException;
 	
 	/**
 	 * Searches for reviews in the data source by film ID
@@ -75,7 +75,7 @@ public interface IReviewDAO {
 	 * @return a set of found reviews
 	 * @throws DAOException
 	 */
-	Set<Review> getReviewsByFilmId(int id) throws DAOException;
+	List<Review> getReviewsByFilmId(int id) throws DAOException;
 	
 	/**
 	 * Searches for the reviews in the data source by film ID
@@ -86,7 +86,7 @@ public interface IReviewDAO {
 	 * @return a set of found reviews
 	 * @throws DAOException
 	 */
-	Set<Review> getReviewsPartByFilmId(int id, int start, int amount) throws DAOException;
+	List<Review> getReviewsPartByFilmId(int id, int start, int amount) throws DAOException;
 	
 	/**
 	 * Searches for review in the data source by user and film IDs
