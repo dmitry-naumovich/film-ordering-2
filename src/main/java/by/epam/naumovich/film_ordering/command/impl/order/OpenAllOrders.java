@@ -46,7 +46,7 @@ public class OpenAllOrders implements Command {
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		System.out.println(query);
 		
-		String lang = null;
+		String lang;
 		try {
 			lang = session.getAttribute(RequestAndSessionAttributes.LANGUAGE).toString();
 		} catch (NullPointerException e) {
@@ -69,8 +69,8 @@ public class OpenAllOrders implements Command {
 				IUserService userService = ServiceFactory.getInstance().getUserService();
 				Set<Order> orders = orderService.getAllOrdersPart(pageNum);
 				
-				List<String> filmNames = new ArrayList<String>();
-				List<String> userLogins = new ArrayList<String>();
+				List<String> filmNames = new ArrayList<>();
+				List<String> userLogins = new ArrayList<>();
 				for (Order o : orders) {
 					String filmName = filmService.getFilmNameByID(o.getFilmId(), lang);
 					filmNames.add(filmName);

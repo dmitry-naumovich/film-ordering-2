@@ -1,11 +1,11 @@
 package by.epam.naumovich.film_ordering.command.impl.film;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,7 +42,7 @@ public class GetNovelty implements Command {
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		System.out.println(query);
 
-		String lang = null;
+		String lang;
 		try {
 			lang = session.getAttribute(RequestAndSessionAttributes.LANGUAGE).toString();
 		} catch (NullPointerException e) {
@@ -62,10 +62,7 @@ public class GetNovelty implements Command {
 					int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
 					try {
 						Set<Order> orders = orderService.getOrdersByUserId(userID);
-						List<Integer> orderFilmIDs = new ArrayList<Integer>();
-						for (Order o : orders) {
-							orderFilmIDs.add(o.getFilmId());
-						}
+						List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
 						request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
 					} catch (GetOrderServiceException e) {
 						request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, Collections.emptyList());

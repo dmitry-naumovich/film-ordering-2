@@ -8,9 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
-
-
 import by.epam.naumovich.film_ordering.bean.Film;
 import by.epam.naumovich.film_ordering.bean.Order;
 import by.epam.naumovich.film_ordering.command.Command;
@@ -40,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OpenNewOrderPage implements Command {
 
-
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
@@ -48,7 +44,7 @@ public class OpenNewOrderPage implements Command {
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		System.out.println(query);
 		
-		String lang = null;
+		String lang;
 		try {
 			lang = session.getAttribute(RequestAndSessionAttributes.LANGUAGE).toString();
 		} catch (NullPointerException e) {
@@ -94,7 +90,7 @@ public class OpenNewOrderPage implements Command {
 					IUserService userService = sFactory.getUserService();
 					
 					Film film = filmService.getFilmByID(filmID, lang);
-					int discount = 0;
+					int discount;
 					try {
 						discount = userService.getCurrentUserDiscountByID(userID).getAmount();
 					} catch (GetDiscountServiceException e) {

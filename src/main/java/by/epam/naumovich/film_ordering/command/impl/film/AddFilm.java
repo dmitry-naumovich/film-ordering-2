@@ -42,7 +42,6 @@ import by.epam.naumovich.film_ordering.service.exception.film.AddFilmServiceExce
 @Slf4j
 public class AddFilm implements Command {
 
-
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);

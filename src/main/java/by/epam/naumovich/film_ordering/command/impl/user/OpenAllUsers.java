@@ -10,9 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
-
-
 import by.epam.naumovich.film_ordering.bean.Discount;
 import by.epam.naumovich.film_ordering.bean.User;
 import by.epam.naumovich.film_ordering.command.Command;
@@ -38,7 +35,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OpenAllUsers implements Command {
 
-
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
@@ -61,11 +57,11 @@ public class OpenAllUsers implements Command {
 				IUserService userService = ServiceFactory.getInstance().getUserService();
 				Set<User> users = userService.getAllUsersPart(pageNum);
 
-				List<Boolean> banList = new ArrayList<Boolean>();
-				List<Discount> discountList = new ArrayList<Discount>();
+				List<Boolean> banList = new ArrayList<>();
+				List<Discount> discountList = new ArrayList<>();
 				for (User u : users) {
 					banList.add(userService.userIsInBan(u.getId()));
-					Discount discount = null;
+					Discount discount;
 					try {
 						discount = userService.getCurrentUserDiscountByID(u.getId());
 						discountList.add(discount);

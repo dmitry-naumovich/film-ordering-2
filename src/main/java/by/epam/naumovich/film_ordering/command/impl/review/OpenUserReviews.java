@@ -42,7 +42,7 @@ public class OpenUserReviews implements Command {
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		System.out.println(query);
 		
-		String lang = null;
+		String lang;
 		try {
 			lang = session.getAttribute(RequestAndSessionAttributes.LANGUAGE).toString();
 		} catch (NullPointerException e) {
@@ -64,7 +64,7 @@ public class OpenUserReviews implements Command {
 			try {
 				Set<Review> reviews = reviewService.getReviewsPartByUserId(userID, pageNum);
 				
-				List<String> reviewFilmNames = new ArrayList<String>();
+				List<String> reviewFilmNames = new ArrayList<>();
 				for (Review r : reviews) {
 					reviewFilmNames.add(filmService.getFilmNameByID(r.getFilmId(), lang));
 				}
@@ -81,7 +81,7 @@ public class OpenUserReviews implements Command {
 			} catch (GetReviewServiceException e) {
 				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);;
+				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
 			} catch (ServiceException e) {
 				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());

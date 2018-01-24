@@ -91,7 +91,7 @@ public class OpenSingleFilm implements Command {
 			request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 			request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 			
-			List<String> reviewLogins = new ArrayList<String>();
+			List<String> reviewLogins = new ArrayList<>();
 			for (Review r : reviews) {
 				reviewLogins.add(userService.getLoginByID(r.getAuthor()));
 			}

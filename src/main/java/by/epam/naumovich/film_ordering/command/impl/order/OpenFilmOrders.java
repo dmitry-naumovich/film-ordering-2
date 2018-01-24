@@ -46,7 +46,7 @@ public class OpenFilmOrders implements Command {
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		System.out.println(query);
 		
-		String lang = null;
+		String lang;
 		try {
 			lang = session.getAttribute(RequestAndSessionAttributes.LANGUAGE).toString();
 		} catch (NullPointerException e) {
@@ -73,7 +73,7 @@ public class OpenFilmOrders implements Command {
 				
 				Set<Order> orders = orderService.getOrdersByFilmId(filmID);
 				
-				List<String> userLogins = new ArrayList<String>();
+				List<String> userLogins = new ArrayList<>();
 				for (Order o : orders) {
 					String userLogin = userService.getLoginByID(o.getUserId());
 					userLogins.add(userLogin);

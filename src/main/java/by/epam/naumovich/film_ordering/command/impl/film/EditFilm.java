@@ -59,10 +59,10 @@ public class EditFilm implements Command {
 			String director = null;
 			String cast = null;
 			String[] countriesArray = null;
-			List<String> countries = new ArrayList<String>();
+			List<String> countries = new ArrayList<>();
 			String composer = null;
 			String[] genresArray = null;
-			List<String> genres = new ArrayList<String>();
+			List<String> genres = new ArrayList<>();
 			String length = null;
 			String price = null;
 			String description = null;
@@ -177,10 +177,6 @@ public class EditFilm implements Command {
 				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher("/Controller?command=open_film_edit_page&filmID=" + filmID).forward(request, response);
-			} catch (ServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			} catch (Exception e) {
 				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());

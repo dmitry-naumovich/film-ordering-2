@@ -46,7 +46,7 @@ public class OpenUserOrders implements Command {
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		System.out.println(query);
 		
-		String lang = null;
+		String lang;
 		try {
 			lang = session.getAttribute(RequestAndSessionAttributes.LANGUAGE).toString();
 		} catch (NullPointerException e) {
@@ -64,7 +64,7 @@ public class OpenUserOrders implements Command {
 		}
 		else {
 			int userID = 0;
-			if (session.getAttribute(RequestAndSessionAttributes.USER_ID).toString() != request.getParameter(RequestAndSessionAttributes.USER_ID)
+			if (!session.getAttribute(RequestAndSessionAttributes.USER_ID).toString().equals(request.getParameter(RequestAndSessionAttributes.USER_ID))
 					&& !(boolean)session.getAttribute(RequestAndSessionAttributes.IS_ADMIN)) {
 				userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
 			}
@@ -77,7 +77,7 @@ public class OpenUserOrders implements Command {
 				IUserService userService = ServiceFactory.getInstance().getUserService();
 				Set<Order> orders = orderService.getOrdersPartByUserId(userID, pageNum);
 				
-				List<String> filmNames = new ArrayList<String>();
+				List<String> filmNames = new ArrayList<>();
 				for (Order o : orders) {
 					String filmName = filmService.getFilmNameByID(o.getFilmId(), lang);
 					filmNames.add(filmName);

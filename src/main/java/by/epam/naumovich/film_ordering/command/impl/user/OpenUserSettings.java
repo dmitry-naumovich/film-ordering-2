@@ -7,9 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
-
-
 import by.epam.naumovich.film_ordering.bean.User;
 import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.ErrorMessages;
@@ -48,8 +45,8 @@ public class OpenUserSettings implements Command {
 			
 		}
 		else {
-			int userID = 0;
-			if (session.getAttribute(RequestAndSessionAttributes.USER_ID).toString() != request.getParameter(RequestAndSessionAttributes.USER_ID)) {
+			int userID;
+			if (!session.getAttribute(RequestAndSessionAttributes.USER_ID).toString().equals(request.getParameter(RequestAndSessionAttributes.USER_ID))) {
 				userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
 			}
 			else {

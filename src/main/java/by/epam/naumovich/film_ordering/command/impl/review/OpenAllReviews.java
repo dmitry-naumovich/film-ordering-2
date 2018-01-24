@@ -41,7 +41,7 @@ public class OpenAllReviews implements Command {
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		System.out.println(query);
 
-		String lang = null;
+		String lang;
 		try {
 			lang = session.getAttribute(RequestAndSessionAttributes.LANGUAGE).toString();
 		} catch (NullPointerException e) {
@@ -57,8 +57,8 @@ public class OpenAllReviews implements Command {
 			
 			Set<Review> reviews = reviewService.getAllReviewsPart(pageNum);
 			
-			List<String> reviewLogins = new ArrayList<String>();
-			List<String> reviewFilmNames = new ArrayList<String>();
+			List<String> reviewLogins = new ArrayList<>();
+			List<String> reviewFilmNames = new ArrayList<>();
 			for (Review r : reviews) {
 				reviewLogins.add(userService.getLoginByID(r.getAuthor()));
 				reviewFilmNames.add(filmService.getFilmByID(r.getFilmId(), lang).getName());
