@@ -7,9 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
-
-
 import by.epam.naumovich.film_ordering.bean.News;
 import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.JavaServerPageNames;
@@ -18,6 +15,7 @@ import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.INewsService;
 import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
+import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -29,13 +27,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GetSidebarNews implements Command {
 
-
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		try {
 			INewsService newsService = ServiceFactory.getInstance().getNewsService();
 			Set<News> newsSet = newsService.getFourLastNews();
-			request.setAttribute(RequestAndSessionAttributes.SIDEBAR_NEWS, newsSet);
+			//request.setAttribute(RequestAndSessionAttributes.SIDEBAR_NEWS, newsSet);
+			HttpSession session = request.getSession(true);
+			session.setAttribute(RequestAndSessionAttributes.SIDEBAR_NEWS, newsSet);
 		} catch (ServiceException e) {
 			log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());

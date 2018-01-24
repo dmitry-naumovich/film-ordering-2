@@ -6,6 +6,5 @@ spring:
     driver-class-name: org.gjt.mm.mysql.Driver
   mvc:
     view:
-      prefix: /WEB-INF/jsp
+      prefix: /WEB-INF/jsp/
       suffix: .jsp
-    

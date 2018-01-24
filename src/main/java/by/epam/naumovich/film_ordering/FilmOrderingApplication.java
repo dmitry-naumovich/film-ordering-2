@@ -1,40 +1,33 @@
 package by.epam.naumovich.film_ordering;
 
-import by.epam.naumovich.film_ordering.controller.Controller;
 import by.epam.naumovich.film_ordering.controller.filter.CharsetFilter;
-import by.epam.naumovich.film_ordering.controller.listener.SimpleSessionAttributeListener;
-import by.epam.naumovich.film_ordering.controller.listener.SimpleSessionListener;
-import javax.servlet.ServletContextAttributeListener;
-import javax.servlet.ServletContextListener;
-import javax.servlet.http.HttpSessionAttributeListener;
-import javax.servlet.http.HttpSessionListener;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
-import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @SpringBootApplication
-public class FilmOrderingApplication {
+public class FilmOrderingApplication extends WebMvcConfigurerAdapter {
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("forward:/index.jsp");
+    }
 
     @Bean
-    public FilterRegistrationBean siteMeshFilter() {
+    public FilterRegistrationBean charsetFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new CharsetFilter());
         registration.setEnabled(true);
         registration.addInitParameter("characterEncoding", "UTF-8");
         registration.setName("charsetFilter");
-        registration.addUrlPatterns("/controller");
+        registration.addUrlPatterns("/Controller");
         registration.setOrder(1);
         return registration;
     }
 
-    @Bean
-    public ServletRegistrationBean servletRegistrationBean() {
-        return new ServletRegistrationBean(new Controller(), "/controller");
-    }
-//
 //    @Bean
 //    public ServletListenerRegistrationBean<HttpSessionAttributeListener> simpleSessionAttributeListenerRegistrationBean() {
 //        ServletListenerRegistrationBean<HttpSessionAttributeListener> bean = new ServletListenerRegistrationBean<>();
@@ -43,7 +36,7 @@ public class FilmOrderingApplication {
 //    }
 //
 //    @Bean
-//    public ServletListenerRegistrationBean<HttpSessionListener> simleSessionListenerRegistrationBean() {
+//    public ServletListenerRegistrationBean<HttpSessionListener> simpleSessionListenerRegistrationBean() {
 //        ServletListenerRegistrationBean<HttpSessionListener> bean = new ServletListenerRegistrationBean<>();
 //        bean.setListener(new SimpleSessionListener());
 //        return bean;

@@ -11,9 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
-
-
 import by.epam.naumovich.film_ordering.bean.Film;
 import by.epam.naumovich.film_ordering.bean.Order;
 import by.epam.naumovich.film_ordering.command.Command;
@@ -37,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class GetNovelty implements Command {
-		
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -58,8 +54,9 @@ public class GetNovelty implements Command {
 			IOrderService orderService = ServiceFactory.getInstance().getOrderService();
 			
 			Set<Film> filmSet = filmService.getTwelveLastAddedFilms(lang);
-			request.setAttribute(RequestAndSessionAttributes.NOVELTY_LIST, filmSet);
-			
+			//request.setAttribute(RequestAndSessionAttributes.NOVELTY_LIST, filmSet);
+			session.setAttribute(RequestAndSessionAttributes.NOVELTY_LIST, filmSet);
+
 			if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) != null) {
 				if (!Boolean.parseBoolean(session.getAttribute(RequestAndSessionAttributes.IS_ADMIN).toString())) {
 					int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());

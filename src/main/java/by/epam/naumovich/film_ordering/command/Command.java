@@ -24,5 +24,5 @@ public interface Command {
 	 * @throws IOException
 	 * @throws ServletException
 	 */
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException;
+	void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException;
 }

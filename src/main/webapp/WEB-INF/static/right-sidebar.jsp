@@ -7,7 +7,7 @@
       	<jsp:include page="/Controller"> 
 				<jsp:param name="command" value="get_sidebar_news"/>
 		</jsp:include>
-      	<c:forEach items="${requestScope.sidebarNews}" var="news">
+      	<c:forEach items="${sessionScope.sidebarNews}" var="news">
       		<figure>
       		<a href="<c:url value="/Controller?command=open_single_news&newsID=${news.id}"/>" >
       			<img src="img/news/${news.id}/01.jpg" alt="Sidebar News Img" class="img-thumbnail img-responsive" width="180" height="140" /> 

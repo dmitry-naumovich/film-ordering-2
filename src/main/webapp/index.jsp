@@ -28,11 +28,11 @@
   <c:set var="url">${pageContext.request.requestURL}</c:set>
     <base href="${fn:substring(url, 0, fn:length(url) - fn:length(pageContext.request.requestURI))}${pageContext.request.contextPath}/" />
 
-  <link rel="icon" type="image/x-icon" href="img/tab-logo.png">
-  <link rel="stylesheet" href="css/bootstrap.min.css" >
-  <link rel="stylesheet" href="css/styles.css">
-  <script src="js/scripts.js"></script>
-  <script src="js/masonry.pkgd.js"></script>
+  <link rel="icon" type="image/x-icon" href="../static.img/tab-logo.png">
+  <link rel="stylesheet" href="/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/styles.css">
+  <script src="/js/scripts.js"></script>
+  <script src="/js/masonry.pkgd.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="http://mybootstrap.ru/wp-content/themes/clear-theme/js/bootstrap-affix.js"></script>
@@ -63,10 +63,8 @@
       
          
           <div class="row panel-body row grid masonry-container masonry js-masonry" style="padding:0px; margin:0px">
-			<jsp:include page="/Controller"> 
-				<jsp:param name="command" value="get_novelty"/>
-			</jsp:include>
-				<c:forEach items="${requestScope.noveltyList}" var="film">
+              <jsp:include page="/Controller?command=get_novelty" />
+				<c:forEach items="${sessionScope.noveltyList}" var="film">
 		            <div class="col-sm-6 col-md-4 col-xs-12 col-lg-4 grid-item" style="display:inline-block; padding:10px; margin:0px; min-height:200px;">
 		              <h2 style="text-align:center">${film.name} (${film.year}) </h2>
 		              <p><b>${director}:</b> ${film.director} </p>
@@ -88,7 +86,7 @@
 	                  </c:choose>
 		             
 		              
-		              <img src="img/films/${film.id}/01.jpg" alt="No frame" class="img-rounded" style="width: 100%; height: auto;" onError="this.onerror=null;this.src='/img/no-img.jpg';"/>
+		              <img src="/img/films/${film.id}/01.jpg" alt="No frame" class="img-rounded" style="width: 100%; height: auto;" onError="this.onerror=null;this.src='/img/no-img.jpg';"/>
 		              <br> <br>
 		              <c:if test="${film.description != null}">
 		              	<p style="text-align:justify">${fn:substring(film.description, 0,60)}... 
