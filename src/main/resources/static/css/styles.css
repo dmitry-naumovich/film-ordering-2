@@ -44,8 +44,8 @@ body {
   /* float: left; */
   /* border: 2px solid #333;
   border-color: hsla(0, 0%, 0%, 0.5);
-  border-radius: 5px; */
-}
+  border-radius: 5px;
+}*/
 
 .active {
 	border-width: 1px;
@@ -61,7 +61,7 @@ body {
 
 .navbar {
       margin-bottom: 0;
-      border-radius: 12;
+      /*border-radius: 12; todo: return */
 }
 
 /* .row.content {
@@ -105,8 +105,8 @@ footer {
 	color:white;
 }
 section a {
-	font-family: "Lucida Sans"
-	font: 20px/30px, serif;
+	font-family: "Lucida Sans";
+	font: 20px/30px serif;
 	color:white;
 }
 .panel-heading h2, .panel-heading h3, .panel-heading h4, .panel-heading h5, .panel-heading h6,
