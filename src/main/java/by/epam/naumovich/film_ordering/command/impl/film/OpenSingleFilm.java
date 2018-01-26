@@ -13,15 +13,12 @@ import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.order.GetOrderServiceException;
 import by.epam.naumovich.film_ordering.service.exception.review.GetReviewServiceException;
 
-
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,15 +31,26 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OpenSingleFilm implements Command {
 
+	private final IFilmService filmService;
+	private final IOrderService orderService;
+	private final IReviewService reviewService;
+	private final IUserService userService;
 
-	@Override
+    public OpenSingleFilm(IFilmService filmService, IOrderService orderService, IReviewService reviewService, IUserService userService) {
+        this.filmService = filmService;
+        this.orderService = orderService;
+        this.reviewService = reviewService;
+        this.userService = userService;
+    }
+
+    @Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
 		String query = QueryUtil.createHttpQueryString(request);
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		System.out.println(query);
 		
-		String lang = null;
+		String lang;
 		try {
 			lang = session.getAttribute(RequestAndSessionAttributes.LANGUAGE).toString();
 		} catch (NullPointerException e) {
@@ -53,12 +61,6 @@ public class OpenSingleFilm implements Command {
 		int pageNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.PAGE_NUM));
 		
 		try {
-			ServiceFactory sFactory = ServiceFactory.getInstance();
-			IFilmService filmService = sFactory.getFilmService();
-			IReviewService reviewService = sFactory.getReviewService();
-			IUserService userService = sFactory.getUserService();
-			IOrderService orderService = sFactory.getOrderService();
-			
 			Film film = filmService.getFilmByID(filmID, lang);
 			request.setAttribute(RequestAndSessionAttributes.FILM, film);
 			

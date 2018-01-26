@@ -7,9 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
-
-
 import by.epam.naumovich.film_ordering.bean.Film;
 import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.ErrorMessages;
@@ -18,7 +15,6 @@ import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.QueryUtil;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.IFilmService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,6 +28,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OpenFilmEditPage implements Command {
 
+	private final IFilmService filmService;
+
+	public OpenFilmEditPage(IFilmService filmService) {
+		this.filmService = filmService;
+	}
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -48,7 +49,6 @@ public class OpenFilmEditPage implements Command {
 		}
 		else {
 			try {
-				IFilmService filmService = ServiceFactory.getInstance().getFilmService();
 				Film film = filmService.getFilmByID(filmID, lang);
 				String[] genres = filmService.getAvailableGenres(lang);
 				String[] countries = filmService.getAvailableCountries(lang);

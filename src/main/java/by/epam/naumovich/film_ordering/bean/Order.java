@@ -2,6 +2,9 @@ package by.epam.naumovich.film_ordering.bean;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,6 +26,8 @@ import java.sql.Time;
 @ToString
 public class Order {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "o_num")
     private int ordNum;
     @Column(name = "o_user")

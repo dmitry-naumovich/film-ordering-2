@@ -17,6 +17,7 @@ import by.epam.naumovich.film_ordering.service.exception.review.GetReviewService
 import by.epam.naumovich.film_ordering.service.exception.review.AddReviewServiceException;
 import by.epam.naumovich.film_ordering.service.util.ExceptionMessages;
 import by.epam.naumovich.film_ordering.service.util.Validator;
+import org.springframework.stereotype.Service;
 
 /**
  * IReviewService interface implementation that works with IReviewDAO implementation
@@ -24,6 +25,7 @@ import by.epam.naumovich.film_ordering.service.util.Validator;
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Service
 public class ReviewServiceImpl implements IReviewService {
 
 	private static final String MYSQL = "mysql";

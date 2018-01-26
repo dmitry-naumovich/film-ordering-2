@@ -27,8 +27,6 @@ import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
 import by.epam.naumovich.film_ordering.service.IFilmService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
-import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.film.EditFilmServiceException;
 
 /**
@@ -42,6 +40,11 @@ import by.epam.naumovich.film_ordering.service.exception.film.EditFilmServiceExc
 @Slf4j
 public class EditFilm implements Command {
 
+	private final IFilmService filmService;
+
+	public EditFilm(IFilmService filmService) {
+		this.filmService = filmService;
+	}
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -134,7 +137,6 @@ public class EditFilm implements Command {
 			    	genresArray = new String[genres.size()];
 				    genresArray = genres.toArray(genresArray);
 			    }
-				IFilmService filmService = ServiceFactory.getInstance().getFilmService();
 				filmService.editFilm(filmID, name, year, director, cast, countriesArray, composer, genresArray, length, price, description);
 				
 				if (posterItem != null) {

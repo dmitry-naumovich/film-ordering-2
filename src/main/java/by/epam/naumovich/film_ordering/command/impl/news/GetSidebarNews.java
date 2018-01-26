@@ -13,7 +13,6 @@ import by.epam.naumovich.film_ordering.command.util.JavaServerPageNames;
 import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.INewsService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +26,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GetSidebarNews implements Command {
 
-	@Override
+    private final INewsService newsService;
+
+    public GetSidebarNews(INewsService newsService) {
+        this.newsService = newsService;
+    }
+
+    @Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		try {
-			INewsService newsService = ServiceFactory.getInstance().getNewsService();
 			List<News> newsSet = newsService.getFourLastNews();
 			//request.setAttribute(RequestAndSessionAttributes.SIDEBAR_NEWS, newsSet);
 			HttpSession session = request.getSession(true);

@@ -1,18 +1,14 @@
 package by.epam.naumovich.film_ordering.command.impl.film;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.List;
 
+import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-
-
 
 import by.epam.naumovich.film_ordering.bean.Film;
 import by.epam.naumovich.film_ordering.bean.Order;
@@ -24,7 +20,6 @@ import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
 import by.epam.naumovich.film_ordering.service.IFilmService;
 import by.epam.naumovich.film_ordering.service.IOrderService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.film.GetFilmServiceException;
 import by.epam.naumovich.film_ordering.service.exception.order.GetOrderServiceException;
@@ -39,15 +34,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SearchFilmsWidened implements Command {
 
+	private final IFilmService filmService;
+    private final IOrderService orderService;
 
-	@Override
+    public SearchFilmsWidened(IFilmService filmService, IOrderService orderService) {
+        this.filmService = filmService;
+        this.orderService = orderService;
+    }
+
+    @Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
 		String query = QueryUtil.createHttpQueryString(request);
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		System.out.println(query);
 		
-		String lang = null;
+		String lang;
 		try {
 			lang = session.getAttribute(RequestAndSessionAttributes.LANGUAGE).toString();
 		} catch (NullPointerException e) {
@@ -61,7 +63,6 @@ public class SearchFilmsWidened implements Command {
 		String[] countries = request.getParameterValues(RequestAndSessionAttributes.COUNTRY);
 		
 		try {
-			IFilmService filmService = ServiceFactory.getInstance().getFilmService();
 			List<Film> foundFilms = filmService.searchWidened(name, yearFrom, yearTo, genres, countries, lang);
 			request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.FILMS_FOUND);
 			request.setAttribute(RequestAndSessionAttributes.FILMS, foundFilms);
@@ -69,12 +70,8 @@ public class SearchFilmsWidened implements Command {
 				if (!Boolean.parseBoolean(session.getAttribute(RequestAndSessionAttributes.IS_ADMIN).toString())) {
 					int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
 					try {
-						IOrderService orderService = ServiceFactory.getInstance().getOrderService();
 						List<Order> orders = orderService.getOrdersByUserId(userID);
-						List<Integer> orderFilmIDs = new ArrayList<Integer>();
-						for (Order o : orders) {
-							orderFilmIDs.add(o.getFilmId());
-						}
+						List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
 						request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
 					} catch (GetOrderServiceException e) {
 						request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, Collections.emptyList());

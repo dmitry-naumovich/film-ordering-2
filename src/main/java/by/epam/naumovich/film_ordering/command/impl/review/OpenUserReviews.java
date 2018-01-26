@@ -3,7 +3,6 @@ package by.epam.naumovich.film_ordering.command.impl.review;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +20,6 @@ import by.epam.naumovich.film_ordering.command.util.QueryUtil;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.IFilmService;
 import by.epam.naumovich.film_ordering.service.IReviewService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.review.GetReviewServiceException;
 
@@ -35,7 +33,15 @@ import by.epam.naumovich.film_ordering.service.exception.review.GetReviewService
 @Slf4j
 public class OpenUserReviews implements Command {
 
-	@Override
+    private final IFilmService filmService;
+    private final IReviewService reviewService;
+
+    public OpenUserReviews(IFilmService filmService, IReviewService reviewService) {
+        this.filmService = filmService;
+        this.reviewService = reviewService;
+    }
+
+    @Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
 		String query = QueryUtil.createHttpQueryString(request);
@@ -57,10 +63,7 @@ public class OpenUserReviews implements Command {
 		}
 		else {
 			int userID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.USER_ID));
-			
-			IReviewService reviewService = ServiceFactory.getInstance().getReviewService();
-			IFilmService filmService = ServiceFactory.getInstance().getFilmService();
-			
+
 			try {
 				List<Review> reviews = reviewService.getReviewsPartByUserId(userID, pageNum);
 				

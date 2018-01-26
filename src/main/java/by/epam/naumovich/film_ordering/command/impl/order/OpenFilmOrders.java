@@ -3,15 +3,11 @@ package by.epam.naumovich.film_ordering.command.impl.order;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-
-
 
 import by.epam.naumovich.film_ordering.bean.Order;
 import by.epam.naumovich.film_ordering.command.Command;
@@ -23,7 +19,6 @@ import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.IFilmService;
 import by.epam.naumovich.film_ordering.service.IOrderService;
 import by.epam.naumovich.film_ordering.service.IUserService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.order.GetOrderServiceException;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +33,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OpenFilmOrders implements Command {
 
+	private final IFilmService filmService;
+	private final IOrderService orderService;
+	private final IUserService userService;
+
+	public OpenFilmOrders(IFilmService filmService, IOrderService orderService, IUserService userService) {
+		this.filmService = filmService;
+		this.orderService = orderService;
+		this.userService = userService;
+	}
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -67,10 +71,6 @@ public class OpenFilmOrders implements Command {
 		else {
 		
 			try {
-				IOrderService orderService = ServiceFactory.getInstance().getOrderService();
-				IFilmService filmService = ServiceFactory.getInstance().getFilmService();
-				IUserService userService = ServiceFactory.getInstance().getUserService();
-				
 				List<Order> orders = orderService.getOrdersByFilmId(filmID);
 				
 				List<String> userLogins = new ArrayList<>();

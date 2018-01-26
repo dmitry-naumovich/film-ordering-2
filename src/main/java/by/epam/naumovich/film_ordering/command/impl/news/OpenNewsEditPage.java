@@ -7,9 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
-
-
 import by.epam.naumovich.film_ordering.bean.News;
 import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.ErrorMessages;
@@ -18,7 +15,6 @@ import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.QueryUtil;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.INewsService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,6 +28,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OpenNewsEditPage implements Command {
 
+	private final INewsService newsService;
+
+	public OpenNewsEditPage(INewsService newsService) {
+		this.newsService = newsService;
+	}
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -48,7 +49,6 @@ public class OpenNewsEditPage implements Command {
 		}
 		else {
 			try {
-				INewsService newsService = ServiceFactory.getInstance().getNewsService();
 				News news = newsService.getNewsById(newsID);
 				request.setAttribute(RequestAndSessionAttributes.NEWS, news);
 				request.getRequestDispatcher(JavaServerPageNames.EDIT_NEWS_JSP_PAGE).forward(request, response);	

@@ -7,9 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
-
-
 import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.ErrorMessages;
 import by.epam.naumovich.film_ordering.command.util.JavaServerPageNames;
@@ -17,7 +14,6 @@ import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
 import by.epam.naumovich.film_ordering.service.IOrderService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.order.AddOrderServiceException;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +28,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AddOrder implements Command {
 
+	private final IOrderService orderService;
+
+	public AddOrder(IOrderService orderService) {
+		this.orderService = orderService;
+	}
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -52,7 +53,6 @@ public class AddOrder implements Command {
 			String payment = request.getParameter(RequestAndSessionAttributes.PAYMENT);
 			
 			try {
-				IOrderService orderService = ServiceFactory.getInstance().getOrderService();
 				int orderNum = orderService.addOrder(filmID, userID, price, discount, payment);
 				log.debug(String.format(LogMessages.ORDER_ADDED, orderNum, payment));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.ORDER_ADDED);

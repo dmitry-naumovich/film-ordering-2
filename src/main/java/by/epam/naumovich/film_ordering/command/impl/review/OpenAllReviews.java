@@ -3,7 +3,6 @@ package by.epam.naumovich.film_ordering.command.impl.review;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +20,6 @@ import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.IFilmService;
 import by.epam.naumovich.film_ordering.service.IReviewService;
 import by.epam.naumovich.film_ordering.service.IUserService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.review.GetReviewServiceException;
 
@@ -34,7 +32,17 @@ import by.epam.naumovich.film_ordering.service.exception.review.GetReviewService
 @Slf4j
 public class OpenAllReviews implements Command {
 
-	@Override
+    private final IFilmService filmService;
+    private final IReviewService reviewService;
+    private final IUserService userService;
+
+    public OpenAllReviews(IFilmService filmService, IReviewService reviewService, IUserService userService) {
+        this.filmService = filmService;
+        this.reviewService = reviewService;
+        this.userService = userService;
+    }
+
+    @Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
 		String query = QueryUtil.createHttpQueryString(request);
@@ -51,10 +59,6 @@ public class OpenAllReviews implements Command {
 		int pageNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.PAGE_NUM));
 		
 		try {
-			IReviewService reviewService = ServiceFactory.getInstance().getReviewService();
-			IFilmService filmService = ServiceFactory.getInstance().getFilmService();
-			IUserService userService = ServiceFactory.getInstance().getUserService();
-			
 			List<Review> reviews = reviewService.getAllReviewsPart(pageNum);
 			
 			List<String> reviewLogins = new ArrayList<>();

@@ -27,7 +27,6 @@ import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
 import by.epam.naumovich.film_ordering.service.IFilmService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.film.AddFilmServiceException;
 
@@ -42,7 +41,13 @@ import by.epam.naumovich.film_ordering.service.exception.film.AddFilmServiceExce
 @Slf4j
 public class AddFilm implements Command {
 
-	@Override
+    private final IFilmService filmService;
+
+    public AddFilm(IFilmService filmService) {
+        this.filmService = filmService;
+    }
+
+    @Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
 		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) == null) {
@@ -157,10 +162,8 @@ public class AddFilm implements Command {
 		    	genresArray = new String[genres.size()];
 			    genresArray = genres.toArray(genresArray);
 		    }
-		    
-		    
-			IFilmService filmService = ServiceFactory.getInstance().getFilmService();
-			int filmID = filmService.addNewFilm(name, year, director, cast, countriesArray, composer, 
+
+			int filmID = filmService.addNewFilm(name, year, director, cast, countriesArray, composer,
 					genresArray, length, price, description);
 			
 			proceedFilmImages(filmID, session, posterItem, frameItem);

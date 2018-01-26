@@ -14,7 +14,6 @@ import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
 import by.epam.naumovich.film_ordering.service.IUserService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,6 +26,12 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class UnbanUser implements Command {
+
+	private final IUserService userService;
+
+	public UnbanUser(IUserService userService) {
+		this.userService = userService;
+	}
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -43,7 +48,6 @@ public class UnbanUser implements Command {
 		}
 		else {
 			try {
-				IUserService userService = ServiceFactory.getInstance().getUserService();
 				userService.unbanUser(userID);
 				log.debug(String.format(LogMessages.USER_UNBANNED, userID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.USER_UNBANNED);

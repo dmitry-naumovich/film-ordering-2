@@ -16,7 +16,6 @@ import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
 import by.epam.naumovich.film_ordering.service.IReviewService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 
 /**
@@ -28,6 +27,12 @@ import by.epam.naumovich.film_ordering.service.exception.ServiceException;
  */
 @Slf4j
 public class DeleteReview implements Command {
+
+	private final IReviewService reviewService;
+
+	public DeleteReview(IReviewService reviewService) {
+		this.reviewService = reviewService;
+	}
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -46,7 +51,6 @@ public class DeleteReview implements Command {
 		}
 		else {
 			try {
-				IReviewService reviewService = ServiceFactory.getInstance().getReviewService();
 				reviewService.deleteReview(userID, filmID);
 				log.debug(String.format(LogMessages.REVIEW_DELETED, userID, filmID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.REVIEW_DELETED);

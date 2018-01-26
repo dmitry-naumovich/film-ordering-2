@@ -16,7 +16,6 @@ import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
 import by.epam.naumovich.film_ordering.service.IReviewService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.review.AddReviewServiceException;
 
@@ -29,6 +28,12 @@ import by.epam.naumovich.film_ordering.service.exception.review.AddReviewService
  */
 @Slf4j
 public class AddReview implements Command {
+
+	private final IReviewService reviewService;
+
+	public AddReview(IReviewService reviewService) {
+		this.reviewService = reviewService;
+	}
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -46,7 +51,6 @@ public class AddReview implements Command {
 			String text = request.getParameter(RequestAndSessionAttributes.REVIEW_TEXT);
 			
 			try {
-				IReviewService reviewService = ServiceFactory.getInstance().getReviewService();
 				reviewService.addReview(userID, filmID, mark, type, text);
 				log.debug(String.format(LogMessages.REVIEW_ADDED, userID, filmID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.REVIEW_ADDED);

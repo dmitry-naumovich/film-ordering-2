@@ -22,7 +22,7 @@ public abstract class DAOFactory {
 	 * return a singleton object of IFilmDAO implementation class
 	 * @return IFilmDAO implementation class object
 	 */
-	public abstract IFilmDAO getFilmDAO();
+	//public abstract IFilmDAO getFilmDAO();
 	
 	/**
 	 * return a singleton object of IOrderDAO implementation class

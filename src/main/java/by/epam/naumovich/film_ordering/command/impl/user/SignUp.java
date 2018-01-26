@@ -24,7 +24,6 @@ import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
 import by.epam.naumovich.film_ordering.service.IUserService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.ServiceSignUpException;
 
@@ -38,6 +37,12 @@ import by.epam.naumovich.film_ordering.service.exception.user.ServiceSignUpExcep
  */
 @Slf4j
 public class SignUp implements Command {
+
+	private final IUserService userService;
+
+	public SignUp(IUserService userService) {
+		this.userService = userService;
+	}
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -106,7 +111,6 @@ public class SignUp implements Command {
 				}
 				
 				
-				IUserService userService = ServiceFactory.getInstance().getUserService();
 				int userID = userService.addUser(login, name, surname, pwd, sex, bDate, phone, email, about);
 				
 				if (avatarItem != null) {

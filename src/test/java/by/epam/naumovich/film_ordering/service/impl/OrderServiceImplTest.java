@@ -3,7 +3,6 @@ package by.epam.naumovich.film_ordering.service.impl;
 import org.junit.Test;
 
 import by.epam.naumovich.film_ordering.service.IOrderService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.order.AddOrderServiceException;
 import by.epam.naumovich.film_ordering.service.exception.order.GetOrderServiceException;
@@ -16,6 +15,8 @@ import by.epam.naumovich.film_ordering.service.exception.order.GetOrderServiceEx
  * @version 1.0
  */
 public class OrderServiceImplTest {
+
+	private IOrderService service;
 	
 	/**
 	 * Tries to add new order with invalid film ID value and expects for the exception. 
@@ -24,7 +25,6 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=AddOrderServiceException.class)
 	public void addOrderWithInvalidFilmID() throws ServiceException {
-		IOrderService service = ServiceFactory.getInstance().getOrderService();
 		service.addOrder(0, 1, "10", "0", "10");
 	}
 	
@@ -35,7 +35,6 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=AddOrderServiceException.class)
 	public void addOrderWithInvalidPayment() throws ServiceException {
-		IOrderService service = ServiceFactory.getInstance().getOrderService();
 		service.addOrder(1, 1, "10", "0", "sdf10");
 	}
 	
@@ -46,7 +45,6 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void deleteOrder() throws ServiceException {
-		IOrderService service = ServiceFactory.getInstance().getOrderService();
 		service.deleteOrder(0);
 	}
 	
@@ -57,7 +55,6 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void getOrderByOrderNum() throws ServiceException {
-		IOrderService service = ServiceFactory.getInstance().getOrderService();
 		service.getOrderByOrderNum(0);
 	}
 	
@@ -68,7 +65,6 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void getOrderByUserAndFilmId() throws ServiceException {
-		IOrderService service = ServiceFactory.getInstance().getOrderService();
 		service.getOrderByUserAndFilmId(-1, 0);
 	}
 	
@@ -79,7 +75,6 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void getOrdersByUserId() throws ServiceException {
-		IOrderService service = ServiceFactory.getInstance().getOrderService();
 		service.getOrdersByUserId(-1);
 	}
 	
@@ -90,7 +85,6 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void getOrdersByFilmId() throws ServiceException {
-		IOrderService service = ServiceFactory.getInstance().getOrderService();
 		service.getOrdersByFilmId(0);
 	}
 	
@@ -101,7 +95,6 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=GetOrderServiceException.class)
 	public void getAllOrdersPart() throws ServiceException {
-		IOrderService service = ServiceFactory.getInstance().getOrderService();
 		service.getAllOrdersPart(-1);
 	}
 	
@@ -112,7 +105,6 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=GetOrderServiceException.class)
 	public void getOrdersPartByUserId() throws ServiceException {
-		IOrderService service = ServiceFactory.getInstance().getOrderService();
 		service.getOrdersPartByUserId(-1, 0);
 	}
 
@@ -123,7 +115,6 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=GetOrderServiceException.class)
 	public void getOrdersPartByFilmId() throws ServiceException {
-		IOrderService service = ServiceFactory.getInstance().getOrderService();
 		service.getOrdersPartByFilmId(-1, 0);
 	}
 	
@@ -134,7 +125,6 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void getNumberOfUserOrdersPages() throws ServiceException {
-		IOrderService service = ServiceFactory.getInstance().getOrderService();
 		service.getNumberOfUserOrdersPages(-1);
 	}
 	
@@ -145,7 +135,6 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void getNumberOfFilmOrdersPages() throws ServiceException {
-		IOrderService service = ServiceFactory.getInstance().getOrderService();
 		service.getNumberOfFilmOrdersPages(0);
 	}
 	

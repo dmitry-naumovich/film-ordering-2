@@ -16,7 +16,6 @@ import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.QueryUtil;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.IUserService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.GetDiscountServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.GetUserServiceException;
@@ -32,6 +31,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OpenUserProfile implements Command {
 
+	private final IUserService userService;
+
+	public OpenUserProfile(IUserService userService) {
+		this.userService = userService;
+	}
+
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
@@ -45,7 +50,6 @@ public class OpenUserProfile implements Command {
 		}
 		else {
 			int userID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.USER_ID));
-			IUserService userService = ServiceFactory.getInstance().getUserService();
 			try {
 				User user = userService.getUserByID(userID);
 				request.setAttribute(RequestAndSessionAttributes.USER, user);

@@ -3,7 +3,6 @@ package by.epam.naumovich.film_ordering.service.impl;
 import org.junit.Test;
 
 import by.epam.naumovich.film_ordering.service.INewsService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.news.AddNewsServiceException;
 import by.epam.naumovich.film_ordering.service.exception.news.EditNewsServiceException;
@@ -18,6 +17,8 @@ import by.epam.naumovich.film_ordering.service.exception.news.GetNewsServiceExce
  */
 public class NewsServiceImplTest {
 
+	private INewsService service;
+
 	/**
 	 * Tries to add new news with invalid news title value and expects for the exception. 
 	 * 
@@ -25,7 +26,6 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=AddNewsServiceException.class)
 	public void addNewsWithInvalidTitle() throws ServiceException {
-		INewsService service = ServiceFactory.getInstance().getNewsService();
 		service.addNews(null, "test news text");
 	}
 	
@@ -36,7 +36,6 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=AddNewsServiceException.class)
 	public void addNewsWithInvalidText() throws ServiceException {
-		INewsService service = ServiceFactory.getInstance().getNewsService();
 		service.addNews("test news title", "");
 	}
 	
@@ -47,7 +46,6 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void deleteNews() throws ServiceException {
-		INewsService service = ServiceFactory.getInstance().getNewsService();
 		service.deleteNews(0);
 	}
 	
@@ -58,7 +56,6 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void editNewsWithInvalidID() throws ServiceException {
-		INewsService service = ServiceFactory.getInstance().getNewsService();
 		service.editNews(0, "new title", "new text");
 	}
 	
@@ -69,7 +66,6 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=EditNewsServiceException.class)
 	public void editNewsWithInvalidTextAndTitle() throws ServiceException {
-		INewsService service = ServiceFactory.getInstance().getNewsService();
 		service.editNews(1, "", null);
 	}
 	
@@ -81,7 +77,6 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=GetNewsServiceException.class)
 	public void getNewsById() throws ServiceException {
-		INewsService service = ServiceFactory.getInstance().getNewsService();
 		service.getNewsById(-1);
 	}
 	
@@ -92,7 +87,6 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=GetNewsServiceException.class)
 	public void getNewsByYear() throws ServiceException {
-		INewsService service = ServiceFactory.getInstance().getNewsService();
 		service.getNewsByYear(1001);
 	}
 	
@@ -103,7 +97,6 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=GetNewsServiceException.class)
 	public void getNewsByMonth() throws ServiceException {
-		INewsService service = ServiceFactory.getInstance().getNewsService();
 		service.getNewsByMonth(13, 2012);
 	}
 	
@@ -114,7 +107,6 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=GetNewsServiceException.class)
 	public void getAllNewsPart() throws ServiceException {
-		INewsService service = ServiceFactory.getInstance().getNewsService();
 		service.getAllNewsPart(0);
 	}
 }

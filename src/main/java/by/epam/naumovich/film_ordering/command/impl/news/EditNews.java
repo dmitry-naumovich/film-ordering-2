@@ -16,8 +16,6 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-
-
 import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.ErrorMessages;
 import by.epam.naumovich.film_ordering.command.util.FileUploadConstants;
@@ -27,7 +25,6 @@ import by.epam.naumovich.film_ordering.command.util.QueryUtil;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
 import by.epam.naumovich.film_ordering.service.INewsService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.news.EditNewsServiceException;
 
@@ -42,6 +39,11 @@ import by.epam.naumovich.film_ordering.service.exception.news.EditNewsServiceExc
 @Slf4j
 public class EditNews implements Command {
 
+	private final INewsService newsService;
+
+	public EditNews(INewsService newsService) {
+		this.newsService = newsService;
+	}
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -91,7 +93,6 @@ public class EditNews implements Command {
 				    }
 				}
 				
-				INewsService newsService = ServiceFactory.getInstance().getNewsService();
 				newsService.editNews(newsID, title, text);
 				
 				if (imgItem != null) {

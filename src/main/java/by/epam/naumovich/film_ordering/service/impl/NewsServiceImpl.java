@@ -21,6 +21,7 @@ import by.epam.naumovich.film_ordering.service.exception.news.EditNewsServiceExc
 import by.epam.naumovich.film_ordering.service.exception.news.GetNewsServiceException;
 import by.epam.naumovich.film_ordering.service.util.ExceptionMessages;
 import by.epam.naumovich.film_ordering.service.util.Validator;
+import org.springframework.stereotype.Service;
 
 /**
  * INewsService interface implementation that works with INewsDAO implementation
@@ -28,6 +29,7 @@ import by.epam.naumovich.film_ordering.service.util.Validator;
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Service
 public class NewsServiceImpl implements INewsService {
 
 	private static final String MYSQL = "mysql";

@@ -3,7 +3,6 @@ package by.epam.naumovich.film_ordering.command.impl.film;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.List;
 
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
@@ -20,7 +19,6 @@ import by.epam.naumovich.film_ordering.command.util.QueryUtil;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.IFilmService;
 import by.epam.naumovich.film_ordering.service.IOrderService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.film.GetFilmServiceException;
 import by.epam.naumovich.film_ordering.service.exception.order.GetOrderServiceException;
@@ -34,6 +32,14 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class GetNovelty implements Command {
+
+	private final IFilmService filmService;
+	private final IOrderService orderService;
+
+	public GetNovelty(IFilmService filmService, IOrderService orderService) {
+		this.filmService = filmService;
+		this.orderService = orderService;
+	}
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -50,9 +56,6 @@ public class GetNovelty implements Command {
 		}
 		
 		try {
-			IFilmService filmService = ServiceFactory.getInstance().getFilmService();
-			IOrderService orderService = ServiceFactory.getInstance().getOrderService();
-			
 			List<Film> filmSet = filmService.getTwelveLastAddedFilms(lang);
 			//request.setAttribute(RequestAndSessionAttributes.NOVELTY_LIST, filmSet);
 			session.setAttribute(RequestAndSessionAttributes.NOVELTY_LIST, filmSet);

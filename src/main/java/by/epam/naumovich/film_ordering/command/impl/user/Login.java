@@ -14,7 +14,6 @@ import by.epam.naumovich.film_ordering.command.util.JavaServerPageNames;
 import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.IUserService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.ServiceAuthException;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +28,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Login implements Command {
 
+	private final IUserService userService;
+
+	public Login(IUserService userService) {
+		this.userService = userService;
+	}
+
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
@@ -42,7 +47,6 @@ public class Login implements Command {
 			String password = request.getParameter(RequestAndSessionAttributes.PASSWORD);
 			
 			try {
-				IUserService userService = ServiceFactory.getInstance().getUserService();
 				User user = userService.authenticate(login, password);
 				log.debug(String.format(LogMessages.USER_LOGGED_IN, login, user.getId()));
 				request.setAttribute(RequestAndSessionAttributes.USER, user);

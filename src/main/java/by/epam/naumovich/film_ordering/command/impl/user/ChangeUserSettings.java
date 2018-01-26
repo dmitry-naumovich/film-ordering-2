@@ -24,7 +24,6 @@ import by.epam.naumovich.film_ordering.command.util.QueryUtil;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
 import by.epam.naumovich.film_ordering.service.IUserService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.UserUpdateServiceException;
 
@@ -39,7 +38,13 @@ import by.epam.naumovich.film_ordering.service.exception.user.UserUpdateServiceE
 @Slf4j
 public class ChangeUserSettings implements Command {
 
-    @Override
+	private final IUserService userService;
+
+	public ChangeUserSettings(IUserService userService) {
+		this.userService = userService;
+	}
+
+	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
 		String query = QueryUtil.createHttpQueryString(request);
@@ -110,7 +115,6 @@ public class ChangeUserSettings implements Command {
 				    }
 				}
 				
-				IUserService userService = ServiceFactory.getInstance().getUserService();
 				userService.updateUser(userID, name, surname, pwd, sex, bDate, phone, email, about);
 				log.debug(String.format(LogMessages.USER_SETTINGS_EDITED, userID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.SETTINGS_UPDATED);

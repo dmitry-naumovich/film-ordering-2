@@ -18,7 +18,6 @@ import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.IFilmService;
 import by.epam.naumovich.film_ordering.service.IReviewService;
 import by.epam.naumovich.film_ordering.service.IUserService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.review.GetReviewServiceException;
 
@@ -31,7 +30,17 @@ import by.epam.naumovich.film_ordering.service.exception.review.GetReviewService
 @Slf4j
 public class OpenSingleReview implements Command {
 
-	@Override
+    private final IFilmService filmService;
+    private final IReviewService reviewService;
+    private final IUserService userService;
+
+    public OpenSingleReview(IFilmService filmService, IReviewService reviewService, IUserService userService) {
+        this.filmService = filmService;
+        this.reviewService = reviewService;
+        this.userService = userService;
+    }
+
+    @Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
 		String query = QueryUtil.createHttpQueryString(request);
@@ -49,13 +58,10 @@ public class OpenSingleReview implements Command {
 		int filmID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.FILM_ID));
 		
 		try {
-			IReviewService reviewService = ServiceFactory.getInstance().getReviewService();
 			Review rev = reviewService.getReviewByUserAndFilmId(userID, filmID);
 			
-			IUserService userService = ServiceFactory.getInstance().getUserService();
 			String userLogin = userService.getLoginByID(userID);
 			
-			IFilmService filmService = ServiceFactory.getInstance().getFilmService();
 			String filmName = filmService.getFilmByID(filmID, lang).getName();
 			
 			request.setAttribute(RequestAndSessionAttributes.REVIEW, rev);

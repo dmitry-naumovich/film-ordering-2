@@ -32,10 +32,10 @@ public class MySQLDAOFactory extends DAOFactory {
 		return MySQLUserDAO.getInstance();
 	}
 
-	@Override
-	public IFilmDAO getFilmDAO() {
-		return MySQLFilmDAO.getInstance();
-	}
+//	@Override
+//	public IFilmDAO getFilmDAO() {
+//		return MySQLFilmDAO.getInstance();
+//	}
 
 	@Override
 	public IOrderDAO getOrderDAO() {

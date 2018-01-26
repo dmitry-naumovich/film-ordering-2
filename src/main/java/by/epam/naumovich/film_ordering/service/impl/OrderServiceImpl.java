@@ -17,6 +17,7 @@ import by.epam.naumovich.film_ordering.service.exception.order.AddOrderServiceEx
 import by.epam.naumovich.film_ordering.service.exception.order.GetOrderServiceException;
 import by.epam.naumovich.film_ordering.service.util.ExceptionMessages;
 import by.epam.naumovich.film_ordering.service.util.Validator;
+import org.springframework.stereotype.Service;
 
 /**
  * IOrderService interface implementation that works with IOrderDAO implementation
@@ -24,6 +25,7 @@ import by.epam.naumovich.film_ordering.service.util.Validator;
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Service
 public class OrderServiceImpl implements IOrderService {
 
 	private static final String MYSQL = "mysql";

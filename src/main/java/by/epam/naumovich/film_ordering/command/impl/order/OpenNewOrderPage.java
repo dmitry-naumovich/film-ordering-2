@@ -19,7 +19,6 @@ import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.IFilmService;
 import by.epam.naumovich.film_ordering.service.IOrderService;
 import by.epam.naumovich.film_ordering.service.IUserService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.film.GetFilmServiceException;
 import by.epam.naumovich.film_ordering.service.exception.order.GetOrderServiceException;
@@ -36,6 +35,16 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class OpenNewOrderPage implements Command {
+
+	private final IFilmService filmService;
+	private final IOrderService orderService;
+	private final IUserService userService;
+
+	public OpenNewOrderPage(IFilmService filmService, IOrderService orderService, IUserService userService) {
+		this.filmService = filmService;
+		this.orderService = orderService;
+		this.userService = userService;
+	}
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -62,8 +71,6 @@ public class OpenNewOrderPage implements Command {
 			request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1").forward(request, response);
 		}
 		else {
-			ServiceFactory sFactory = ServiceFactory.getInstance();
-			IOrderService orderService = sFactory.getOrderService();
 			boolean already = false;
 			int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
 			try {
@@ -86,9 +93,6 @@ public class OpenNewOrderPage implements Command {
 			
 			if (!already) {
 				try {
-					IFilmService filmService = sFactory.getFilmService();
-					IUserService userService = sFactory.getUserService();
-					
 					Film film = filmService.getFilmByID(filmID, lang);
 					int discount;
 					try {

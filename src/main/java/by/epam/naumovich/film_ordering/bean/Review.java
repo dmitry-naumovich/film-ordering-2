@@ -1,6 +1,9 @@
 package by.epam.naumovich.film_ordering.bean;
 
+import java.io.Serializable;
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import lombok.Data;
@@ -23,10 +26,17 @@ import java.sql.Time;
 @ToString
 public class Review {
 
-    @Column(name = "r_author")
-    private int author;
-    @Column(name = "r_film")
-    private int filmId;
+    public Review() {
+        id = new ReviewPK();
+    }
+
+    //    @Column(name = "r_author")
+//    private int author;
+//    @Column(name = "r_film")
+//    private int filmId;
+    @EmbeddedId
+    private ReviewPK id;
+
     @Column(name = "r_type")
     private String type;
     @Column(name = "r_mark")
@@ -38,4 +48,19 @@ public class Review {
     @Column(name = "r_time")
     private Time time;
 
+    public int getAuthor() {
+        return id.getAuthor();
+    }
+
+    public int getFilmId() {
+        return id.getFilmId();
+    }
+
+    public void setAuthor(int author) {
+        id.setAuthor(author);
+    }
+
+    public void setFilmId(int filmId) {
+        id.setFilmId(filmId);
+    }
 }

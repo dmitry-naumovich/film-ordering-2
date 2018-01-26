@@ -14,7 +14,6 @@ import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
 import by.epam.naumovich.film_ordering.service.IFilmService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,6 +26,12 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class DeleteFilm implements Command {
+
+    private final IFilmService filmService;
+
+    public DeleteFilm(IFilmService filmService) {
+        this.filmService = filmService;
+    }
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -41,7 +46,6 @@ public class DeleteFilm implements Command {
             request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1").forward(request, response);
         } else {
             try {
-                IFilmService filmService = ServiceFactory.getInstance().getFilmService();
                 filmService.deleteFilm(filmID);
 
                 log.debug(String.format(LogMessages.FILM_DELETED, filmID));

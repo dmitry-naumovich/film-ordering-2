@@ -7,9 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
-
-
 import by.epam.naumovich.film_ordering.bean.News;
 import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.JavaServerPageNames;
@@ -17,7 +14,6 @@ import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.QueryUtil;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.INewsService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.news.GetNewsServiceException;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +27,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OpenAllNews implements Command {
 
+	private final INewsService newsService;
+
+	public OpenAllNews(INewsService newsService) {
+		this.newsService = newsService;
+	}
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -41,7 +42,6 @@ public class OpenAllNews implements Command {
 		int pageNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.PAGE_NUM));
 		
 		try {
-			INewsService newsService = ServiceFactory.getInstance().getNewsService();
 			List<News> news = newsService.getAllNewsPart(pageNum);
 			
 			int totalPageAmount = newsService.getNumberOfAllNewsPages();

@@ -7,9 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
-
-
 import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.ErrorMessages;
 import by.epam.naumovich.film_ordering.command.util.JavaServerPageNames;
@@ -17,7 +14,6 @@ import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
 import by.epam.naumovich.film_ordering.service.IUserService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.BanUserServiceException;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +28,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BanUser implements Command {
 
+	private final IUserService userService;
+
+	public BanUser(IUserService userService) {
+		this.userService = userService;
+	}
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -51,7 +52,6 @@ public class BanUser implements Command {
 			String reason = request.getParameter(RequestAndSessionAttributes.BAN_REASON);
 			
 			try {
-				IUserService userService = ServiceFactory.getInstance().getUserService();
 				userService.banUser(userID, length, reason);
 				log.debug(String.format(LogMessages.USER_BANNED, userID, reason));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.USER_BANNED);

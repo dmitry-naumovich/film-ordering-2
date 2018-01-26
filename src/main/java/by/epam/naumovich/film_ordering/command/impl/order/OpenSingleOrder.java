@@ -7,9 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
-
-
 import by.epam.naumovich.film_ordering.bean.Order;
 import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.ErrorMessages;
@@ -20,7 +17,6 @@ import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.IFilmService;
 import by.epam.naumovich.film_ordering.service.IOrderService;
 import by.epam.naumovich.film_ordering.service.IUserService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +30,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OpenSingleOrder implements Command {
 
+	private final IFilmService filmService;
+	private final IOrderService orderService;
+	private final IUserService userService;
+
+	public OpenSingleOrder(IFilmService filmService, IOrderService orderService, IUserService userService) {
+		this.filmService = filmService;
+		this.orderService = orderService;
+		this.userService = userService;
+	}
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -56,9 +61,6 @@ public class OpenSingleOrder implements Command {
 		else {
 			int orderNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.ORDER_NUM));
 			try {
-				IOrderService orderService = ServiceFactory.getInstance().getOrderService();
-				IFilmService filmService = ServiceFactory.getInstance().getFilmService();
-				IUserService userService = ServiceFactory.getInstance().getUserService();
 				Order order = orderService.getOrderByOrderNum(orderNum);
 				String filmName = filmService.getFilmNameByID(order.getFilmId(), lang);
 				String userLogin = userService.getLoginByID(order.getUserId());

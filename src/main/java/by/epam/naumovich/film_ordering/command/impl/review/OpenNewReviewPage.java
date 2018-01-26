@@ -18,7 +18,6 @@ import by.epam.naumovich.film_ordering.command.util.QueryUtil;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.IFilmService;
 import by.epam.naumovich.film_ordering.service.IReviewService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.film.GetFilmServiceException;
 import by.epam.naumovich.film_ordering.service.exception.review.GetReviewServiceException;
@@ -32,6 +31,14 @@ import by.epam.naumovich.film_ordering.service.exception.review.GetReviewService
  */
 @Slf4j
 public class OpenNewReviewPage implements Command {
+
+	private final IFilmService filmService;
+	private final IReviewService reviewService;
+
+	public OpenNewReviewPage(IFilmService filmService, IReviewService reviewService) {
+		this.filmService = filmService;
+		this.reviewService = reviewService;
+	}
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {		
@@ -54,8 +61,6 @@ public class OpenNewReviewPage implements Command {
 		else {
 			int filmID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.FILM_ID));
 			int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
-			IFilmService filmService = ServiceFactory.getInstance().getFilmService();
-			IReviewService reviewService = ServiceFactory.getInstance().getReviewService();
 			Film film = null;
 			try {
 				film = filmService.getFilmByID(filmID, lang);

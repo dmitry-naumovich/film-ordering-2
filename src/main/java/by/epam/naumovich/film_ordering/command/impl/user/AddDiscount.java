@@ -14,7 +14,6 @@ import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
 import by.epam.naumovich.film_ordering.service.IUserService;
-import by.epam.naumovich.film_ordering.service.ServiceFactory;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.DiscountServiceException;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +27,12 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class AddDiscount implements Command {
+
+	private final IUserService userService;
+
+	public AddDiscount(IUserService userService) {
+		this.userService = userService;
+	}
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -48,7 +53,6 @@ public class AddDiscount implements Command {
 			String endTime = request.getParameter(RequestAndSessionAttributes.END_TIME);
 			
 			try {
-				IUserService userService = ServiceFactory.getInstance().getUserService();
 				userService.addDiscount(userID, amount, endDate, endTime);
 				log.debug(String.format(LogMessages.DISCOUNT_ADDED, userID, amount));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.DISCOUNT_ADDED);

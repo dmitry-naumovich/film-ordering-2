@@ -23,6 +23,7 @@ import by.epam.naumovich.film_ordering.service.exception.user.ServiceSignUpExcep
 import by.epam.naumovich.film_ordering.service.exception.user.UserUpdateServiceException;
 import by.epam.naumovich.film_ordering.service.util.ExceptionMessages;
 import by.epam.naumovich.film_ordering.service.util.Validator;
+import org.springframework.stereotype.Service;
 
 /**
  * IUserService interface implementation that works with IUserDAO implementation
@@ -30,6 +31,7 @@ import by.epam.naumovich.film_ordering.service.util.Validator;
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Service
 public class UserServiceImpl implements IUserService {
 
 	private static final String MYSQL = "mysql";

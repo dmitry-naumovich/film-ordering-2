@@ -24,6 +24,7 @@ import by.epam.naumovich.film_ordering.dao.exception.DAOException;
  */
 public class MySQLFilmDAOTest {
 
+	private IFilmDAO filmDAO;
 	/**
 	 * Database type used in this test suite.
 	 * 
@@ -70,12 +71,12 @@ public class MySQLFilmDAOTest {
 	 */
 	@Test
 	public void addFilm() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IFilmDAO filmDAO = daoFactory.getFilmDAO();
+//		//DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
+//		//IFilmDAO filmDAO = daoFactory.getFilmDAO();
 		
-		int filmID = filmDAO.create(expectedFilm);
-        Film actualFilm = filmDAO.getById(filmID, EN_LANG);
-        filmDAO.delete(filmID);
+		Film film = filmDAO.save(expectedFilm);
+        Film actualFilm = filmDAO.getById(film.getId(), EN_LANG);
+        filmDAO.delete(film);
         
         Assert.assertEquals(expectedFilm.getName(), actualFilm.getName());
         Assert.assertEquals(expectedFilm.getYear(), actualFilm.getYear());
@@ -97,12 +98,12 @@ public class MySQLFilmDAOTest {
 	 */
 	@Test
 	public void deleteFilm() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IFilmDAO filmDAO = daoFactory.getFilmDAO();
+//		//DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
+//		//IFilmDAO filmDAO = daoFactory.getFilmDAO();
 
-		int filmID = filmDAO.create(expectedFilm);
-		filmDAO.delete(filmID);
-        Film deletedFilm = filmDAO.getById(filmID, EN_LANG);
+		Film film = filmDAO.save(expectedFilm);
+		filmDAO.delete(film);
+        Film deletedFilm = filmDAO.getById(film.getId(), EN_LANG);
 
         Assert.assertNull(deletedFilm);
 	}
@@ -116,16 +117,16 @@ public class MySQLFilmDAOTest {
 	 */
 	@Test
 	public void editFilm() throws DAOException, InterruptedException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IFilmDAO filmDAO = daoFactory.getFilmDAO();
+//		//DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
+//		//IFilmDAO filmDAO = daoFactory.getFilmDAO();
 		
-		int filmID = filmDAO.create(expectedFilm);
+		Film film = filmDAO.save(expectedFilm);
 		expectedFilm.setName("test name 1");
 		expectedFilm.setActors("test actors 1");
 		expectedFilm.setPrice(12);
-		filmDAO.update(filmID, expectedFilm);
-		Film actualFilm = filmDAO.getById(filmID, EN_LANG);
-        filmDAO.delete(filmID);
+		filmDAO.update(film.getId(), expectedFilm);
+		Film actualFilm = filmDAO.getById(film.getId(), EN_LANG);
+        filmDAO.delete(film.getId());
 	    
         Assert.assertEquals(expectedFilm.getName(), actualFilm.getName());
         Assert.assertEquals(expectedFilm.getPrice(), actualFilm.getPrice(), 0.01f);
@@ -139,12 +140,12 @@ public class MySQLFilmDAOTest {
 	 * @throws DAOException
 	 */
 	public void getFilmByID() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IFilmDAO filmDAO = daoFactory.getFilmDAO();
+//		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
+//		IFilmDAO filmDAO = daoFactory.getFilmDAO();
 		
-		int filmID = filmDAO.create(expectedFilm);
-		Film actualFilm = filmDAO.getById(filmID, EN_LANG);
-		filmDAO.delete(filmID);
+		Film film = filmDAO.save(expectedFilm);
+		Film actualFilm = filmDAO.getById(film.getId(), EN_LANG);
+		filmDAO.delete(film.getId());
 		
 		Assert.assertEquals(expectedFilm.getName(), actualFilm.getName());
         Assert.assertEquals(expectedFilm.getYear(), actualFilm.getYear());
@@ -167,12 +168,12 @@ public class MySQLFilmDAOTest {
 	 */
 	@Test
 	public void getFilmNameByID() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IFilmDAO filmDAO = daoFactory.getFilmDAO();
+		//DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
+		//IFilmDAO filmDAO = daoFactory.getFilmDAO();
 		
-		int filmID = filmDAO.create(expectedFilm);
-		String actualFilmName = filmDAO.getFilmNameByID(filmID, EN_LANG);
-		filmDAO.delete(filmID);
+		Film film = filmDAO.save(expectedFilm);
+		String actualFilmName = filmDAO.getFilmNameByID(film.getId(), EN_LANG);
+		filmDAO.delete(film.getId());
 		
 		Assert.assertEquals(expectedFilm.getName(), actualFilmName);
 	}
@@ -184,8 +185,8 @@ public class MySQLFilmDAOTest {
 	 */
 	@Test
 	public void getAllFilms() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IFilmDAO filmDAO = daoFactory.getFilmDAO();
+		//DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
+		//IFilmDAO filmDAO = daoFactory.getFilmDAO();
 		
 		List<Film> allFilms1 = filmDAO.getAll(EN_LANG);
 		List<Film> allFilms2 = filmDAO.getFilmsBetweenYears(1, 3000, EN_LANG);
@@ -200,10 +201,10 @@ public class MySQLFilmDAOTest {
 	 */
 	@Test
 	public void getFilmsByName() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IFilmDAO filmDAO = daoFactory.getFilmDAO();
+		//DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
+		//IFilmDAO filmDAO = daoFactory.getFilmDAO();
 		
-		int filmID = filmDAO.create(expectedFilm);
+		Film film = filmDAO.save(expectedFilm);
 		List<Film> filmsByName1 = filmDAO.getFilmsByName(expectedFilm.getName(), EN_LANG);
 		
 		List<Film> filmsByName2 = new ArrayList<Film>();
@@ -213,7 +214,7 @@ public class MySQLFilmDAOTest {
 			}
 		}
 		
-		filmDAO.delete(filmID);
+		filmDAO.delete(film.getId());
 		Assert.assertEquals(filmsByName1, filmsByName2);
 	}
 	
@@ -224,8 +225,8 @@ public class MySQLFilmDAOTest {
 	 */
 	@Test
 	public void getFilmsByYear() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IFilmDAO filmDAO = daoFactory.getFilmDAO();
+		//DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
+		//IFilmDAO filmDAO = daoFactory.getFilmDAO();
 		
 		List<Film> filmsByYear1 = filmDAO.getFilmsByYear(2012, EN_LANG);
 		
@@ -246,8 +247,8 @@ public class MySQLFilmDAOTest {
 	 */
 	@Test
 	public void getFilmsByGenre() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IFilmDAO filmDAO = daoFactory.getFilmDAO();
+		//DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
+		//IFilmDAO filmDAO = daoFactory.getFilmDAO();
 		
 		List<Film> filmsByGenre1 = filmDAO.getFilmsByGenre(expectedFilm.getGenre(), EN_LANG);
 		
@@ -267,8 +268,8 @@ public class MySQLFilmDAOTest {
 	 */
 	@Test
 	public void getFilmsByCountry() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IFilmDAO filmDAO = daoFactory.getFilmDAO();
+		//DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
+		//IFilmDAO filmDAO = daoFactory.getFilmDAO();
 		
 		List<Film> filmsByCountry1 = filmDAO.getFilmsByCountry(expectedFilm.getCountry(), EN_LANG);
 		
@@ -288,8 +289,8 @@ public class MySQLFilmDAOTest {
 	 */
 	@Test
 	public void getFilmsBetweenYears() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IFilmDAO filmDAO = daoFactory.getFilmDAO();
+		//DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
+		//IFilmDAO filmDAO = daoFactory.getFilmDAO();
 		
 		List<Film> filmsByYears1 = filmDAO.getFilmsBetweenYears(2000, 2005, EN_LANG);
 		
@@ -309,8 +310,8 @@ public class MySQLFilmDAOTest {
 	 */
 	@Test
 	public void getNumberOfFilms() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IFilmDAO filmDAO = daoFactory.getFilmDAO();
+		//DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
+		//IFilmDAO filmDAO = daoFactory.getFilmDAO();
 		
 		int filmsNum1 = filmDAO.getNumberOfFilms();
 		List<Film> allFilms = filmDAO.getAll(EN_LANG);
@@ -326,8 +327,8 @@ public class MySQLFilmDAOTest {
 	 */
 	@Test
 	public void getAllFilmsPart() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IFilmDAO filmDAO = daoFactory.getFilmDAO();
+		//DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
+		//IFilmDAO filmDAO = daoFactory.getFilmDAO();
 		
 		List<Film> particularFilms1 = filmDAO.getAllPart(0, 6, EN_LANG);
 		List<Film> allFilms = new ArrayList<Film>(filmDAO.getAll(EN_LANG));
