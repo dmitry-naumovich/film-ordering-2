@@ -59,7 +59,7 @@ public class OpenUserOrders implements Command {
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_YOUR_ORDERS);
 			}
 			
-			request.getRequestDispatcher(JavaServerPageNames.LOGINATION_PAGE).forward(request, response);
+			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else {
 			int userID = 0;

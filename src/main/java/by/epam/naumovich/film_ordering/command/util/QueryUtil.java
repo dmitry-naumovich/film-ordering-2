@@ -20,22 +20,19 @@ public final class QueryUtil {
 	 * @param request the request
 	 * @return String query
 	 */
-	public static String createHttpQueryString(HttpServletRequest request){
-		
+	public static String createHttpQueryString(HttpServletRequest request) {
+		StringBuilder queryBuilder = new StringBuilder(request.getRequestURL() + "?");
 		Enumeration<String> params = request.getParameterNames();
-		String query = "";
-		
+
 		String key;
 		String value;
 		while (params.hasMoreElements()) {
 			key = params.nextElement();
 			value  = request.getParameter(key);
-			query = query + "&" + key + "=" + value;			
+			queryBuilder.append("&").append(key).append("=").append(value);
 		}
 		
-		query = request.getRequestURL() + "?" + query;
-		
-		return query;		
+		return queryBuilder.toString();
 	}
 
 }

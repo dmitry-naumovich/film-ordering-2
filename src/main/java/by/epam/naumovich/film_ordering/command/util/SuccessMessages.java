@@ -23,7 +23,7 @@ public final class SuccessMessages {
 	public static final String REVIEW_ADDED = "Congratulations! Your review was successfully added!";
 	public static final String REVIEW_DELETED = "The review was successfully deleted!";
 	public static final String SETTINGS_UPDATED = "Your profile settings were successfully updated!";
-	public static final String SUCCESSFULL_SIGN_UP = "Registration successfull! Welcome!";
+	public static final String SUCCESSFUL_SIGN_UP = "Registration successful! Welcome!";
 	public static final String USER_BANNED = "User was successfully banned!";
 	public static final String USER_UNBANNED = "User was successfully unbanned!";
 	

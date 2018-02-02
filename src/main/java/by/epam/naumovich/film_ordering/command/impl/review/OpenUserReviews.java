@@ -54,7 +54,7 @@ public class OpenUserReviews implements Command {
 		
 		if (request.getParameter(RequestAndSessionAttributes.USER_ID).equals(RequestAndSessionAttributes.EMPTY_STRING)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_YOUR_REVIEWS);
-			request.getRequestDispatcher(JavaServerPageNames.LOGINATION_PAGE).forward(request, response);
+			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else {
 			int userID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.USER_ID));

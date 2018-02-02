@@ -20,7 +20,7 @@ import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
  * @author Dmitry Naumovich
  * @version 1.0
  */
-public class OpenLoginationPage implements Command {
+public class OpenLoginPage implements Command {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -33,7 +33,7 @@ public class OpenLoginationPage implements Command {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.LOG_OUT_FOR_ANOTHER_ACC);
 			request.getRequestDispatcher(JavaServerPageNames.INDEX_PAGE).forward(request, response);
 		} else {
-			request.getRequestDispatcher(JavaServerPageNames.LOGINATION_PAGE).forward(request, response);
+			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 	}
 

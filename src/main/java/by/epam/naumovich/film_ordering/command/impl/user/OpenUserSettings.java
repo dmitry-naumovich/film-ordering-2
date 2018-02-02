@@ -45,7 +45,7 @@ public class OpenUserSettings implements Command {
 			if (request.getParameter(RequestAndSessionAttributes.USER_ID).isEmpty() || request.getParameter(RequestAndSessionAttributes.USER_ID) == null) {
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_SETTINGS);
 			}
-			request.getRequestDispatcher(JavaServerPageNames.LOGINATION_PAGE).forward(request, response);
+			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 			
 		}
 		else {

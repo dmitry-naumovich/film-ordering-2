@@ -10,7 +10,7 @@ public final class LogMessages {
 
 	public static final String DISCOUNT_ADDED = "New discount for user (ID #%s, amount %s) was added to the data source.";
 	public static final String DISCOUNT_DELETED = "Discount (ID #%s) for user (ID #%s) was deleted from the data source.";
-	public static final String DISCOUNT_EDITED = "Discount (ID #%s) for user (ID #%s) was updated in the data source.";
+	public static final String DISCOUNT_UPDATED = "Discount (ID #%s) for user (ID #%s) was updated in the data source.";
 	public static final String EXCEPTION_IN_COMMAND = "%s occured in %s command. Message for user is: \"%s\".";
 	public static final String FILM_ADDED = "New film %s (id #%s) was added to the data source.";
 	public static final String FILM_DELETED = "Film (had id #%s) was deleted from the data source.";

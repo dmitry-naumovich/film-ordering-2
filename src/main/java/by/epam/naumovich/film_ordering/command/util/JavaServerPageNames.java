@@ -19,7 +19,7 @@ public final class JavaServerPageNames {
 	public static final String FILM_ORDERING_PAGE = "WEB-INF/jsp/film-ordering.jsp";
 	public static final String FILMS_JSP_PAGE = "WEB-INF/jsp/films.jsp";
 	public static final String HELP_PAGE = "WEB-INF/jsp/help.jsp";
-	public static final String LOGINATION_PAGE = "WEB-INF/jsp/logination.jsp";
+	public static final String LOGIN_PAGE = "WEB-INF/jsp/logination.jsp";
 	public static final String NEW_REVIEW_PAGE = "WEB-INF/jsp/new-review.jsp";
 	public static final String NEWS_ADDING_PAGE = "WEB-INF/jsp/news-adding.jsp";
 	public static final String NEWS_JSP_PAGE = "WEB-INF/jsp/news.jsp";

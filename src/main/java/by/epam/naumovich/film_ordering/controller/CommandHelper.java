@@ -95,7 +95,7 @@ public class CommandHelper {
 		commands.put(CommandName.OPEN_FILM_EDIT_PAGE, new OpenFilmEditPage(filmService));
 		commands.put(CommandName.OPEN_FILM_ORDERS, new OpenFilmOrders(filmService, orderService, userService));
 		commands.put(CommandName.OPEN_HELP_PAGE, new OpenHelpPage());
-		commands.put(CommandName.OPEN_LOGINATION_PAGE, new OpenLoginationPage());
+		commands.put(CommandName.OPEN_LOGIN_PAGE, new OpenLoginPage());
 		commands.put(CommandName.OPEN_NEW_FILM_PAGE, new OpenNewFilmPage(filmService));
 		commands.put(CommandName.OPEN_NEW_NEWS_PAGE, new OpenNewNewsPage());
 		commands.put(CommandName.OPEN_NEW_ORDER_PAGE, new OpenNewOrderPage(filmService, orderService, userService, discountService));

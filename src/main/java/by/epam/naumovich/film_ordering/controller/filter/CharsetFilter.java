@@ -19,24 +19,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class CharsetFilter implements Filter {
 
-	private String encoding;
-	private static final String CHAR_ENCODING = "characterEncoding";
-	
+    private static final String CHAR_ENCODING = "characterEncoding";
+
+    private String encoding;
+
+	@Override
+	public void init(FilterConfig filterConfig) throws ServletException {
+		encoding = filterConfig.getInitParameter(CHAR_ENCODING);
+	}
+
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		request.setCharacterEncoding(encoding);
+		response.setCharacterEncoding(encoding);
+		chain.doFilter(request, response);
+	}
+
 	@Override
 	public void destroy() {
-		
-	}
 
-	@Override
-	public void doFilter(ServletRequest arg0, ServletResponse arg1, FilterChain arg2)
-			throws IOException, ServletException {
-		arg0.setCharacterEncoding(encoding);
-		arg1.setCharacterEncoding(encoding);
-		arg2.doFilter(arg0, arg1);
-	}
-
-	@Override
-	public void init(FilterConfig arg0) throws ServletException {
-		encoding = arg0.getInitParameter(CHAR_ENCODING);
 	}
 }
