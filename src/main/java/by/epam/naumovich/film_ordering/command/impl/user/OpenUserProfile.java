@@ -1,5 +1,6 @@
 package by.epam.naumovich.film_ordering.command.impl.user;
 
+import by.epam.naumovich.film_ordering.service.IDiscountService;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -32,9 +33,11 @@ import lombok.extern.slf4j.Slf4j;
 public class OpenUserProfile implements Command {
 
 	private final IUserService userService;
+	private final IDiscountService discountService;
 
-	public OpenUserProfile(IUserService userService) {
+	public OpenUserProfile(IUserService userService, IDiscountService discountService) {
 		this.userService = userService;
+		this.discountService = discountService;
 	}
 
 	@Override
@@ -60,7 +63,7 @@ public class OpenUserProfile implements Command {
 					request.setAttribute(RequestAndSessionAttributes.BANNED, false);
 				}
 				try {
-					Discount discount = userService.getCurrentUserDiscountByID(userID);
+					Discount discount = discountService.getCurrentUserDiscountByID(userID);
 					request.setAttribute(RequestAndSessionAttributes.USER_DISCOUNT, discount);
 				} catch (GetDiscountServiceException e) {}
 				

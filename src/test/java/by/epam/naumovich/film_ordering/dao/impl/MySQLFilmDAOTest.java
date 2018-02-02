@@ -1,16 +1,13 @@
 package by.epam.naumovich.film_ordering.dao.impl;
 
 import java.util.ArrayList;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import by.epam.naumovich.film_ordering.bean.Film;
-import by.epam.naumovich.film_ordering.dao.DAOFactory;
 import by.epam.naumovich.film_ordering.dao.IFilmDAO;
 import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 
@@ -116,7 +113,7 @@ public class MySQLFilmDAOTest {
 	 * @throws InterruptedException 
 	 */
 	@Test
-	public void editFilm() throws DAOException, InterruptedException {
+	public void updateFilm() throws DAOException, InterruptedException {
 //		//DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 //		//IFilmDAO filmDAO = daoFactory.getFilmDAO();
 		
@@ -124,7 +121,7 @@ public class MySQLFilmDAOTest {
 		expectedFilm.setName("test name 1");
 		expectedFilm.setActors("test actors 1");
 		expectedFilm.setPrice(12);
-		filmDAO.update(film.getId(), expectedFilm);
+		filmDAO.save(expectedFilm);
 		Film actualFilm = filmDAO.getById(film.getId(), EN_LANG);
         filmDAO.delete(film.getId());
 	    
@@ -310,10 +307,7 @@ public class MySQLFilmDAOTest {
 	 */
 	@Test
 	public void getNumberOfFilms() throws DAOException {
-		//DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		//IFilmDAO filmDAO = daoFactory.getFilmDAO();
-		
-		int filmsNum1 = filmDAO.getNumberOfFilms();
+		int filmsNum1 = (int) filmDAO.count();
 		List<Film> allFilms = filmDAO.getAll(EN_LANG);
 		int filmsNum2 = allFilms.size();
 		

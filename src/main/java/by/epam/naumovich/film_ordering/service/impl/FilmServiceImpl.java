@@ -16,6 +16,9 @@ import by.epam.naumovich.film_ordering.service.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
+import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ENG_LANG;
+
 /**
  * IFilmService interface implementation that works with IFilmDAO implementation
  * 
@@ -59,27 +62,14 @@ public class FilmServiceImpl implements IFilmService {
 		if (Validator.validateStrings(cast)) { 
 			 newFilm.setActors(cast);
 		}
-		
-		if (Validator.validateObject(countries) && Validator.validateStringArray(countries)) {
-			StringBuilder countryBuilder = new StringBuilder();
-			for (String s : countries) {
-				countryBuilder.append(s + ",");
-			}
-			countryBuilder.deleteCharAt(countryBuilder.length() - 1);
-			newFilm.setCountry(countryBuilder.toString());
-		}
-		if (Validator.validateStrings(composer)) {
-			newFilm.setComposer(composer);
-		}
-		if (Validator.validateObject(genres) && Validator.validateStringArray(genres)) {
-			StringBuilder genresBuilder = new StringBuilder();
-			for (String g : genres) {
-				genresBuilder.append(g + ",");
-			}
-			genresBuilder.deleteCharAt(genresBuilder.length() - 1);
-			newFilm.setGenre(genresBuilder.toString());
-		}
-		
+
+        if (Validator.validateStrings(composer)) {
+            newFilm.setComposer(composer);
+        }
+
+        newFilm = validateAndSetCountries(newFilm, countries);
+		newFilm = validateAndSetGenres(newFilm, genres);
+
 		try {
 			int fLength = Integer.parseInt(length);
 			if (fLength < 0) {
@@ -116,14 +106,7 @@ public class FilmServiceImpl implements IFilmService {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
-		
-//		try {
-			//DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			//IFilmDAO filmDAO = daoFactory.getFilmDAO();
-			filmDAO.delete(id);
-//		} catch (DAOException e) {
-//			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-//		}
+		filmDAO.delete(id);
 	}
 
 	@Override
@@ -150,29 +133,16 @@ public class FilmServiceImpl implements IFilmService {
 		}
 		
 		editedFilm.setDirector(director);
+
 		if (Validator.validateStrings(cast)) { 
 			 editedFilm.setActors(cast);
 		}
-		
-		if (Validator.validateObject(countries) && Validator.validateStringArray(countries)) {
-			StringBuilder countryBuilder = new StringBuilder();
-			for (String s : countries) {
-				countryBuilder.append(s + ",");
-			}
-			countryBuilder.deleteCharAt(countryBuilder.length() - 1);
-			editedFilm.setCountry(countryBuilder.toString());
-		}
-		if (Validator.validateStrings(composer)) {
-			editedFilm.setComposer(composer);
-		}
-		if (Validator.validateObject(genres) && Validator.validateStringArray(genres)) {
-			StringBuilder genresBuilder = new StringBuilder();
-			for (String g : genres) {
-				genresBuilder.append(g + ",");
-			}
-			genresBuilder.deleteCharAt(genresBuilder.length() - 1);
-			editedFilm.setGenre(genresBuilder.toString());
-		}
+        if (Validator.validateStrings(composer)) {
+            editedFilm.setComposer(composer);
+        }
+
+        editedFilm = validateAndSetCountries(editedFilm, countries);
+        editedFilm = validateAndSetGenres(editedFilm, genres);
 		
 		try {
 			int fLength = Integer.parseInt(length);
@@ -197,21 +167,14 @@ public class FilmServiceImpl implements IFilmService {
 		if (Validator.validateStrings(description)) {
 			editedFilm.setDescription(description);
 		}
-		
-		try {
-			//IFilmDAO filmDAO = DAOFactory.getDAOFactory(MYSQL).getFilmDAO();
-			filmDAO.update(id, editedFilm);
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+
+		filmDAO.save(editedFilm);
 	}
 	
 	@Override
 	public List<Film> getTwelveLastAddedFilms(String lang) throws ServiceException {
-		List<Film> filmSet = new ArrayList<>();
+		List<Film> filmSet;
 		try {
-			//DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			//IFilmDAO filmDAO = daoFactory.getFilmDAO();
 			filmSet = filmDAO.getTwelveLastAddedFilms(lang);
 			
 			if (filmSet.isEmpty()) {
@@ -227,10 +190,8 @@ public class FilmServiceImpl implements IFilmService {
 
 	@Override
 	public List<Film> getAllFilms(String lang) throws ServiceException {
-		List<Film> filmSet = new ArrayList<>();
+		List<Film> filmSet;
 		try {
-//			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-//			IFilmDAO filmDAO = daoFactory.getFilmDAO();
 			filmSet = filmDAO.getAll(lang);
 			
 			if (filmSet.isEmpty()) {
@@ -248,10 +209,8 @@ public class FilmServiceImpl implements IFilmService {
 		if (!Validator.validateInt(id)) {
 			throw new GetFilmServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
-		Film film = null;
+		Film film;
 		try {
-//			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-//			IFilmDAO filmDAO = daoFactory.getFilmDAO();
 			film = filmDAO.getById(id, lang);
 			if (film == null) {
 				throw new GetFilmServiceException(ExceptionMessages.FILM_NOT_PRESENT);
@@ -270,8 +229,6 @@ public class FilmServiceImpl implements IFilmService {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
 		try {
-//			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-//			IFilmDAO filmDAO = daoFactory.getFilmDAO();
 			String name = filmDAO.getFilmNameByID(id, lang);
 			if (name == null) {
 				throw new GetFilmServiceException(ExceptionMessages.FILM_NOT_PRESENT);
@@ -282,25 +239,20 @@ public class FilmServiceImpl implements IFilmService {
 		}
 	}
 
-	
-
 	@Override
 	public List<Film> searchByName(String text, String lang) throws ServiceException {
 		if (!Validator.validateStrings(text)) {
 			throw new GetFilmServiceException(ExceptionMessages.NO_FILMS_FOUND);
 		}
 		
-		List<Film> foundFilms = new ArrayList<Film>();
+		List<Film> foundFilms = new ArrayList<>();
 		try {
-//			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-//			IFilmDAO filmDAO = daoFactory.getFilmDAO();
 			foundFilms.addAll(filmDAO.getFilmsByName(text, lang));
 			List<Film> allFilms = filmDAO.getAll(lang);
 			
 			String searchText = text.toLowerCase();
 			boolean moreThanOneWord = false;
 			String[] words = null;
-			
 			if (searchText.split(FilmServiceImpl.SPACE).length > 1) {
 				moreThanOneWord = true;
 				words = searchText.split(FilmServiceImpl.SPACE);
@@ -358,15 +310,12 @@ public class FilmServiceImpl implements IFilmService {
 			}
 		}
 		
-		List<Film> foundFilms = new ArrayList<Film>();
+		List<Film> foundFilms = new ArrayList<>();
 		try {
-//			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-//			IFilmDAO filmDAO = daoFactory.getFilmDAO();
-			
 			foundFilms.addAll(filmDAO.getFilmsBetweenYears(fYearFrom, fYearTo, lang));
 			
 			if (Validator.validateObject(genres) && Validator.validateStringArray(genres)) {
-				List<Film> filmsByGenre = new ArrayList<Film>();
+				List<Film> filmsByGenre;
 				for (String genre : genres) {
 					filmsByGenre = filmDAO.getFilmsByGenre(genre, lang);
 					foundFilms.retainAll(filmsByGenre);
@@ -374,7 +323,7 @@ public class FilmServiceImpl implements IFilmService {
 			}
 			
 			if (Validator.validateObject(countries) && Validator.validateStringArray(countries)) {
-				List<Film> filmsByCountry = new ArrayList<Film>();
+				List<Film> filmsByCountry;
 				for (String country : countries) {
 					filmsByCountry = filmDAO.getFilmsByCountry(country, lang);
 					foundFilms.retainAll(filmsByCountry);
@@ -402,13 +351,20 @@ public class FilmServiceImpl implements IFilmService {
 	@Override
 	public String[] getAvailableGenres(String lang) throws ServiceException {
 		try {
-//			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-//			IFilmDAO filmDAO = daoFactory.getFilmDAO();
-			String[] genres = filmDAO.getAvailableGenres(lang);
+			String[] genres;
+			if (lang.equals(ENG_LANG)) {
+			    genres = filmDAO.getAvailableGenresDefault();
+            } else {
+			    genres = filmDAO.getAvailableGenresLocalized();
+            }
 			if (genres == null) {
 				throw new ServiceException(ExceptionMessages.GENRES_NOT_AVAILABLE);
 			}
-			return genres;
+			String genresE = genres[0];
+			int f = genresE.indexOf("('");
+			int l = genresE.lastIndexOf("')");
+			String ss = genresE.substring(f + 2, l);
+			return ss.split("','");
 		} catch (DAOException e) {
 			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
 		}
@@ -417,13 +373,20 @@ public class FilmServiceImpl implements IFilmService {
 	@Override
 	public String[] getAvailableCountries(String lang) throws ServiceException {
 		try {
-//			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-//			IFilmDAO filmDAO = daoFactory.getFilmDAO();
-			String[] countries = filmDAO.getAvailableCountries(lang);
+			String[] countries;
+			if (lang.equals(ENG_LANG)) {
+			    countries = filmDAO.getAvailableCountriesDefault();
+            } else {
+			    countries = filmDAO.getAvailableCountriesLocalized();
+            }
 			if (countries == null) {
 				throw new ServiceException(ExceptionMessages.COUNTRIES_NOT_AVAILABLE);
 			}
-			return countries;
+            String countriesE = countries[0];
+            int f = countriesE.indexOf("('");
+            int l = countriesE.lastIndexOf("')");
+            String ss = countriesE.substring(f + 2, l);
+            return ss.split("','");
 		} catch (DAOException e) {
 			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
 		}
@@ -436,10 +399,8 @@ public class FilmServiceImpl implements IFilmService {
 		}
 		int start = (pageNum - 1) * FILMS_AMOUNT_ON_PAGE;
 		
-		List<Film> filmSet = new ArrayList<Film>();
+		List<Film> filmSet;
 		try {
-//			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-//			IFilmDAO filmDAO = daoFactory.getFilmDAO();
 			filmSet = filmDAO.getAllPart(start, FILMS_AMOUNT_ON_PAGE, lang);
 			
 			if (filmSet.isEmpty()) {
@@ -454,20 +415,40 @@ public class FilmServiceImpl implements IFilmService {
 
 	@Override
 	public int getNumberOfAllFilmsPages() throws ServiceException {
-		try {
-//			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-//			IFilmDAO filmDAO = daoFactory.getFilmDAO();
-			int numOfFilms = filmDAO.getNumberOfFilms();
-			if (numOfFilms % FILMS_AMOUNT_ON_PAGE == 0) {
-				return numOfFilms / FILMS_AMOUNT_ON_PAGE;
-			}
-			else {
-				return numOfFilms / FILMS_AMOUNT_ON_PAGE + 1;
-			}
-			
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
+		int numOfFilms = (int)filmDAO.count(); //todo: return long everywhere
+		if (numOfFilms % FILMS_AMOUNT_ON_PAGE == 0) {
+			return numOfFilms / FILMS_AMOUNT_ON_PAGE;
+		}
+		else {
+			return numOfFilms / FILMS_AMOUNT_ON_PAGE + 1;
 		}
 	}
+
+    private Film validateAndSetCountries(Film film, String[] countries) {
+        String countriesString = validateAndBuildStringFromArray(countries);
+	    if (countriesString != null) {
+            film.setCountry(countriesString);
+        }
+        return film;
+    }
+
+    private Film validateAndSetGenres(Film film, String[] genres) {
+        String genresString = validateAndBuildStringFromArray(genres);
+        if (genresString != null) {
+            film.setGenre(genresString);
+        }
+        return film;
+    }
+
+    private String validateAndBuildStringFromArray(String[] array) {
+        if (Validator.validateObject(array) && Validator.validateStringArray(array)) {
+            StringBuilder sb = new StringBuilder();
+            for (String g : array) {
+                sb.append(g).append(",");
+            }
+            return sb.deleteCharAt(sb.length() - 1).toString();
+        }
+        return null;
+    }
+
 }

@@ -5,7 +5,6 @@ import org.junit.Test;
 import by.epam.naumovich.film_ordering.service.IUserService;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.BanUserServiceException;
-import by.epam.naumovich.film_ordering.service.exception.user.DiscountServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.GetUserServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.ServiceAuthException;
 import by.epam.naumovich.film_ordering.service.exception.user.ServiceSignUpException;
@@ -152,68 +151,6 @@ public class UserServiceImplTest {
 	@Test(expected=GetUserServiceException.class)
 	public void getLoginByID() throws ServiceException {
 		service.getLoginByID(-2);
-	}
-
-
-	/**
-	 * Tries to get current user discount by the zero ID value and expects for the exception.
-	 *
-	 * @throws ServiceException
-	 */
-	@Test(expected=ServiceException.class)
-	public void getCurrentUserDiscountByID() throws ServiceException {
-		service.getCurrentUserDiscountByID(0);
-	}
-
-	/**
-	 * Tries to add user discount with the invalid amount value and expects for the exception.
-	 *
-	 * @throws ServiceException
-	 */
-	@Test(expected=DiscountServiceException.class)
-	public void addDiscountWithInvalidAmount() throws ServiceException {
-		service.addDiscount(1, "105", "2100-01-01", "15:00:00");
-	}
-
-
-	/**
-	 * Tries to add user discount with the invalid end date value and expects for the exception.
-	 *
-	 * @throws ServiceException
-	 */
-	@Test(expected=DiscountServiceException.class)
-	public void addDiscountWithInvalidEndDate() throws ServiceException {
-		service.addDiscount(1, "10", "2000-01-01", "15:00:00");
-	}
-
-	/**
-	 * Tries to add user discount with the invalid end time value and expects for the exception.
-	 *
-	 * @throws ServiceException
-	 */
-	@Test(expected=DiscountServiceException.class)
-	public void addDiscountWithInvalidEndTime() throws ServiceException {
-		service.addDiscount(1, "10", "2100-01-01", null);
-	}
-
-	/**
-	 * Tries to edit user discount by the invalid discount ID value and expects for the exception.
-	 *
-	 * @throws ServiceException
-	 */
-	@Test(expected=DiscountServiceException.class)
-	public void editDiscount() throws ServiceException {
-		service.editDiscount(0, "10", "2100-01-01", "15:00:00");
-	}
-
-	/**
-	 * Tries to delete the discount by the invalid ID value and expects for the exception.
-	 *
-	 * @throws ServiceException
-	 */
-	@Test(expected=DiscountServiceException.class)
-	public void deleteDiscount() throws ServiceException {
-		service.deleteDiscount(0);
 	}
 
 	/**

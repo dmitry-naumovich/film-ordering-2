@@ -1,5 +1,6 @@
 package by.epam.naumovich.film_ordering.command.impl.user;
 
+import by.epam.naumovich.film_ordering.service.IDiscountService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +35,11 @@ import lombok.extern.slf4j.Slf4j;
 public class OpenAllUsers implements Command {
 
 	private final IUserService userService;
+	private final IDiscountService discountService;
 
-	public OpenAllUsers(IUserService userService) {
+	public OpenAllUsers(IUserService userService, IDiscountService discountService) {
 		this.userService = userService;
+		this.discountService = discountService;
 	}
 
 	@Override
@@ -66,7 +69,7 @@ public class OpenAllUsers implements Command {
 					banList.add(userService.userIsInBan(u.getId()));
 					Discount discount;
 					try {
-						discount = userService.getCurrentUserDiscountByID(u.getId());
+						discount = discountService.getCurrentUserDiscountByID(u.getId());
 						discountList.add(discount);
 					} catch (GetDiscountServiceException e) {
 						discountList.add(null);

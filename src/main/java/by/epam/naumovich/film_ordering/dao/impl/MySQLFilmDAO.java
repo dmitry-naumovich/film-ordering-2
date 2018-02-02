@@ -177,7 +177,7 @@ public class MySQLFilmDAO /*implements IFilmDAO*/ {
 //	}
 //
 //	@Override
-//	public void update(int id, Film editedFilm) throws DAOException {
+//	public void save(int id, Film editedFilm) throws DAOException {
 //		ConnectionPool pool = null;
 //		Connection con = null;
 //		PreparedStatement st = null;
@@ -891,7 +891,7 @@ public class MySQLFilmDAO /*implements IFilmDAO*/ {
 //	}
 //
 //	@Override
-//	public int getNumberOfFilms() throws DAOException {
+//	public int count() throws DAOException {
 //		ConnectionPool pool = null;
 //		Connection con = null;
 //		PreparedStatement st = null;

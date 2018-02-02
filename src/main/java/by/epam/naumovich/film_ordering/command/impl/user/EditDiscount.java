@@ -13,7 +13,7 @@ import by.epam.naumovich.film_ordering.command.util.JavaServerPageNames;
 import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
-import by.epam.naumovich.film_ordering.service.IUserService;
+import by.epam.naumovich.film_ordering.service.IDiscountService;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.DiscountServiceException;
 import lombok.extern.slf4j.Slf4j;
@@ -28,10 +28,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EditDiscount implements Command {
 
-	private final IUserService userService;
+	private final IDiscountService discountService;
 
-	public EditDiscount(IUserService userService) {
-		this.userService = userService;
+	public EditDiscount(IDiscountService discountService) {
+		this.discountService = discountService;
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class EditDiscount implements Command {
 			String endTime = request.getParameter(RequestAndSessionAttributes.END_TIME);
 			
 			try {
-				userService.editDiscount(discountID, amount, endDate, endTime);
+				discountService.editDiscount(discountID, amount, endDate, endTime);
 				log.debug(String.format(LogMessages.DISCOUNT_DELETED, discountID, userID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.DISCOUNT_EDITED);
 				Thread.sleep(1000);

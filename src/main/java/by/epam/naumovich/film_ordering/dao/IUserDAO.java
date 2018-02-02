@@ -4,9 +4,13 @@ import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
 
-import by.epam.naumovich.film_ordering.bean.Discount;
 import by.epam.naumovich.film_ordering.bean.User;
 import by.epam.naumovich.film_ordering.dao.exception.DAOException;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Defines methods for implementing in the DAO layer for the User, Ban and Discount entities.
@@ -14,41 +18,18 @@ import by.epam.naumovich.film_ordering.dao.exception.DAOException;
  * @author Dmitry Naumovich
  * @version 1.0
  */
-public interface IUserDAO {
+@Transactional
+public interface IUserDAO extends CrudRepository<User, Integer> {
 
 	/**
-	 * Adds new user to the data source
-	 * 
-	 * @param user new user entity
-	 * @return id of the newly added user or 0 if it was not added
-	 * @throws DAOException
-	 */
-	int addUser(User user) throws DAOException;
-	
-	/**
-	 * Updates user in the data source
-	 * 
-	 * @param id user ID
-	 * @param user user entity with edited fields
-	 * @throws DAOException
-	 */
-	void updateUser(int id, User user) throws DAOException;
-	
-	/**
-	 * Deletes user from the data source by ID
-	 * 
-	 * @param id user ID
-	 * @throws DAOException
-	 */
-	void deleteUser(int id) throws DAOException;
-	
-	/**
 	 * Returns all users that are present in the data source
-	 * 
+	 *
 	 * @return a set of all users
 	 * @throws DAOException
 	 */
-	List<User> getAllUsers() throws DAOException;
+	@Override
+	@Query(value = "SELECT * FROM users ORDER BY u_regdate DESC, u_regtime DESC", nativeQuery = true)
+	List<User> findAll();
 	
 	/**
 	 * Returns a necessary part of all users from the data source
@@ -58,7 +39,8 @@ public interface IUserDAO {
 	 * @return a part of the set of all users
 	 * @throws DAOException
 	 */
-	List<User> getAllUsersPart(int start, int amount) throws DAOException;
+	@Query(value = "SELECT * FROM users ORDER BY u_regdate DESC, u_regtime DESC LIMIT :start, :amount", nativeQuery = true)
+	List<User> findAllPart(@Param("start") int start, @Param("amount") int amount) throws DAOException;
 	
 	/**
 	 * Searches for users that are banned at the moment
@@ -66,17 +48,13 @@ public interface IUserDAO {
 	 * @return a set of found users
 	 * @throws DAOException
 	 */
-	List<User> getUsersInBan() throws DAOException;
-	
-	/**
-	 * Searches for the user in the data source by its ID
-	 * 
-	 * @param id user ID
-	 * @return found user or null if it was not found
-	 * @throws DAOException
-	 */
-	User getUserByID(int id) throws DAOException;
-	
+	@Query(value = "SELECT users.* FROM users JOIN bans ON users.u_id = bans.b_user " +
+            "WHERE b_active = 1 AND ((CURDATE() = b_stdate AND CURTIME() > b_sttime) " +
+            "OR (CURDATE() = DATE_ADD(b_stdate, INTERVAL b_length DAY) AND CURTIME() < b_sttime) " +
+            "OR (CURDATE() > b_stdate AND CURDATE() < DATE_ADD(b_stdate, INTERVAL b_length DAY))) " +
+            "ORDER BY bans.b_stdate DESC, bans.b_sttime DESC", nativeQuery = true)
+	List<User> findBanned() throws DAOException;
+
 	/**
 	 * Searches for the user in the data source by its login
 	 * 
@@ -84,7 +62,7 @@ public interface IUserDAO {
 	 * @return found user or null if it was not found
 	 * @throws DAOException
 	 */
-	User getUserByLogin(String login) throws DAOException;
+	User findByLogin(String login) throws DAOException;
 	
 	/**
 	 * Returns the password of the user by its login
@@ -92,49 +70,9 @@ public interface IUserDAO {
 	 * @param login user login
 	 * @return string password or null if it was not found
 	 * @throws DAOException
-	 */
-	String getPasswordByLogin(String login) throws DAOException;
-	
-	/**
-	 * Searches for user current discount by its ID
-	 * 
-	 * @param id user ID
-	 * @return found discount or null if it was not found
-	 * @throws DAOException
-	 */
-	Discount getCurrentUserDiscountByID(int id) throws DAOException;
-	
-	/**
-	 * Searches for the discount in the data source by its ID
-	 * 
-	 * @param discountID discount ID
-	 * @return found discount entity
-	 * @throws DAOException
-	 */
-	Discount getDiscountByID(int discountID) throws DAOException;
-	/**
-	 * Adds new user discount to the data source
-	 * 
-	 * @param discount new discount entity
-	 * @throws DAOException
-	 */
-	int addDiscount(Discount discount) throws DAOException;
-	
-	/**
-	 * Edits the discount in the data source
-	 * 
-	 * @param editedDisc discount entity with edited fields
-	 * @throws DAOException
-	 */
-	void editDiscount(Discount editedDisc) throws DAOException;
-	
-	/**
-	 * Deletes discount from the data source (finishes it)
-	 * 
-	 * @param discountID discount ID
-	 * @throws DAOException
-	 */
-	void deleteDiscount(int discountID) throws DAOException;
+	 */ //todo: check if it works without @Query
+	@Query(value = "SELECT u_passw FROM users WHERE u_login = :login", nativeQuery = true)
+	String getPasswordByLogin(@Param("login") String login) throws DAOException;
 	
 	/**
 	 * Check if the user is banned at the moment
@@ -143,7 +81,11 @@ public interface IUserDAO {
 	 * @return true if user is banned at the moment, false - otherwise
 	 * @throws DAOException
 	 */
-	boolean userIsInBan(int id) throws DAOException;
+	@Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN 'true' ELSE 'false' END FROM bans WHERE bans.b_user = :id AND b_active = 1 " +
+            "AND ((CURDATE() = b_stdate AND CURTIME() > b_sttime) OR (CURDATE() = DATE_ADD(b_stdate, INTERVAL b_length DAY) " +
+            "AND CURTIME() < b_sttime) OR (CURDATE() > b_stdate AND CURDATE() < DATE_ADD(b_stdate, INTERVAL b_length DAY)))",
+            nativeQuery = true)
+	boolean userIsInBan(@Param("id") int id) throws DAOException;
 	
 	/**
 	 * Bans user (adds ban entity to the data source)
@@ -155,7 +97,11 @@ public interface IUserDAO {
 	 * @param reason ban reason
 	 * @throws DAOException
 	 */
-	void banUser(int userID, Date startDate, Time startTime, int length, String reason) throws DAOException;
+	@Modifying
+	@Query(value = "INSERT INTO bans (b_user, b_stdate, b_sttime, b_length, b_reason) " +
+            "VALUES (:userID, :startDate, :startTime, :length, :reason)", nativeQuery = true)
+	void banUser(@Param("userID") int userID, @Param("startDate") Date startDate, @Param("startTime") Time startTime,
+                 @Param("length") int length, @Param("reason") String reason) throws DAOException;
 	
 	/**
 	 * Unbans user immediately
@@ -163,7 +109,9 @@ public interface IUserDAO {
 	 * @param userID ID of the user that will be unbanned
 	 * @throws DAOException
 	 */
-	void unbanUser(int userID) throws DAOException;
+    @Modifying
+	@Query(value = "UPDATE bans SET b_active = 0 WHERE b_user = :userID", nativeQuery = true)
+	void unbanUser(@Param("userID") int userID) throws DAOException;
 	
 	/**
 	 * Returns user ban end date and time
@@ -172,7 +120,11 @@ public interface IUserDAO {
 	 * @return ban and date and time concatenated in one String object
 	 * @throws DAOException
 	 */
-	String getCurrentBanEnd(int userID) throws DAOException;
+    @Query(value = "SELECT DATE_ADD(b_stdate, INTERVAL b_length DAY), b_sttime FROM bans " +
+            "WHERE b_user = :userID  AND b_active = 1 AND ((CURDATE() = b_stdate AND CURTIME() > b_sttime) " +
+            "OR (CURDATE() = DATE_ADD(b_stdate, INTERVAL b_length DAY) AND CURTIME() < b_sttime) " +
+            "OR (CURDATE() > b_stdate AND CURDATE() < DATE_ADD(b_stdate, INTERVAL b_length DAY)))", nativeQuery = true)
+	String getCurrentBanEnd(@Param("userID") int userID) throws DAOException;
 	
 	/**
 	 * Returns ban reason for the user
@@ -181,14 +133,10 @@ public interface IUserDAO {
 	 * @return ban reason or null if it was not found
 	 * @throws DAOException
 	 */
-	String getCurrentBanReason(int userID) throws DAOException;
-	
-	/**
-	 * Counts the number of all users in the data source
-	 * 
-	 * @return total user amount
-	 * @throws DAOException
-	 */
-	int getNumberOfUsers() throws DAOException;
-	
+    @Query(value = "SELECT b_reason FROM bans WHERE b_user = :userID AND ((CURDATE() = b_stdate AND CURTIME() > b_sttime) " +
+            "OR (CURDATE() = DATE_ADD(b_stdate, INTERVAL b_length DAY) AND CURTIME() < b_sttime) " +
+            "OR (CURDATE() > b_stdate AND CURDATE() < DATE_ADD(b_stdate, INTERVAL b_length DAY))) " +
+            "AND b_active = 1", nativeQuery = true)
+	String getCurrentBanReason(@Param("userID") int userID) throws DAOException;
+
 }

@@ -1,5 +1,6 @@
 package by.epam.naumovich.film_ordering.controller;
 
+import by.epam.naumovich.film_ordering.service.IDiscountService;
 import by.epam.naumovich.film_ordering.service.IFilmService;
 import by.epam.naumovich.film_ordering.service.INewsService;
 import by.epam.naumovich.film_ordering.service.IOrderService;
@@ -35,17 +36,19 @@ public class CommandHelper {
 	private IOrderService orderService;
 	private IReviewService reviewService;
 	private IUserService userService;
+	private IDiscountService discountService;
 
     private Map<CommandName, Command> commands = new HashMap<>();
 
 	@Autowired
     public CommandHelper(IFilmService filmService, INewsService newsService, IOrderService orderService,
-                         IReviewService reviewService, IUserService userService) {
+                         IReviewService reviewService, IUserService userService, IDiscountService discountService) {
         this.filmService = filmService;
         this.newsService = newsService;
         this.orderService = orderService;
         this.reviewService = reviewService;
         this.userService = userService;
+        this.discountService = discountService;
         putCommands();
     }
 
@@ -63,19 +66,19 @@ public class CommandHelper {
 	 * Puts all existing commands to the map where the key is the CommandName enumeration object
 	 */
 	private void putCommands() {
-		commands.put(CommandName.ADD_DISCOUNT, new AddDiscount(userService));
-		commands.put(CommandName.ADD_FILM, new AddFilm(filmService));
-		commands.put(CommandName.ADD_NEWS, new AddNews(newsService));
+        commands.put(CommandName.ADD_DISCOUNT, new AddDiscount(discountService));
+        commands.put(CommandName.ADD_FILM, new AddFilm(filmService));
+        commands.put(CommandName.ADD_NEWS, new AddNews(newsService));
 		commands.put(CommandName.ADD_ORDER, new AddOrder(orderService));
 		commands.put(CommandName.ADD_REVIEW, new AddReview(reviewService));
 		commands.put(CommandName.BAN_USER, new BanUser(userService));
 		commands.put(CommandName.CHANGE_LANGUAGE, new ChangeLanguage());
 		commands.put(CommandName.CHANGE_USER_SETTINGS, new ChangeUserSettings(userService));
-		commands.put(CommandName.DELETE_DISCOUNT, new DeleteDiscount(userService));
+		commands.put(CommandName.DELETE_DISCOUNT, new DeleteDiscount(discountService));
 		commands.put(CommandName.DELETE_FILM, new DeleteFilm(filmService));
 		commands.put(CommandName.DELETE_NEWS, new DeleteNews(newsService));
 		commands.put(CommandName.DELETE_REVIEW, new DeleteReview(reviewService));
-		commands.put(CommandName.EDIT_DISCOUNT, new EditDiscount(userService));
+		commands.put(CommandName.EDIT_DISCOUNT, new EditDiscount(discountService));
 		commands.put(CommandName.EDIT_FILM, new EditFilm(filmService));
 		commands.put(CommandName.EDIT_NEWS, new EditNews(newsService));
 		commands.put(CommandName.GET_NOVELTY, new GetNovelty(filmService, orderService));
@@ -87,7 +90,7 @@ public class CommandHelper {
 		commands.put(CommandName.OPEN_ALL_NEWS, new OpenAllNews(newsService));
 		commands.put(CommandName.OPEN_ALL_ORDERS, new OpenAllOrders(filmService, orderService, userService));
 		commands.put(CommandName.OPEN_ALL_REVIEWS, new OpenAllReviews(filmService, reviewService, userService));
-		commands.put(CommandName.OPEN_ALL_USERS, new OpenAllUsers(userService));
+		commands.put(CommandName.OPEN_ALL_USERS, new OpenAllUsers(userService, discountService));
 		commands.put(CommandName.OPEN_FEEDBACK_PAGE, new OpenFeedbackPage());
 		commands.put(CommandName.OPEN_FILM_EDIT_PAGE, new OpenFilmEditPage(filmService));
 		commands.put(CommandName.OPEN_FILM_ORDERS, new OpenFilmOrders(filmService, orderService, userService));
@@ -95,7 +98,7 @@ public class CommandHelper {
 		commands.put(CommandName.OPEN_LOGINATION_PAGE, new OpenLoginationPage());
 		commands.put(CommandName.OPEN_NEW_FILM_PAGE, new OpenNewFilmPage(filmService));
 		commands.put(CommandName.OPEN_NEW_NEWS_PAGE, new OpenNewNewsPage());
-		commands.put(CommandName.OPEN_NEW_ORDER_PAGE, new OpenNewOrderPage(filmService, orderService, userService));
+		commands.put(CommandName.OPEN_NEW_ORDER_PAGE, new OpenNewOrderPage(filmService, orderService, userService, discountService));
 		commands.put(CommandName.OPEN_NEW_REVIEW_PAGE, new OpenNewReviewPage(filmService, reviewService));
 		commands.put(CommandName.OPEN_NEWS_EDIT_PAGE, new OpenNewsEditPage(newsService));
 		commands.put(CommandName.OPEN_SIGN_UP_PAGE, new OpenSignUpPage());
@@ -103,7 +106,7 @@ public class CommandHelper {
 		commands.put(CommandName.OPEN_SINGLE_NEWS, new OpenSingleNews(newsService));
 		commands.put(CommandName.OPEN_SINGLE_ORDER, new OpenSingleOrder(filmService, orderService, userService));
 		commands.put(CommandName.OPEN_SINGLE_REVIEW, new OpenSingleReview(filmService, reviewService, userService));
-		commands.put(CommandName.OPEN_USER_PROFILE, new OpenUserProfile(userService));
+		commands.put(CommandName.OPEN_USER_PROFILE, new OpenUserProfile(userService, discountService));
 		commands.put(CommandName.OPEN_USER_SETTINGS, new OpenUserSettings(userService));
 		commands.put(CommandName.OPEN_USER_ORDERS, new OpenUserOrders(filmService, orderService, userService));
 		commands.put(CommandName.OPEN_USER_REVIEWS, new OpenUserReviews(filmService, reviewService));

@@ -7,22 +7,19 @@ import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.List;
 
-import by.epam.naumovich.film_ordering.bean.Discount;
 import by.epam.naumovich.film_ordering.bean.User;
-import by.epam.naumovich.film_ordering.dao.DAOFactory;
 import by.epam.naumovich.film_ordering.dao.IUserDAO;
 import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 import by.epam.naumovich.film_ordering.service.IUserService;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.BanUserServiceException;
-import by.epam.naumovich.film_ordering.service.exception.user.DiscountServiceException;
-import by.epam.naumovich.film_ordering.service.exception.user.GetDiscountServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.GetUserServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.ServiceAuthException;
 import by.epam.naumovich.film_ordering.service.exception.user.ServiceSignUpException;
 import by.epam.naumovich.film_ordering.service.exception.user.UserUpdateServiceException;
 import by.epam.naumovich.film_ordering.service.util.ExceptionMessages;
 import by.epam.naumovich.film_ordering.service.util.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -34,7 +31,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements IUserService {
 
-	private static final String MYSQL = "mysql";
 	private static final int MIN_YEAR = 1920;
 	private static final int PHONE_NUM_LENGTH = 9;
 	private static final char USER_TYPE_CLIENT = 'c';
@@ -44,13 +40,19 @@ public class UserServiceImpl implements IUserService {
 	private static final String LOGIN_PATTERN = "(^[a-zA-Z]{3,})[a-zA-Z0-9]*";
 	private static final String PASSWORD_PATTERN = "^[a-zA-Z�-��-�0-9_-]{4,30}$";
 	
-	@Override
+	private final IUserDAO userDAO;
+
+	@Autowired
+    public UserServiceImpl(IUserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
+
+    @Override
 	public int addUser(String login, String name, String surname, String password, String sex, String bDate,
 			String phone, String email, String about) throws ServiceException {
 
 		try {
-			IUserDAO userDAO = DAOFactory.getDAOFactory(MYSQL).getUserDAO();
-			User existingUser = userDAO.getUserByLogin(login);
+			User existingUser = userDAO.findByLogin(login);
 			if (existingUser != null) {
 				throw new ServiceSignUpException(ExceptionMessages.ALREADY_TAKEN_LOGIN);
 			}
@@ -82,22 +84,8 @@ public class UserServiceImpl implements IUserService {
 		
 		newUser.setRegDate(Date.valueOf(LocalDate.now()));
 		newUser.setRegTime(Time.valueOf(LocalTime.now()));
-		
-		if (Validator.validateStrings(bDate)) { 
-			try {
-				Date currentDate = Date.valueOf(LocalDate.now());
-				Date birthDate = Date.valueOf(bDate);
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(birthDate);
-				
-				if (birthDate.after(currentDate) || calendar.get(Calendar.YEAR) <= MIN_YEAR) {
-					throw new UserUpdateServiceException(String.format(ExceptionMessages.INVALID_BIRTHDATE, MIN_YEAR));
-				}
-				newUser.setBirthDate(Date.valueOf(bDate));
-			} catch (IllegalArgumentException e) {
-				throw new UserUpdateServiceException(ExceptionMessages.BIRTHDATE_RIGHT_FORMAT);
-			}
-		}
+		newUser = validateAndSetBirthdate(newUser, bDate);
+
 		if (Validator.validateStrings(phone)) { 
 			if (phone.length() != PHONE_NUM_LENGTH) {
 				throw new UserUpdateServiceException(String.format(ExceptionMessages.INVALID_PHONE_NUM, PHONE_NUM_LENGTH));
@@ -108,20 +96,12 @@ public class UserServiceImpl implements IUserService {
 		
 		if (Validator.validateStrings(about)) { newUser.setAbout(about); }
 		
-		int newUserID = 0;
-		try {
-			IUserDAO userDAO = DAOFactory.getDAOFactory(MYSQL).getUserDAO();
-			newUserID = userDAO.addUser(newUser);
-			if (newUserID == 0) {
-				throw new ServiceSignUpException(ExceptionMessages.UNSUCCESSFULL_SIGN_UP);
-			}
-			newUser.setId(newUserID);
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
+		User createdUser = userDAO.save(newUser);
+		if (createdUser == null) {
+			throw new ServiceSignUpException(ExceptionMessages.UNSUCCESSFULL_SIGN_UP);
 		}
 		
-		return newUserID;
+		return createdUser.getId();
 	}
 
 	@Override
@@ -142,29 +122,25 @@ public class UserServiceImpl implements IUserService {
 		if (!Validator.validateStrings(name, surname, sex)) {
 			throw new UserUpdateServiceException(ExceptionMessages.CORRUPTED_NAME_SURN_SEX);
 		}
+
+		User existingUser = userDAO.findOne(id);
+		if (existingUser == null) {
+		    throw new UserUpdateServiceException(ExceptionMessages.USER_NOT_FOUND);
+        }
 		
 		User updUser = new User();
+		updUser.setId(id);
+		updUser.setLogin(existingUser.getLogin());
+		updUser.setType(existingUser.getType());
+		updUser.setRegDate(existingUser.getRegDate());
+		updUser.setRegTime(existingUser.getRegTime());
 		updUser.setName(name);
 		updUser.setSurname(surname);
 		updUser.setPassword(password);
 		updUser.setSex(sex.charAt(0));
 		updUser.setEmail(email);
+        updUser = validateAndSetBirthdate(updUser, bDate);
 
-		if (Validator.validateStrings(bDate)) { 
-			try {
-				Date currentDate = Date.valueOf(LocalDate.now());
-				Date birthDate = Date.valueOf(bDate);
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(birthDate);
-				
-				if (birthDate.after(currentDate) || calendar.get(Calendar.YEAR) <= MIN_YEAR) {
-					throw new UserUpdateServiceException(String.format(ExceptionMessages.INVALID_BIRTHDATE, MIN_YEAR));
-				}
-				updUser.setBirthDate(Date.valueOf(bDate));
-			} catch (IllegalArgumentException e) {
-				throw new UserUpdateServiceException(ExceptionMessages.BIRTHDATE_RIGHT_FORMAT);
-			}
-		}
 		if (Validator.validateStrings(phone)) { 
 			if (phone.length() != PHONE_NUM_LENGTH) {
 				throw new UserUpdateServiceException(String.format(ExceptionMessages.INVALID_PHONE_NUM, PHONE_NUM_LENGTH));
@@ -172,15 +148,8 @@ public class UserServiceImpl implements IUserService {
 			updUser.setPhone(phone); 
 		}
 		if (Validator.validateStrings(about)) { updUser.setAbout(about); }
-		
-		try {
-			IUserDAO userDAO = DAOFactory.getDAOFactory(MYSQL).getUserDAO();
-			userDAO.updateUser(id, updUser);
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
-		
+        
+		userDAO.save(updUser);
 	}
 	
 	@Override
@@ -188,16 +157,7 @@ public class UserServiceImpl implements IUserService {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
-		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IUserDAO dao = daoFactory.getUserDAO();
-			dao.deleteUser(id);
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
-		
-		
-		
+		userDAO.delete(id);
 	}
 	
 	@Override
@@ -207,9 +167,7 @@ public class UserServiceImpl implements IUserService {
 		}
 		
 		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IUserDAO dao = daoFactory.getUserDAO();
-			User user = dao.getUserByLogin(login);
+			User user = userDAO.findByLogin(login);
 			if (user == null) {
 				throw new ServiceAuthException(ExceptionMessages.LOGIN_NOT_REGISTRATED);
 			}
@@ -219,25 +177,17 @@ public class UserServiceImpl implements IUserService {
 			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
 		}
 	}
-	
 
 	@Override
 	public User getUserByID(int id) throws ServiceException {
 		if(!Validator.validateInt(id)){
 			throw new GetUserServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
-		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IUserDAO dao = daoFactory.getUserDAO();
-			User user = dao.getUserByID(id);
-			if (user == null) {
-				throw new GetUserServiceException(ExceptionMessages.USER_NOT_FOUND);
-			}
-			return user;
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+        User user = userDAO.findOne(id);
+        if (user == null) {
+            throw new GetUserServiceException(ExceptionMessages.USER_NOT_FOUND);
+        }
+        return user;
 	}
 
 	@Override
@@ -247,22 +197,20 @@ public class UserServiceImpl implements IUserService {
 		}
 		
 		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IUserDAO dao = daoFactory.getUserDAO();
-			User user = dao.getUserByLogin(login);
+			User user = userDAO.findByLogin(login);
 			if (user == null) {
 				throw new ServiceAuthException(ExceptionMessages.LOGIN_NOT_REGISTRATED);
 			}
 			
-			String realPassw = dao.getPasswordByLogin(login);
+			String realPassw = userDAO.getPasswordByLogin(login);
 			
 			if (!realPassw.equals(password)) {
 				throw new ServiceAuthException(ExceptionMessages.WRONG_PASSWORD);
 			}
 			
-			if (dao.userIsInBan(user.getId())) {
-				String untilDateAndTime = dao.getCurrentBanEnd(user.getId());
-				String banReason = dao.getCurrentBanReason(user.getId());
+			if (userDAO.userIsInBan(user.getId())) {
+				String untilDateAndTime = userDAO.getCurrentBanEnd(user.getId());
+				String banReason = userDAO.getCurrentBanReason(user.getId());
 				throw new ServiceAuthException(String.format(ExceptionMessages.YOU_ARE_BANNED, untilDateAndTime, banReason));
 			}
 			
@@ -278,61 +226,26 @@ public class UserServiceImpl implements IUserService {
 		if(!Validator.validateInt(id)){
 			throw new GetUserServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
-		
-		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IUserDAO dao = daoFactory.getUserDAO();
-			
-			User user = dao.getUserByID(id);
-			if (user == null) {
-				throw new GetUserServiceException(ExceptionMessages.USER_NOT_FOUND);
-			}
-			return user.getLogin();
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);	
-		}
-	}
-
-	@Override
-	public Discount getCurrentUserDiscountByID(int id) throws ServiceException {
-		if (!Validator.validateObject(id)){
-			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
-		}
-		
-		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IUserDAO dao = daoFactory.getUserDAO();
-			Discount discount = dao.getCurrentUserDiscountByID(id);
-			if (discount == null) {
-				throw new GetDiscountServiceException(ExceptionMessages.DISCOUNT_NOT_FOUND);
-			}
-			return discount;
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);	
-		}	
+        User user = userDAO.findOne(id);
+        if (user == null) {
+            throw new GetUserServiceException(ExceptionMessages.USER_NOT_FOUND);
+        }
+        return user.getLogin();
 	}
 
 	@Override
 	public List<User> getAllUsers() throws ServiceException {
-		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IUserDAO dao = daoFactory.getUserDAO();
-			List<User> users = dao.getAllUsers();
-			if (users == null) {
-				throw new GetUserServiceException(ExceptionMessages.NO_USERS_IN_DB);
-			}
-			return users;
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);	
-		}	
+        List<User> users = userDAO.findAll();
+        if (users == null) {
+            throw new GetUserServiceException(ExceptionMessages.NO_USERS_IN_DB);
+        }
+        return users;
 	}
 
 	@Override
 	public List<User> getUsersInBanNow() throws ServiceException {
 		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IUserDAO dao = daoFactory.getUserDAO();
-			List<User> users = dao.getUsersInBan();
+			List<User> users = userDAO.findBanned();
 			if (users == null) {
 				throw new GetUserServiceException(ExceptionMessages.NO_USERS_IN_BAN_NOW);
 			}
@@ -350,7 +263,7 @@ public class UserServiceImpl implements IUserService {
 		if (!Validator.validateStrings(length, reason)) {
 			throw new BanUserServiceException(ExceptionMessages.CORRUPTED_LENGTH_OR_REASON);
 		}
-		int bLength = 0;
+		int bLength;
 		try {
 			bLength = Integer.parseInt(length);
 		} catch (NumberFormatException e) {
@@ -364,8 +277,6 @@ public class UserServiceImpl implements IUserService {
 		Time startTime = Time.valueOf(LocalTime.now());
 		
 		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IUserDAO userDAO = daoFactory.getUserDAO();
 			userDAO.banUser(userID, startDate, startTime, bLength, reason);
 		} catch (DAOException e) {
 			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
@@ -379,8 +290,6 @@ public class UserServiceImpl implements IUserService {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
 		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IUserDAO userDAO = daoFactory.getUserDAO();
 			userDAO.unbanUser(userID);
 		} catch (DAOException e) {
 			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
@@ -394,119 +303,7 @@ public class UserServiceImpl implements IUserService {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
 		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IUserDAO userDAO = daoFactory.getUserDAO();
 			return userDAO.userIsInBan(id);
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
-	}
-
-	@Override
-	public void addDiscount(int userID, String amount, String endDate, String endTime) throws ServiceException {
-		if (!Validator.validateInt(userID)) {
-			throw new DiscountServiceException(ExceptionMessages.CORRUPTED_USER_ID);
-		}
-		
-		if (!Validator.validateStrings(amount, endDate, endTime)) {
-			throw new DiscountServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
-		}
-		Discount discount = new Discount();
-		discount.setUserID(userID);
-		try {
-			int dAmount = Integer.parseInt(amount);
-			if (dAmount <= 0 || dAmount > 100) {
-				throw new DiscountServiceException(ExceptionMessages.INVALID_DISCOUNT_AMOUNT);
-			}
-			discount.setAmount(dAmount);
-			
-		} catch (NumberFormatException e) {
-			throw new DiscountServiceException(ExceptionMessages.INVALID_DISCOUNT_AMOUNT);
-		}
-		
-		try {
-			Date currentDate = Date.valueOf(LocalDate.now());
-			Date discountEndDate = Date.valueOf(endDate);	
-			Time currentTime = Time.valueOf(LocalTime.now());
-			Time discountEndTime = Time.valueOf(endTime);	
-				
-			if (currentDate.after(discountEndDate) || (currentDate.equals(discountEndDate) && currentTime.after(discountEndTime))) {
-				throw new DiscountServiceException(ExceptionMessages.INVALID_DISCOUNT_END);
-			}
-			discount.setEnDate(Date.valueOf(endDate));
-			discount.setEnTime(Time.valueOf(endTime));
-			discount.setStDate(currentDate);
-			discount.setStTime(currentTime);
-		} catch (IllegalArgumentException e) {
-			throw new DiscountServiceException(ExceptionMessages.DISCOUNT_DATE_TIME_RIGHT_FORMAT);
-		}
-		
-		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IUserDAO dao = daoFactory.getUserDAO();
-			dao.addDiscount(discount);
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
-	}
-
-	@Override
-	public void editDiscount(int discountID, String amount, String endDate, String endTime) throws ServiceException {
-		if (!Validator.validateInt(discountID)) {
-			throw new DiscountServiceException(ExceptionMessages.CORRUPTED_DISCOUNT_ID);
-		}
-		
-		if (!Validator.validateStrings(amount, endDate, endTime)) {
-			throw new DiscountServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
-		}
-		Discount discount = new Discount();
-		discount.setId(discountID);
-		try {
-			int dAmount = Integer.parseInt(amount);
-			if (dAmount <= 0 || dAmount > 100) {
-				throw new DiscountServiceException(ExceptionMessages.INVALID_DISCOUNT_AMOUNT);
-			}
-			discount.setAmount(dAmount);
-			
-		} catch (NumberFormatException e) {
-			throw new DiscountServiceException(ExceptionMessages.INVALID_DISCOUNT_AMOUNT);
-		}
-		
-		try {
-			Date currentDate = Date.valueOf(LocalDate.now());
-			Date discountEndDate = Date.valueOf(endDate);	
-			Time currentTime = Time.valueOf(LocalTime.now());
-			Time discountEndTime = Time.valueOf(endTime);	
-				
-			if (currentDate.after(discountEndDate) || (currentDate.equals(discountEndDate) && currentTime.after(discountEndTime))) {
-				throw new DiscountServiceException(ExceptionMessages.INVALID_DISCOUNT_END);
-			}
-			discount.setEnDate(Date.valueOf(endDate));
-			discount.setEnTime(Time.valueOf(endTime));
-			discount.setStDate(currentDate);
-			discount.setStTime(currentTime);
-		} catch (IllegalArgumentException e) {
-			throw new DiscountServiceException(ExceptionMessages.DISCOUNT_DATE_TIME_RIGHT_FORMAT);
-		}
-		
-		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IUserDAO dao = daoFactory.getUserDAO();
-			dao.editDiscount(discount);
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
-	}
-
-	@Override
-	public void deleteDiscount(int discountID) throws ServiceException {
-		if (!Validator.validateInt(discountID)) {
-			throw new DiscountServiceException(ExceptionMessages.CORRUPTED_DISCOUNT_ID);
-		}
-		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IUserDAO dao = daoFactory.getUserDAO();
-			dao.deleteDiscount(discountID);
 		} catch (DAOException e) {
 			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
 		}
@@ -520,9 +317,7 @@ public class UserServiceImpl implements IUserService {
 		int start = (pageNum - 1) * USERS_AMOUNT_ON_PAGE;
 		
 		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IUserDAO dao = daoFactory.getUserDAO();
-			List<User> users = dao.getAllUsersPart(start, USERS_AMOUNT_ON_PAGE);
+			List<User> users = userDAO.findAllPart(start, USERS_AMOUNT_ON_PAGE);
 			if (users == null) {
 				throw new GetUserServiceException(ExceptionMessages.NO_USERS_IN_DB);
 			}
@@ -534,20 +329,31 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public int getNumberOfAllUsersPages() throws ServiceException {
-		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IUserDAO dao = daoFactory.getUserDAO();
-			int numOfUsers = dao.getNumberOfUsers();
-			if (numOfUsers % USERS_AMOUNT_ON_PAGE == 0) {
-				return numOfUsers / USERS_AMOUNT_ON_PAGE;
-			}
-			else {
-				return numOfUsers / USERS_AMOUNT_ON_PAGE + 1;
-			}
-			
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+        int numOfUsers = (int)userDAO.count(); //todo: return long everywhere
+        if (numOfUsers % USERS_AMOUNT_ON_PAGE == 0) {
+            return numOfUsers / USERS_AMOUNT_ON_PAGE;
+        }
+        else {
+            return numOfUsers / USERS_AMOUNT_ON_PAGE + 1;
+        }
 	}
+
+    private User validateAndSetBirthdate(User user, String bDate) throws ServiceException {
+        if (Validator.validateStrings(bDate)) {
+            try {
+                Date currentDate = Date.valueOf(LocalDate.now());
+                Date birthDate = Date.valueOf(bDate);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(birthDate);
+
+                if (birthDate.after(currentDate) || calendar.get(Calendar.YEAR) <= MIN_YEAR) {
+                    throw new UserUpdateServiceException(String.format(ExceptionMessages.INVALID_BIRTHDATE, MIN_YEAR));
+                }
+                user.setBirthDate(Date.valueOf(bDate));
+            } catch (IllegalArgumentException e) {
+                throw new UserUpdateServiceException(ExceptionMessages.BIRTHDATE_RIGHT_FORMAT);
+            }
+        }
+        return user;
+    }
 }

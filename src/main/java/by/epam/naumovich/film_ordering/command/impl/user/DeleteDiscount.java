@@ -13,7 +13,7 @@ import by.epam.naumovich.film_ordering.command.util.JavaServerPageNames;
 import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
-import by.epam.naumovich.film_ordering.service.IUserService;
+import by.epam.naumovich.film_ordering.service.IDiscountService;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.DiscountServiceException;
 import lombok.extern.slf4j.Slf4j;
@@ -28,10 +28,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DeleteDiscount implements Command {
 
-	private final IUserService userService;
+	private final IDiscountService discountService;
 
-	public DeleteDiscount(IUserService userService) {
-		this.userService = userService;
+	public DeleteDiscount(IDiscountService discountService) {
+		this.discountService = discountService;
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class DeleteDiscount implements Command {
 		}
 		else {
 			try {
-				userService.deleteDiscount(discountID);
+				discountService.deleteDiscount(discountID);
 				log.debug(String.format(LogMessages.DISCOUNT_DELETED, discountID, userID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.DISCOUNT_DELETED);
 				Thread.sleep(1000);

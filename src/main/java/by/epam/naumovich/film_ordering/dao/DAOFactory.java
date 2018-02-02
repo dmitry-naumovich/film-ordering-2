@@ -16,7 +16,7 @@ public abstract class DAOFactory {
 	 * return a singleton object of IUserDAO implementation class
 	 * @return IUserDAO implementation class object
 	 */
-	public abstract IUserDAO getUserDAO();
+	//public abstract IUserDAO getUserDAO();
 	
 	/**
 	 * return a singleton object of IFilmDAO implementation class

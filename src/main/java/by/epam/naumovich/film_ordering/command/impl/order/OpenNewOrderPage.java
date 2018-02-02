@@ -1,5 +1,6 @@
 package by.epam.naumovich.film_ordering.command.impl.order;
 
+import by.epam.naumovich.film_ordering.service.IDiscountService;
 import java.io.IOException;
 import java.util.List;
 
@@ -39,14 +40,17 @@ public class OpenNewOrderPage implements Command {
 	private final IFilmService filmService;
 	private final IOrderService orderService;
 	private final IUserService userService;
+	private final IDiscountService discountService;
 
-	public OpenNewOrderPage(IFilmService filmService, IOrderService orderService, IUserService userService) {
-		this.filmService = filmService;
-		this.orderService = orderService;
-		this.userService = userService;
-	}
+    public OpenNewOrderPage(IFilmService filmService, IOrderService orderService, IUserService userService,
+                            IDiscountService discountService) {
+        this.filmService = filmService;
+        this.orderService = orderService;
+        this.userService = userService;
+        this.discountService = discountService;
+    }
 
-	@Override
+    @Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
 		String query = QueryUtil.createHttpQueryString(request);
@@ -96,7 +100,7 @@ public class OpenNewOrderPage implements Command {
 					Film film = filmService.getFilmByID(filmID, lang);
 					int discount;
 					try {
-						discount = userService.getCurrentUserDiscountByID(userID).getAmount();
+						discount = discountService.getCurrentUserDiscountByID(userID).getAmount();
 					} catch (GetDiscountServiceException e) {
 						discount = 0;
 					}

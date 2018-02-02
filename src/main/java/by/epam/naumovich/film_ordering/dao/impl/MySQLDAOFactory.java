@@ -27,10 +27,10 @@ public class MySQLDAOFactory extends DAOFactory {
 		return instance;
 	}
 	
-	@Override
-	public IUserDAO getUserDAO() {
-		return MySQLUserDAO.getInstance();
-	}
+//	@Override
+//	public IUserDAO getUserDAO() {
+//		return MySQLUserDAO.getInstance();
+//	}
 
 //	@Override
 //	public IFilmDAO getFilmDAO() {

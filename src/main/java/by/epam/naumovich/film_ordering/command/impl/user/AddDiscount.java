@@ -1,5 +1,6 @@
 package by.epam.naumovich.film_ordering.command.impl.user;
 
+import by.epam.naumovich.film_ordering.service.IDiscountService;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -13,7 +14,6 @@ import by.epam.naumovich.film_ordering.command.util.JavaServerPageNames;
 import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
-import by.epam.naumovich.film_ordering.service.IUserService;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.DiscountServiceException;
 import lombok.extern.slf4j.Slf4j;
@@ -28,10 +28,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AddDiscount implements Command {
 
-	private final IUserService userService;
+	private final IDiscountService discountService;
 
-	public AddDiscount(IUserService userService) {
-		this.userService = userService;
+	public AddDiscount(IDiscountService discountService) {
+		this.discountService = discountService;
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class AddDiscount implements Command {
 			String endTime = request.getParameter(RequestAndSessionAttributes.END_TIME);
 			
 			try {
-				userService.addDiscount(userID, amount, endDate, endTime);
+				discountService.addDiscount(userID, amount, endDate, endTime);
 				log.debug(String.format(LogMessages.DISCOUNT_ADDED, userID, amount));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.DISCOUNT_ADDED);
 				Thread.sleep(1000);
@@ -68,7 +68,5 @@ public class AddDiscount implements Command {
 				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			}
 		}
-
 	}
-
 }

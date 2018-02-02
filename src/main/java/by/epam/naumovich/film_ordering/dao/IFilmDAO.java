@@ -6,8 +6,8 @@ import by.epam.naumovich.film_ordering.bean.Film;
 import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.RepositoryDefinition;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Defines methods for implementing in the DAO layer for the Film entity.
@@ -15,7 +15,7 @@ import org.springframework.data.repository.query.Param;
  * @author Dmitry Naumovich
  * @version 1.0
  */
-@RepositoryDefinition(domainClass = Film.class, idClass = Integer.class)
+@Transactional
 public interface IFilmDAO extends CrudRepository<Film, Integer> {
 
     /**
@@ -35,16 +35,16 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
 	 */
 	//void delete(int id) throws DAOException;
 	
-	/**
-	 * Edits a film in the data source
-	 * 
-	 * @param id ID of a film which will be edited
-	 * @param editedFilm film entity with edited fields
-	 * @throws DAOException
-	 */
-	//todo: save from CrudRepository updates also
-    @Query(value = "UPDATE films SET f_name = ?, f_year = ?, f_direct = ?, f_country = ?, f_genre = ?, f_actors = ?, f_composer = ?, f_description = ?, f_length = ?, f_price = ? WHERE f_id = ?", nativeQuery = true)
-	void update(@Param("id") int id, @Param("editedFilm") Film editedFilm) throws DAOException;
+//	/**
+//	 * Edits a film in the data source
+//	 *
+//	 * @param id ID of a film which will be edited
+//	 * @param editedFilm film entity with edited fields
+//	 * @throws DAOException
+//	 */
+//	//todo: save from CrudRepository updates also
+//    @Query(value = "UPDATE films SET f_name = ?, f_year = ?, f_direct = ?, f_country = ?, f_genre = ?, f_actors = ?, f_composer = ?, f_description = ?, f_length = ?, f_price = ? WHERE f_id = ?", nativeQuery = true)
+//	void update(@Param("id") int id, @Param("editedFilm") Film editedFilm) throws DAOException;
 	
 	/**
 	 * Searches for a film in the data source by its ID considering language
@@ -218,8 +218,18 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
 	 * @param lang language of the source data to be returned
 	 * @throws DAOException
 	 */
-	@Query(value = "SHOW COLUMNS FROM films_local LIKE 'loc_genre'", nativeQuery = true)
-	String[] getAvailableGenres(String lang) throws DAOException;
+	@Query(value = "SHOW COLUMNS FROM films LIKE 'f_genre'", nativeQuery = true)
+	String[] getAvailableGenresDefault() throws DAOException;
+
+    /**
+     * Returns all film genres that are present in the data source
+     *
+     * @return an array of available genres
+     * @param lang language of the source data to be returned
+     * @throws DAOException
+     */
+    @Query(value = "SHOW COLUMNS FROM films_local LIKE 'loc_genre'", nativeQuery = true)
+    String[] getAvailableGenresLocalized() throws DAOException;
 	
 	/**
 	 * Returns all film countries that are present in the data source
@@ -229,14 +239,16 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
 	 * @throws DAOException
 	 */
 	@Query(value = "SHOW COLUMNS FROM films LIKE 'f_country'", nativeQuery = true)
-	String[] getAvailableCountries(String lang) throws DAOException;
-	
+    String[] getAvailableCountriesDefault() throws DAOException;
+
 	/**
-	 * Counts the number of all films in the data source
-	 * 
-	 * @return total film amount
+	 * Returns all film countries that are present in the data source
+	 *
+	 * @return an array of available countries
+	 * @param lang language of the source data to be returned
 	 * @throws DAOException
 	 */
-	@Query(value = "SELECT COUNT(*) FROM films", nativeQuery = true)
-	int getNumberOfFilms() throws DAOException;
+	@Query(value = "SHOW COLUMNS FROM films_local LIKE 'loc_country'", nativeQuery = true)
+    String[] getAvailableCountriesLocalized() throws DAOException;
+
 }
