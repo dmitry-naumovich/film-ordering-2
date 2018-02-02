@@ -70,7 +70,7 @@ public interface IUserDAO extends CrudRepository<User, Integer> {
 	 * @param login user login
 	 * @return string password or null if it was not found
 	 * @throws DAOException
-	 */ //todo: check if it works without @Query
+	 */
 	@Query(value = "SELECT u_passw FROM users WHERE u_login = :login", nativeQuery = true)
 	String getPasswordByLogin(@Param("login") String login) throws DAOException;
 	

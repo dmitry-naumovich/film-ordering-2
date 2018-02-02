@@ -11,18 +11,6 @@ import by.epam.naumovich.film_ordering.dao.util.ExceptionMessages;
  * @version 1.0
  */
 public abstract class DAOFactory {
-
-	/**
-	 * return a singleton object of IUserDAO implementation class
-	 * @return IUserDAO implementation class object
-	 */
-	//public abstract IUserDAO getUserDAO();
-	
-	/**
-	 * return a singleton object of IFilmDAO implementation class
-	 * @return IFilmDAO implementation class object
-	 */
-	//public abstract IFilmDAO getFilmDAO();
 	
 	/**
 	 * return a singleton object of IOrderDAO implementation class
@@ -35,13 +23,7 @@ public abstract class DAOFactory {
 	 * @return IReviewDAO implementation class object
 	 */
 	public abstract IReviewDAO getReviewDAO();
-	
-	/**
-	 * return a singleton object of INewsDAO implementation class
-	 * @return INewsDAO implementation class object
-	 */
-	public abstract INewsDAO getNewsDAO();
-	
+
 	/**
 	 * Enumeration of available and implemented data source types
 	 * 

@@ -6,16 +6,13 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.ArrayList;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import by.epam.naumovich.film_ordering.bean.News;
-import by.epam.naumovich.film_ordering.dao.DAOFactory;
 import by.epam.naumovich.film_ordering.dao.INewsDAO;
 import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 
@@ -28,11 +25,8 @@ import by.epam.naumovich.film_ordering.dao.exception.DAOException;
  */
 public class MySQLNewsDAOTest {
 
-	/**
-	 * Database type used in this test suite.
-	 * 
-	 */
-	private static final String MYSQL = "mysql";
+	private INewsDAO dao;
+
 	/**
 	 * This object will be compared to the actual object taken from the DAO layer.
 	 * 
@@ -59,13 +53,10 @@ public class MySQLNewsDAOTest {
 	 * @throws DAOException
 	 */
 	@Test
-	public void addNews() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		INewsDAO dao = daoFactory.getNewsDAO();
-		
-		int id = dao.addNews(expectedNews);
-		News actualNews = dao.getNewsById(id);
-		dao.deleteNews(id);
+	public void addNews() throws DAOException {		
+		int id = dao.save(expectedNews).getId();
+		News actualNews = dao.findOne(id);
+		dao.delete(id);
 		
 		Assert.assertEquals(expectedNews.getDate(), actualNews.getDate());
 		Assert.assertEquals(expectedNews.getTime(), actualNews.getTime());
@@ -80,13 +71,10 @@ public class MySQLNewsDAOTest {
 	 * @throws DAOException
 	 */
 	@Test
-	public void deleteNews() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		INewsDAO dao = daoFactory.getNewsDAO();
-		
-		int id = dao.addNews(expectedNews);
-		dao.deleteNews(id);
-		News actualNews = dao.getNewsById(id);
+	public void deleteNews() throws DAOException {		
+		int id = dao.save(expectedNews).getId();
+		dao.delete(id);
+		News actualNews = dao.findOne(id);
 		
 		Assert.assertNull(actualNews);
 	}
@@ -99,15 +87,14 @@ public class MySQLNewsDAOTest {
 	 */
 	@Test
 	public void editNews() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		INewsDAO dao = daoFactory.getNewsDAO();
 		
-		int id = dao.addNews(expectedNews);
+		int id = dao.save(expectedNews).getId();
+		expectedNews.setId(id);
 		expectedNews.setTitle("updated title");
 		expectedNews.setText("updated news text");
-		dao.editNews(id, expectedNews);
-		News actualNews = dao.getNewsById(id);
-		dao.deleteNews(id);
+		dao.save(expectedNews);
+		News actualNews = dao.findOne(id);
+		dao.delete(id);
 		
 		Assert.assertEquals(expectedNews.getDate(), actualNews.getDate());
 		Assert.assertEquals(expectedNews.getTime(), actualNews.getTime());
@@ -123,12 +110,11 @@ public class MySQLNewsDAOTest {
 	 */
 	@Test
 	public void getNewsById() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		INewsDAO dao = daoFactory.getNewsDAO();
 		
-		int id = dao.addNews(expectedNews);
-		News actualNews = dao.getNewsById(id);
-		dao.deleteNews(id);
+		
+		int id = dao.save(expectedNews).getId();
+		News actualNews = dao.findOne(id);
+		dao.delete(id);
 		
 		Assert.assertEquals(expectedNews.getDate(), actualNews.getDate());
 		Assert.assertEquals(expectedNews.getTime(), actualNews.getTime());
@@ -143,13 +129,12 @@ public class MySQLNewsDAOTest {
 	 */
 	@Test
 	public void getAllNews() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		INewsDAO dao = daoFactory.getNewsDAO();
 		
-		List<News> allNews1 = dao.getAllNews();
-		List<News> allNews2 = new ArrayList<News>();
+		
+		List<News> allNews1 = dao.findAllByOrderByDateDescTimeDesc();
+		List<News> allNews2 = new ArrayList<>();
 		for (int i = 2016; i < 2050; i++) {
-			allNews2.addAll(dao.getNewsByYear(i));
+			allNews2.addAll(dao.findByYear(i));
 		}
 		
 		Assert.assertEquals(allNews1, allNews2);
@@ -164,11 +149,10 @@ public class MySQLNewsDAOTest {
 	 */
 	@Test
 	public void getNewsByYear() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		INewsDAO dao = daoFactory.getNewsDAO();
 		
-		List<News> yearNews = dao.getNewsByYear(2016);
-		List<News> allNews = dao.getAllNews();
+		
+		List<News> yearNews = dao.findByYear(2016);
+		List<News> allNews = dao.findAllByOrderByDateDescTimeDesc();
 		Calendar calendar = Calendar.getInstance();
 		for (News n : allNews) {
 			calendar.setTime(n.getDate());
@@ -188,11 +172,10 @@ public class MySQLNewsDAOTest {
 	 */
 	@Test
 	public void getNewsByMonthAndYear() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		INewsDAO dao = daoFactory.getNewsDAO();
+		
 		
 		List<News> yearNews = dao.getNewsByMonthAndYear(8, 2016);
-		List<News> allNews = dao.getAllNews();
+		List<News> allNews = dao.findAllByOrderByDateDescTimeDesc();
 		Calendar calendar = Calendar.getInstance();
 		for (News n : allNews) {
 			
@@ -212,11 +195,8 @@ public class MySQLNewsDAOTest {
 	 */
 	@Test
 	public void getNumberOfNews() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		INewsDAO newsDAO = daoFactory.getNewsDAO();
-		
-		int newsNum1 = newsDAO.getNumberOfNews();
-		List<News> allNews = newsDAO.getAllNews();
+		int newsNum1 = (int)dao.count();
+		List<News> allNews = dao.findAllByOrderByDateDescTimeDesc();
 		int newsNum2 = allNews.size();
 		
 		Assert.assertEquals(newsNum1, newsNum2);
@@ -229,12 +209,9 @@ public class MySQLNewsDAOTest {
 	 */
 	@Test
 	public void getAllNewsPart() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		INewsDAO newsDAO = daoFactory.getNewsDAO();
-		
-		List<News> particularNews1 = newsDAO.getAllNewsPart(0, 6);
-		List<News> allNews = new ArrayList<News>(newsDAO.getAllNews());
-		List<News> particularNews2 = new ArrayList<News>(allNews.subList(0, 6));
+		List<News> particularNews1 = dao.getAllNewsPart(0, 6);
+		List<News> allNews = new ArrayList<>(dao.findAllByOrderByDateDescTimeDesc());
+		List<News> particularNews2 = new ArrayList<>(allNews.subList(0, 6));
 		
 		Assert.assertEquals(particularNews1, particularNews2);	
 	}
