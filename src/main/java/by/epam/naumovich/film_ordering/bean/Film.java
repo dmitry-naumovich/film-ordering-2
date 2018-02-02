@@ -46,7 +46,7 @@ public class Film {
     @Column(name = "f_length")
     private int length;
     @Column(name = "f_rating")
-    private float rating;
+    private Float rating;
     @Column(name = "f_price")
     private float price;
 

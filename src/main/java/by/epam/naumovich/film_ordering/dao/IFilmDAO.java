@@ -18,34 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface IFilmDAO extends CrudRepository<Film, Integer> {
 
-    /**
-     * Adds a new film to the data source
-     *
-     * @param film new film entity
-     * @return ID of a newly added film or 0 if it was not added
-     * @throws DAOException
-     */
-	//int create(Film film) throws DAOException;
-	
-	/**
-	 * Deletes a film from the data source
-	 * 
-	 * @param id ID of a film which will be deleted
-	 * @throws DAOException
-	 */
-	//void delete(int id) throws DAOException;
-	
-//	/**
-//	 * Edits a film in the data source
-//	 *
-//	 * @param id ID of a film which will be edited
-//	 * @param editedFilm film entity with edited fields
-//	 * @throws DAOException
-//	 */
-//	//todo: save from CrudRepository updates also
-//    @Query(value = "UPDATE films SET f_name = ?, f_year = ?, f_direct = ?, f_country = ?, f_genre = ?, f_actors = ?, f_composer = ?, f_description = ?, f_length = ?, f_price = ? WHERE f_id = ?", nativeQuery = true)
-//	void update(@Param("id") int id, @Param("editedFilm") Film editedFilm) throws DAOException;
-	
 	/**
 	 * Searches for a film in the data source by its ID considering language
 	 * 
@@ -215,37 +187,33 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
 	 * Returns all film genres that are present in the data source
 	 * 
 	 * @return an array of available genres
-	 * @param lang language of the source data to be returned
 	 * @throws DAOException
 	 */
 	@Query(value = "SHOW COLUMNS FROM films LIKE 'f_genre'", nativeQuery = true)
 	String[] getAvailableGenresDefault() throws DAOException;
 
     /**
-     * Returns all film genres that are present in the data source
+     * Returns all film localized genres that are present in the data source
      *
-     * @return an array of available genres
-     * @param lang language of the source data to be returned
+     * @return an array of available localized genres
      * @throws DAOException
      */
     @Query(value = "SHOW COLUMNS FROM films_local LIKE 'loc_genre'", nativeQuery = true)
     String[] getAvailableGenresLocalized() throws DAOException;
 	
 	/**
-	 * Returns all film countries that are present in the data source
+	 * Returns all film country names that are present in the data source
 	 * 
-	 * @return an array of available countries
-	 * @param lang language of the source data to be returned
+	 * @return an array of available country names
 	 * @throws DAOException
 	 */
 	@Query(value = "SHOW COLUMNS FROM films LIKE 'f_country'", nativeQuery = true)
     String[] getAvailableCountriesDefault() throws DAOException;
 
 	/**
-	 * Returns all film countries that are present in the data source
+	 * Returns all film country localized names that are present in the data source
 	 *
-	 * @return an array of available countries
-	 * @param lang language of the source data to be returned
+	 * @return an array of available country localized names
 	 * @throws DAOException
 	 */
 	@Query(value = "SHOW COLUMNS FROM films_local LIKE 'loc_country'", nativeQuery = true)

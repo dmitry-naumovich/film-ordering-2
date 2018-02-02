@@ -166,7 +166,7 @@ public class AddFilm implements Command {
 			int filmID = filmService.addNewFilm(name, year, director, cast, countriesArray, composer,
 					genresArray, length, price, description);
 			
-			proceedFilmImages(filmID, session, posterItem, frameItem);
+			//proceedFilmImages(filmID, session, posterItem, frameItem); //TODO: return file upload using Spring!
 			log.debug(String.format(LogMessages.FILM_ADDED, name, filmID));
 			return filmID;
 	}
@@ -174,7 +174,9 @@ public class AddFilm implements Command {
 	private void proceedFilmImages(int filmID, HttpSession session, FileItem posterItem, FileItem frameItem) throws FileNotUploadedException {
 		
 		String absoluteFilePath = session.getServletContext().getRealPath(FileUploadConstants.FILM_IMGS_UPLOAD_DIR + filmID + "/");
-		new File(absoluteFilePath).mkdir();
+		if (absoluteFilePath != null) {
+			new File(absoluteFilePath).mkdir();
+		}
 
 		if (posterItem != null) {
 			loadImage(posterItem, FileUploadConstants.POSTER_FILE_NAME, absoluteFilePath);

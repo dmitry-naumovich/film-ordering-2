@@ -100,6 +100,7 @@ public interface IFilmService {
 	 * @return a set of films
 	 * @throws ServiceException
 	 */
+	//todo: remove if it's unnecessary
 	List<Film> getAllFilms(String lang) throws ServiceException;
 	
 	/**
