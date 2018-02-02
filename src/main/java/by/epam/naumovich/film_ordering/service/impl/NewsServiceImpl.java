@@ -128,7 +128,7 @@ public class NewsServiceImpl implements INewsService {
 	public List<News> getNewsByMonth(int month, int year) throws ServiceException {
 		List<News> set;
 		try {
-			set = newsDAO.getNewsByMonthAndYear(month, year);
+			set = newsDAO.findByMonthAndYear(month, year);
 			
 			if (set.isEmpty()) {
 				throw new GetNewsServiceException(String.format(ExceptionMessages.NO_NEWS_WITHIN_MONTH, month, year));
@@ -179,7 +179,7 @@ public class NewsServiceImpl implements INewsService {
 		int start = (pageNum - 1) * NEWS_AMOUNT_ON_PAGE;
 		
 		try {
-			List<News> news = newsDAO.getAllNewsPart(start, NEWS_AMOUNT_ON_PAGE);
+			List<News> news = newsDAO.findAllPart(start, NEWS_AMOUNT_ON_PAGE);
 			if (news == null) {
 				throw new GetNewsServiceException(ExceptionMessages.NO_NEWS_IN_DB);
 			}

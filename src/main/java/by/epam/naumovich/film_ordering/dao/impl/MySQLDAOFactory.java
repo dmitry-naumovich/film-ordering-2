@@ -28,9 +28,4 @@ public class MySQLDAOFactory extends DAOFactory {
 	public IOrderDAO getOrderDAO() {
 		return MySQLOrderDAO.getInstance();
 	}
-
-	@Override
-	public IReviewDAO getReviewDAO() {
-		return MySQLReviewDAO.getInstance();
-	}
 }

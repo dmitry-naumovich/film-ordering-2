@@ -174,7 +174,7 @@ public class MySQLNewsDAOTest {
 	public void getNewsByMonthAndYear() throws DAOException {
 		
 		
-		List<News> yearNews = dao.getNewsByMonthAndYear(8, 2016);
+		List<News> yearNews = dao.findByMonthAndYear(8, 2016);
 		List<News> allNews = dao.findAllByOrderByDateDescTimeDesc();
 		Calendar calendar = Calendar.getInstance();
 		for (News n : allNews) {
@@ -209,7 +209,7 @@ public class MySQLNewsDAOTest {
 	 */
 	@Test
 	public void getAllNewsPart() throws DAOException {
-		List<News> particularNews1 = dao.getAllNewsPart(0, 6);
+		List<News> particularNews1 = dao.findAllPart(0, 6);
 		List<News> allNews = new ArrayList<>(dao.findAllByOrderByDateDescTimeDesc());
 		List<News> particularNews2 = new ArrayList<>(allNews.subList(0, 6));
 		

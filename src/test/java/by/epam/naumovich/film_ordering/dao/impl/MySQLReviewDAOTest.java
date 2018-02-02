@@ -1,19 +1,17 @@
 package by.epam.naumovich.film_ordering.dao.impl;
 
+import by.epam.naumovich.film_ordering.bean.ReviewPK;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import by.epam.naumovich.film_ordering.bean.Review;
-import by.epam.naumovich.film_ordering.dao.DAOFactory;
 import by.epam.naumovich.film_ordering.dao.IReviewDAO;
 import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 import org.junit.Assert;
@@ -27,11 +25,8 @@ import org.junit.Assert;
  */
 public class MySQLReviewDAOTest {
 
-	/**
-	 * Database type used in this test suite.
-	 * 
-	 */
-	private static final String MYSQL = "mysql";
+	private IReviewDAO dao;
+
 	/**
 	 * This object will be compared to the actual object taken from the DAO layer.
 	 * 
@@ -62,13 +57,12 @@ public class MySQLReviewDAOTest {
 	 */
 	@Test
 	public void addReview() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IReviewDAO dao = daoFactory.getReviewDAO();
-		
-		dao.addReview(expectedReview);
-		Review actualReview = dao.getReviewByUserAndFilmId(expectedReview.getAuthor(), expectedReview.getFilmId());
-		dao.deleteReview(expectedReview.getAuthor(), expectedReview.getFilmId());
-		
+
+		dao.save(expectedReview);
+        ReviewPK reviewPK = new ReviewPK(expectedReview.getAuthor(), expectedReview.getFilmId());
+        Review actualReview = dao.findOne(reviewPK);
+		dao.delete(reviewPK);
+
 		Assert.assertEquals(expectedReview.getAuthor(), actualReview.getAuthor());
 		Assert.assertEquals(expectedReview.getFilmId(), actualReview.getFilmId());
 		Assert.assertEquals(expectedReview.getDate(), actualReview.getDate());
@@ -86,12 +80,10 @@ public class MySQLReviewDAOTest {
 	 */
 	@Test
 	public void deleteReview() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IReviewDAO dao = daoFactory.getReviewDAO();
-		
-		dao.addReview(expectedReview);
-		dao.deleteReview(expectedReview.getAuthor(), expectedReview.getFilmId());
-		Review actualReview = dao.getReviewByUserAndFilmId(expectedReview.getAuthor(), expectedReview.getFilmId());
+		dao.save(expectedReview);
+		dao.delete(expectedReview);
+        ReviewPK reviewPK = new ReviewPK(expectedReview.getAuthor(), expectedReview.getFilmId());
+        Review actualReview = dao.findOne(reviewPK);
 		
 		Assert.assertNull(actualReview);
 	}
@@ -103,12 +95,11 @@ public class MySQLReviewDAOTest {
 	 */
 	@Test
 	public void getReviewsByUserId() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IReviewDAO dao = daoFactory.getReviewDAO();
 		
-		List<Review> userReviews1 = dao.getReviewsByUserId(1);
-		List<Review> userReviews2 = new ArrayList<Review>();
-		for (Review r : dao.getAllReviews()) {
+		
+		List<Review> userReviews1 = dao.findByUserId(1);
+		List<Review> userReviews2 = new ArrayList<>();
+		for (Review r : dao.findAll()) {
 			if (r.getAuthor() == 1) {
 				userReviews2.add(r);
 			}
@@ -124,12 +115,11 @@ public class MySQLReviewDAOTest {
 	 */
 	@Test
 	public void getReviewsByFilmId() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IReviewDAO dao = daoFactory.getReviewDAO();
+		
 		
 		List<Review> filmReviews1 = dao.getReviewsByFilmId(1);
-		List<Review> filmReviews2 = new ArrayList<Review>();
-		for (Review r : dao.getAllReviews()) {
+		List<Review> filmReviews2 = new ArrayList<>();
+		for (Review r : dao.findAll()) {
 			if (r.getFilmId() == 1) {
 				filmReviews2.add(r);
 			}
@@ -147,12 +137,12 @@ public class MySQLReviewDAOTest {
 	 */
 	@Test
 	public void getReviewByUserAndFilmId() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IReviewDAO dao = daoFactory.getReviewDAO();
+		
 
-		dao.addReview(expectedReview);
-		Review actualReview = dao.getReviewByUserAndFilmId(expectedReview.getAuthor(), expectedReview.getFilmId());
-		dao.deleteReview(expectedReview.getAuthor(), expectedReview.getFilmId());
+		dao.save(expectedReview);
+		ReviewPK reviewPK = new ReviewPK(expectedReview.getAuthor(), expectedReview.getFilmId());
+		Review actualReview = dao.findOne(reviewPK);
+		dao.delete(expectedReview.getId());
 		
 		Assert.assertEquals(expectedReview.getAuthor(), actualReview.getAuthor());
 		Assert.assertEquals(expectedReview.getFilmId(), actualReview.getFilmId());
@@ -170,11 +160,8 @@ public class MySQLReviewDAOTest {
 	 */
 	@Test
 	public void getNumberOfReviews() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IReviewDAO reviewDAO = daoFactory.getReviewDAO();
-		
-		int reviewsNum1 = reviewDAO.getNumberOfReviews();
-		int reviewsNum2 = reviewDAO.getAllReviews().size();
+		int reviewsNum1 = (int)dao.count();
+		int reviewsNum2 = dao.findAllByOrderByDateDescTimeDesc().size();
 		
 		Assert.assertEquals(reviewsNum1, reviewsNum2);
 	}
@@ -186,12 +173,9 @@ public class MySQLReviewDAOTest {
 	 */
 	@Test
 	public void getAllReviewsPart() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IReviewDAO reviewDAO = daoFactory.getReviewDAO();
-		
-		List<Review> particularReviews1 = reviewDAO.getAllReviewsPart(0, 6);
-		List<Review> allReviews = new ArrayList<Review>(reviewDAO.getAllReviews());
-		List<Review> particularReviews2 = new ArrayList<Review>(allReviews.subList(0, 6));
+		List<Review> particularReviews1 = dao.findAllPart(0, 6);
+		List<Review> allReviews = new ArrayList<>(dao.findAllByOrderByDateDescTimeDesc());
+		List<Review> particularReviews2 = new ArrayList<>(allReviews.subList(0, 6));
 		
 		Assert.assertEquals(particularReviews1, particularReviews2);	
 	}
@@ -203,12 +187,11 @@ public class MySQLReviewDAOTest {
 	 */
 	@Test
 	public void getReviewsPartByUserId() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IReviewDAO dao = daoFactory.getReviewDAO();
+		
 		
 		List<Review> userReviews1 = dao.getReviewsPartByUserId(1, 0, 3);
 		List<Review> userReviews2 = new ArrayList<Review>();
-		for (Review o : dao.getAllReviews()) {
+		for (Review o : dao.findAll()) {
 			if (o.getAuthor() == 1) {
 				userReviews2.add(o);
 			}
@@ -226,18 +209,17 @@ public class MySQLReviewDAOTest {
 	 */
 	@Test
 	public void getReviewsPartByFilmId() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IReviewDAO dao = daoFactory.getReviewDAO();
+		
 		
 		List<Review> filmReviews1 = dao.getReviewsPartByFilmId(1, 0, 3);
 		List<Review> filmReviews2 = new ArrayList<Review>();
-		for (Review o : dao.getAllReviews()) {
+		for (Review o : dao.findAll()) {
 			if (o.getFilmId() == 1) {
 				filmReviews2.add(o);
 			}
 		}
-		List<Review> list = new ArrayList<Review>(filmReviews2);
-		filmReviews2 = new ArrayList<Review>(list.subList(0, 3));
+		List<Review> list = new ArrayList<>(filmReviews2);
+		filmReviews2 = new ArrayList<>(list.subList(0, 3));
 		
 		Assert.assertEquals(filmReviews1, filmReviews2);	
 	}
@@ -249,12 +231,9 @@ public class MySQLReviewDAOTest {
 	 */
 	@Test
 	public void getNumberOfUserReviews() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IReviewDAO reviewDAO = daoFactory.getReviewDAO();
-		
-		int reviewsNum1 = reviewDAO.getNumberOfUserReviews(4);
-		List<Review> userReviews = new ArrayList<Review>();
-		for (Review o : reviewDAO.getAllReviews()) {
+		int reviewsNum1 = dao.countByAuthor(4);
+		List<Review> userReviews = new ArrayList<>();
+		for (Review o : dao.findAll()) {
 			if (o.getAuthor() == 4) {
 				userReviews.add(o);
 			}
@@ -271,12 +250,9 @@ public class MySQLReviewDAOTest {
 	 */
 	@Test
 	public void getNumberOfFilmReviews() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IReviewDAO reviewDAO = daoFactory.getReviewDAO();
-		
-		int reviewsNum1 = reviewDAO.getNumberOfFilmReviews(1);
-		List<Review> filmReviews = new ArrayList<Review>();
-		for (Review o : reviewDAO.getAllReviews()) {
+		int reviewsNum1 = dao.countByFilmId(1);
+		List<Review> filmReviews = new ArrayList<>();
+		for (Review o : dao.findAll()) {
 			if (o.getFilmId() == 1) {
 				filmReviews.add(o);
 			}

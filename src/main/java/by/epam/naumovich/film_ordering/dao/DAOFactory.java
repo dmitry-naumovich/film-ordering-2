@@ -17,12 +17,6 @@ public abstract class DAOFactory {
 	 * @return IOrderDAO implementation class object
 	 */
 	public abstract IOrderDAO getOrderDAO();
-	
-	/**
-	 * return a singleton object of IReviewDAO implementation class
-	 * @return IReviewDAO implementation class object
-	 */
-	public abstract IReviewDAO getReviewDAO();
 
 	/**
 	 * Enumeration of available and implemented data source types

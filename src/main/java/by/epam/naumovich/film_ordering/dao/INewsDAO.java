@@ -46,7 +46,7 @@ public interface INewsDAO extends CrudRepository<News, Integer> {
 	 */
 	@Query(value = "SELECT * FROM news WHERE MONTH(n_date) = :month AND YEAR(n_date) = :year " +
             "ORDER BY n_date DESC, n_time DESC", nativeQuery = true)
-	List<News> getNewsByMonthAndYear(@Param("month") int month, @Param("year") int year) throws DAOException;
+	List<News> findByMonthAndYear(@Param("month") int month, @Param("year") int year) throws DAOException;
 	
 	/**
 	 * Returns a necessary part of all news from the data source
@@ -57,5 +57,5 @@ public interface INewsDAO extends CrudRepository<News, Integer> {
 	 * @throws DAOException
 	 */
 	@Query(value = "SELECT * FROM news ORDER BY n_date DESC, n_time DESC LIMIT :start, :amount", nativeQuery = true)
-	List<News> getAllNewsPart(@Param("start") int start, @Param("amount") int amount) throws DAOException;
+	List<News> findAllPart(@Param("start") int start, @Param("amount") int amount) throws DAOException;
 }

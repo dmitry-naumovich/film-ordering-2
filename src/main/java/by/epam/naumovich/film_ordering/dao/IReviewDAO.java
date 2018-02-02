@@ -1,9 +1,14 @@
 package by.epam.naumovich.film_ordering.dao;
 
+import by.epam.naumovich.film_ordering.bean.ReviewPK;
 import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Review;
-import by.epam.naumovich.film_ordering.dao.exception.DAOException;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Defines methods for implementing in the DAO layer for the Review entity.
@@ -11,32 +16,15 @@ import by.epam.naumovich.film_ordering.dao.exception.DAOException;
  * @author Dmitry Naumovich
  * @version 1.0
  */
-public interface IReviewDAO {
+@Transactional
+public interface IReviewDAO extends CrudRepository<Review, ReviewPK> {
 
 	/**
-	 * Adds new review to the data source
-	 * 
-	 * @param review new review entity
-	 * @throws DAOException
-	 */
-	void addReview(Review review) throws DAOException;
-	
-	/**
-	 * Deletes review from the data source by user and film IDs
-	 * 
-	 * @param userID user ID
-	 * @param filmID film ID
-	 * @throws DAOException
-	 */
-	void deleteReview(int userID, int filmID) throws DAOException;
-	
-	/**
 	 * Returns all reviews that are present in the data source
-	 * 
+	 *
 	 * @return a set of reviews
-	 * @throws DAOException
 	 */
-	List<Review> getAllReviews() throws DAOException;
+	List<Review> findAllByOrderByDateDescTimeDesc();
 
 	/**
 	 * Returns a necessary part of all reviews from the data source
@@ -44,83 +32,77 @@ public interface IReviewDAO {
 	 * @param start start index of necessary reviews part
 	 * @param amount amount of reviews to be returned
 	 * @return a part of the set of all reviews
-	 * @throws DAOException
 	 */
-	List<Review> getAllReviewsPart(int start, int amount) throws DAOException;
+	@Query(value = "SELECT * FROM reviews ORDER BY r_date DESC, r_time DESC LIMIT :start, :amount", nativeQuery = true)
+	List<Review> findAllPart(@Param("start") int start, @Param("amount") int amount);
 	
 	/**
 	 * Searches for reviews in the data source by user ID
 	 * 
-	 * @param id user ID
+	 * @param author author ID
 	 * @return a set of found reviews
-	 * @throws DAOException
 	 */
-	List<Review> getReviewsByUserId(int id) throws DAOException;
+	@Query(value = "SELECT * FROM reviews WHERE r_author = :author ORDER BY r_date DESC, r_time DESC", nativeQuery = true)
+	List<Review> findByUserId(@Param("author") int author);
 	
 	/**
-	 * Searches for the reviews in the data source by user ID and returns the necessary part of them
+	 * Searches for the reviews in the data source by author ID and returns the necessary part of them
 	 * 
-	 * @param id user ID
+	 * @param author author ID
 	 * @param start start index of necessary part
 	 * @param amount amount of reviews to be returned
 	 * @return a set of found reviews
-	 * @throws DAOException
 	 */
-	List<Review> getReviewsPartByUserId(int userID, int start, int amount) throws DAOException;
+	@Query(value = "SELECT * FROM reviews WHERE r_author = :author ORDER BY r_date DESC, r_time DESC " +
+            "LIMIT :start, :amount", nativeQuery = true)
+	List<Review> getReviewsPartByUserId(@Param("author") int author, @Param("start") int start, @Param("amount") int amount);
 	
 	/**
 	 * Searches for reviews in the data source by film ID
 	 * 
-	 * @param id film ID
+	 * @param filmId film ID
 	 * @return a set of found reviews
-	 * @throws DAOException
 	 */
-	List<Review> getReviewsByFilmId(int id) throws DAOException;
+	@Query(value = "SELECT * FROM reviews WHERE r_film = :filmId ORDER BY r_date DESC, r_time DESC", nativeQuery = true)
+	List<Review> getReviewsByFilmId(@Param("filmId") int filmId);
 	
 	/**
 	 * Searches for the reviews in the data source by film ID
 	 * 
-	 * @param id film ID
+	 * @param filmId film ID
 	 * @param start start index of necessary part
 	 * @param amount amount of reviews to be returned
 	 * @return a set of found reviews
-	 * @throws DAOException
 	 */
-	List<Review> getReviewsPartByFilmId(int id, int start, int amount) throws DAOException;
-	
-	/**
-	 * Searches for review in the data source by user and film IDs
-	 * 
-	 * @param userID user ID
-	 * @param filmID film ID
-	 * @return found review or null if it was not found
-	 * @throws DAOException
-	 */
-	Review getReviewByUserAndFilmId(int userID, int filmID) throws DAOException;
-	
-	/**
-	 * Counts the number of all reviews in the data source
-	 * 
-	 * @return total review amount
-	 * @throws DAOException
-	 */
-	int getNumberOfReviews() throws DAOException;
-	
+	@Query(value = "SELECT * FROM reviews WHERE r_film = :filmId ORDER BY r_date DESC, r_time DESC " +
+            "LIMIT :start, :amount", nativeQuery = true)
+	List<Review> getReviewsPartByFilmId(@Param("filmId") int filmId, @Param("start") int start, @Param("amount") int amount);
+
 	/**
 	 * Counts the number of user reviews in the data source
 	 * 
-	 * @param userID ID of the user whose reviews are counted
+	 * @param author ID of the author whose reviews are counted
 	 * @return total user reviews amount
-	 * @throws DAOException
 	 */
-	int getNumberOfUserReviews(int userID) throws DAOException;
+	@Query(value = "SELECT COUNT(*) FROM reviews WHERE r_author = :author", nativeQuery = true)
+	int countByAuthor(@Param("author") int author);
 	
 	/**
 	 * Counts the number of film reviews in the data source
 	 * 
-	 * @param filmID ID of the film which reviews are counted
+	 * @param filmId ID of the film which reviews are counted
 	 * @return total film reviews amount
-	 * @throws DAOException
 	 */
-	int getNumberOfFilmReviews(int filmID) throws DAOException;
+	@Query(value = "SELECT COUNT(*) FROM reviews WHERE r_film = :filmId", nativeQuery = true)
+	int countByFilmId(@Param("filmId") int filmId);
+
+    /**
+     * Recounts and updates film rating
+     *
+     * @param filmId film id
+     */
+    @Modifying
+	@Query(value = "UPDATE films SET f_rating = (SELECT AVG(r_mark) FROM reviews WHERE r_film = :filmId) " +
+            "WHERE films.f_id = :filmId", nativeQuery = true)
+	void updateFilmRating(@Param("filmId") int filmId);
 }
