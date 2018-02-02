@@ -173,35 +173,24 @@ public class FilmServiceImpl implements IFilmService {
 	
 	@Override
 	public List<Film> getTwelveLastAddedFilms(String lang) throws ServiceException {
-		List<Film> filmSet;
-		try {
-			filmSet = filmDAO.getTwelveLastAddedFilms(lang);
-			
-			if (filmSet.isEmpty()) {
-				throw new GetFilmServiceException(ExceptionMessages.NO_FILMS_IN_DB);
-			}
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+		List<Film> films = filmDAO.getTwelveLastAddedFilms(lang);
+
+        if (films.isEmpty()) {
+            throw new GetFilmServiceException(ExceptionMessages.NO_FILMS_IN_DB);
+        }
 		
-		return filmSet;
+		return films;
 	}
 
 	@Override
 	public List<Film> getAllFilms(String lang) throws ServiceException {
-		List<Film> filmSet;
-		try {
-			filmSet = filmDAO.getAll(lang);
+		List<Film> films = filmDAO.getAll(lang);
 			
-			if (filmSet.isEmpty()) {
-				throw new GetFilmServiceException(ExceptionMessages.NO_FILMS_IN_DB);
-			}
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+        if (films.isEmpty()) {
+            throw new GetFilmServiceException(ExceptionMessages.NO_FILMS_IN_DB);
+        }
 		
-		return filmSet;
+		return films;
 	}
 
 	@Override
@@ -209,15 +198,10 @@ public class FilmServiceImpl implements IFilmService {
 		if (!Validator.validateInt(id)) {
 			throw new GetFilmServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
-		Film film;
-		try {
-			film = filmDAO.getById(id, lang);
-			if (film == null) {
-				throw new GetFilmServiceException(ExceptionMessages.FILM_NOT_PRESENT);
-			}
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+		Film film = filmDAO.getById(id, lang);
+        if (film == null) {
+            throw new GetFilmServiceException(ExceptionMessages.FILM_NOT_PRESENT);
+        }
 		
 		return film;
 	}
@@ -228,15 +212,11 @@ public class FilmServiceImpl implements IFilmService {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
-		try {
-			String name = filmDAO.getFilmNameByID(id, lang);
-			if (name == null) {
-				throw new GetFilmServiceException(ExceptionMessages.FILM_NOT_PRESENT);
-			}
-			return name;
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+        String name = filmDAO.getFilmNameByID(id, lang);
+        if (name == null) {
+            throw new GetFilmServiceException(ExceptionMessages.FILM_NOT_PRESENT);
+        }
+        return name;
 	}
 
 	@Override
@@ -245,38 +225,34 @@ public class FilmServiceImpl implements IFilmService {
 			throw new GetFilmServiceException(ExceptionMessages.NO_FILMS_FOUND);
 		}
 		
-		List<Film> foundFilms = new ArrayList<>();
-		try {
-			foundFilms.addAll(filmDAO.getFilmsByName(text, lang));
-			List<Film> allFilms = filmDAO.getAll(lang);
-			
-			String searchText = text.toLowerCase();
-			boolean moreThanOneWord = false;
-			String[] words = null;
-			if (searchText.split(FilmServiceImpl.SPACE).length > 1) {
-				moreThanOneWord = true;
-				words = searchText.split(FilmServiceImpl.SPACE);
-			}
-			for (Film f : allFilms) {
-				String filmName = f.getName().toLowerCase();
-				if (filmName.contains(searchText) || searchText.contains(filmName)) {
-					foundFilms.add(f);
-				}
-				if (moreThanOneWord) {
-					for (String s : words) {
-						if (filmName.contains(s) || s.contains(filmName)) {
-							foundFilms.add(f);
-						}
-					}
-				}
-			}
-			
-			if (foundFilms.isEmpty()) {
-				throw new GetFilmServiceException(ExceptionMessages.NO_FILMS_FOUND);
-			}
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+		List<Film> foundFilms = filmDAO.getFilmsByName(text, lang);
+
+        List<Film> allFilms = filmDAO.getAll(lang);
+
+        String searchText = text.toLowerCase();
+        boolean moreThanOneWord = false;
+        String[] words = null;
+        if (searchText.split(FilmServiceImpl.SPACE).length > 1) {
+            moreThanOneWord = true;
+            words = searchText.split(FilmServiceImpl.SPACE);
+        }
+        for (Film f : allFilms) {
+            String filmName = f.getName().toLowerCase();
+            if (filmName.contains(searchText) || searchText.contains(filmName)) {
+                foundFilms.add(f);
+            }
+            if (moreThanOneWord) {
+                for (String s : words) {
+                    if (filmName.contains(s) || s.contains(filmName)) {
+                        foundFilms.add(f);
+                    }
+                }
+            }
+        }
+
+        if (foundFilms.isEmpty()) {
+            throw new GetFilmServiceException(ExceptionMessages.NO_FILMS_FOUND);
+        }
 		
 		return foundFilms;
 	}
@@ -310,86 +286,73 @@ public class FilmServiceImpl implements IFilmService {
 			}
 		}
 		
-		List<Film> foundFilms = new ArrayList<>();
-		try {
-			foundFilms.addAll(filmDAO.getFilmsBetweenYears(fYearFrom, fYearTo, lang));
-			
-			if (Validator.validateObject(genres) && Validator.validateStringArray(genres)) {
-				List<Film> filmsByGenre;
-				for (String genre : genres) {
-					filmsByGenre = filmDAO.getFilmsByGenre(genre, lang);
-					foundFilms.retainAll(filmsByGenre);
-				}
-			}
-			
-			if (Validator.validateObject(countries) && Validator.validateStringArray(countries)) {
-				List<Film> filmsByCountry;
-				for (String country : countries) {
-					filmsByCountry = filmDAO.getFilmsByCountry(country, lang);
-					foundFilms.retainAll(filmsByCountry);
-				}
-			}
-			
-			if (Validator.validateStrings(name)) {
-				try {
-					List<Film> filmsByName = searchByName(name, lang);
-					foundFilms.retainAll(filmsByName);
-				} catch (GetFilmServiceException e) {
-				}
-			}
-			
-			if (foundFilms.isEmpty()) {
-				throw new GetFilmServiceException(ExceptionMessages.NO_FILMS_FOUND);
-			}
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+		List<Film> foundFilms = new ArrayList<>(filmDAO.getFilmsBetweenYears(fYearFrom, fYearTo, lang));
+
+        if (Validator.validateObject(genres) && Validator.validateStringArray(genres)) {
+            List<Film> filmsByGenre;
+            for (String genre : genres) {
+                filmsByGenre = filmDAO.getFilmsByGenre(genre, lang);
+                foundFilms.retainAll(filmsByGenre);
+            }
+        }
+
+        if (Validator.validateObject(countries) && Validator.validateStringArray(countries)) {
+            List<Film> filmsByCountry;
+            for (String country : countries) {
+                filmsByCountry = filmDAO.getFilmsByCountry(country, lang);
+                foundFilms.retainAll(filmsByCountry);
+            }
+        }
+
+        if (Validator.validateStrings(name)) {
+            try {
+                List<Film> filmsByName = searchByName(name, lang);
+                foundFilms.retainAll(filmsByName);
+            } catch (GetFilmServiceException e) {
+            }
+        }
+
+        if (foundFilms.isEmpty()) {
+            throw new GetFilmServiceException(ExceptionMessages.NO_FILMS_FOUND);
+        }
 		
 		return foundFilms;
 	}
 
 	@Override
 	public String[] getAvailableGenres(String lang) throws ServiceException {
-		try {
-			String[] genres;
-			if (lang.equals(ENG_LANG)) {
-			    genres = filmDAO.getAvailableGenresDefault();
-            } else {
-			    genres = filmDAO.getAvailableGenresLocalized();
-            }
-			if (genres == null) {
-				throw new ServiceException(ExceptionMessages.GENRES_NOT_AVAILABLE);
-			}
-			String genresE = genres[0];
-			int f = genresE.indexOf("('");
-			int l = genresE.lastIndexOf("')");
-			String ss = genresE.substring(f + 2, l);
-			return ss.split("','");
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+        String[] genres;
+        if (lang.equals(ENG_LANG)) {
+            genres = filmDAO.getAvailableGenresDefault();
+        } else {
+            genres = filmDAO.getAvailableGenresLocalized();
+        }
+        if (genres == null) {
+            throw new ServiceException(ExceptionMessages.GENRES_NOT_AVAILABLE);
+        }
+        String genresE = genres[0];
+        int f = genresE.indexOf("('");
+        int l = genresE.lastIndexOf("')");
+        String ss = genresE.substring(f + 2, l);
+        return ss.split("','");
 	}
 
 	@Override
 	public String[] getAvailableCountries(String lang) throws ServiceException {
-		try {
-			String[] countries;
-			if (lang.equals(ENG_LANG)) {
-			    countries = filmDAO.getAvailableCountriesDefault();
-            } else {
-			    countries = filmDAO.getAvailableCountriesLocalized();
-            }
-			if (countries == null) {
-				throw new ServiceException(ExceptionMessages.COUNTRIES_NOT_AVAILABLE);
-			}
-            String countriesE = countries[0];
-            int f = countriesE.indexOf("('");
-            int l = countriesE.lastIndexOf("')");
-            String ss = countriesE.substring(f + 2, l);
-            return ss.split("','");
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+        String[] countries;
+        if (lang.equals(ENG_LANG)) {
+            countries = filmDAO.getAvailableCountriesDefault();
+        } else {
+            countries = filmDAO.getAvailableCountriesLocalized();
+        }
+        if (countries == null) {
+            throw new ServiceException(ExceptionMessages.COUNTRIES_NOT_AVAILABLE);
+        }
+        String countriesE = countries[0];
+        int f = countriesE.indexOf("('");
+        int l = countriesE.lastIndexOf("')");
+        String ss = countriesE.substring(f + 2, l);
+        return ss.split("','");
 	}
 
 	@Override
@@ -399,18 +362,12 @@ public class FilmServiceImpl implements IFilmService {
 		}
 		int start = (pageNum - 1) * FILMS_AMOUNT_ON_PAGE;
 		
-		List<Film> filmSet;
-		try {
-			filmSet = filmDAO.getAllPart(start, FILMS_AMOUNT_ON_PAGE, lang);
-			
-			if (filmSet.isEmpty()) {
-				throw new GetFilmServiceException(ExceptionMessages.NO_FILMS_IN_DB);
-			}
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+		List<Film> films = filmDAO.getAllPart(start, FILMS_AMOUNT_ON_PAGE, lang);
+        if (films.isEmpty()) {
+            throw new GetFilmServiceException(ExceptionMessages.NO_FILMS_IN_DB);
+        }
 		
-		return filmSet;
+		return films;
 	}
 
 	@Override

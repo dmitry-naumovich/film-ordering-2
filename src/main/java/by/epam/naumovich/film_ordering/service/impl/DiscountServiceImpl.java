@@ -2,7 +2,6 @@ package by.epam.naumovich.film_ordering.service.impl;
 
 import by.epam.naumovich.film_ordering.bean.Discount;
 import by.epam.naumovich.film_ordering.dao.IDiscountDAO;
-import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 import by.epam.naumovich.film_ordering.service.IDiscountService;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.DiscountServiceException;
@@ -66,19 +65,15 @@ public class DiscountServiceImpl implements IDiscountService {
 
     @Override
     public Discount getCurrentUserDiscountByID(int id) throws ServiceException {
-        if (!Validator.validateObject(id)){
+        if (!Validator.validateInt(id)){
             throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
         }
 
-        try {
-            List<Discount> discounts = discountDAO.findDiscountByUserId(id);
-            if (discounts.isEmpty()) {
-                throw new GetDiscountServiceException(ExceptionMessages.DISCOUNT_NOT_FOUND);
-            }
-            return discounts.get(0);
-        } catch (DAOException e) {
-            throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
+        List<Discount> discounts = discountDAO.findDiscountByUserId(id);
+        if (discounts.isEmpty()) {
+            throw new GetDiscountServiceException(ExceptionMessages.DISCOUNT_NOT_FOUND);
         }
+        return discounts.get(0);
     }
 
     @Override

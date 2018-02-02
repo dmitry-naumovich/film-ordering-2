@@ -9,7 +9,6 @@ import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.User;
 import by.epam.naumovich.film_ordering.dao.IUserDAO;
-import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 import by.epam.naumovich.film_ordering.service.IUserService;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.BanUserServiceException;
@@ -51,15 +50,10 @@ public class UserServiceImpl implements IUserService {
 	public int addUser(String login, String name, String surname, String password, String sex, String bDate,
 			String phone, String email, String about) throws ServiceException {
 
-		try {
-			User existingUser = userDAO.findByLogin(login);
-			if (existingUser != null) {
-				throw new ServiceSignUpException(ExceptionMessages.ALREADY_TAKEN_LOGIN);
-			}
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+        User existingUser = userDAO.findByLogin(login);
+        if (existingUser != null) {
+            throw new ServiceSignUpException(ExceptionMessages.ALREADY_TAKEN_LOGIN);
+        }
 		
 		if (!Validator.validateWithPattern(login, LOGIN_PATTERN)) {
 			throw new ServiceSignUpException(ExceptionMessages.INVALID_LOGIN);
@@ -165,17 +159,12 @@ public class UserServiceImpl implements IUserService {
 		if(!Validator.validateStrings(login)){
 			throw new ServiceAuthException(ExceptionMessages.CORRUPTED_LOGIN);
 		}
-		
-		try {
-			User user = userDAO.findByLogin(login);
-			if (user == null) {
-				throw new ServiceAuthException(ExceptionMessages.LOGIN_NOT_REGISTRATED);
-			}
-			return user;
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+
+        User user = userDAO.findByLogin(login);
+        if (user == null) {
+            throw new ServiceAuthException(ExceptionMessages.LOGIN_NOT_REGISTRATED);
+        }
+        return user;
 	}
 
 	@Override
@@ -195,30 +184,25 @@ public class UserServiceImpl implements IUserService {
 		if(!Validator.validateStrings(login, password)){
 			throw new ServiceAuthException(ExceptionMessages.CORRUPTED_LOGIN_OR_PWD);
 		}
-		
-		try {
-			User user = userDAO.findByLogin(login);
-			if (user == null) {
-				throw new ServiceAuthException(ExceptionMessages.LOGIN_NOT_REGISTRATED);
-			}
+
+        User user = userDAO.findByLogin(login);
+        if (user == null) {
+            throw new ServiceAuthException(ExceptionMessages.LOGIN_NOT_REGISTRATED);
+        }
+
+        String realPassw = userDAO.getPasswordByLogin(login);
+
+        if (!realPassw.equals(password)) {
+            throw new ServiceAuthException(ExceptionMessages.WRONG_PASSWORD);
+        }
+
+        if (userDAO.userIsInBan(user.getId())) {
+            String untilDateAndTime = userDAO.getCurrentBanEnd(user.getId());
+            String banReason = userDAO.getCurrentBanReason(user.getId());
+            throw new ServiceAuthException(String.format(ExceptionMessages.YOU_ARE_BANNED, untilDateAndTime, banReason));
+        }
 			
-			String realPassw = userDAO.getPasswordByLogin(login);
-			
-			if (!realPassw.equals(password)) {
-				throw new ServiceAuthException(ExceptionMessages.WRONG_PASSWORD);
-			}
-			
-			if (userDAO.userIsInBan(user.getId())) {
-				String untilDateAndTime = userDAO.getCurrentBanEnd(user.getId());
-				String banReason = userDAO.getCurrentBanReason(user.getId());
-				throw new ServiceAuthException(String.format(ExceptionMessages.YOU_ARE_BANNED, untilDateAndTime, banReason));
-			}
-			
-			return user;
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);	
-		}
+        return user;
 	}
 
 	@Override
@@ -244,15 +228,11 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public List<User> getUsersInBanNow() throws ServiceException {
-		try {
-			List<User> users = userDAO.findBanned();
-			if (users == null) {
-				throw new GetUserServiceException(ExceptionMessages.NO_USERS_IN_BAN_NOW);
-			}
-			return users;
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);	
-		}	
+        List<User> users = userDAO.findBanned();
+        if (users == null) {
+            throw new GetUserServiceException(ExceptionMessages.NO_USERS_IN_BAN_NOW);
+        }
+        return users;
 	}
 
 	@Override
@@ -276,12 +256,7 @@ public class UserServiceImpl implements IUserService {
 		Date startDate = Date.valueOf(LocalDate.now());
 		Time startTime = Time.valueOf(LocalTime.now());
 		
-		try {
-			userDAO.banUser(userID, startDate, startTime, bLength, reason);
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
-		
+        userDAO.banUser(userID, startDate, startTime, bLength, reason);
 	}
 
 	@Override
@@ -289,12 +264,7 @@ public class UserServiceImpl implements IUserService {
 		if (!Validator.validateInt(userID)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
-		try {
-			userDAO.unbanUser(userID);
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
-		
+        userDAO.unbanUser(userID);
 	}
 
 	@Override
@@ -302,11 +272,7 @@ public class UserServiceImpl implements IUserService {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
-		try {
-			return userDAO.userIsInBan(id);
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+        return userDAO.userIsInBan(id);
 	}
 
 	@Override
@@ -316,15 +282,11 @@ public class UserServiceImpl implements IUserService {
 		}
 		int start = (pageNum - 1) * USERS_AMOUNT_ON_PAGE;
 		
-		try {
-			List<User> users = userDAO.findAllPart(start, USERS_AMOUNT_ON_PAGE);
-			if (users == null) {
-				throw new GetUserServiceException(ExceptionMessages.NO_USERS_IN_DB);
-			}
-			return users;
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);	
-		}	
+        List<User> users = userDAO.findAllPart(start, USERS_AMOUNT_ON_PAGE);
+        if (users == null) {
+            throw new GetUserServiceException(ExceptionMessages.NO_USERS_IN_DB);
+        }
+        return users;
 	}
 
 	@Override

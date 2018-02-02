@@ -49,11 +49,11 @@ public final class Validator {
 	/**
 	 * Validates input object
 	 * 
-	 * @param obj
+	 * @param obj object to validate
 	 * @return true if it is not null, false otherwise
 	 */
 	public static boolean validateObject(Object obj) {
-		return obj == null ? false : true;
+		return obj != null;
 	}
 	
 	/**

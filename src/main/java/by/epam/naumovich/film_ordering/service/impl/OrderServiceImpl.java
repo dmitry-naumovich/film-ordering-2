@@ -131,13 +131,13 @@ public class OrderServiceImpl implements IOrderService {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
 		
-		List<Order> set = new ArrayList<Order>();
+		List<Order> orders;
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			set = orderDAO.getOrdersByUserId(id);
+			orders = orderDAO.getOrdersByUserId(id);
 			
-			if (set.isEmpty()) {
+			if (orders.isEmpty()) {
 				throw new GetOrderServiceException(ExceptionMessages.NO_USER_ORDERS_YET);
 			}
 			
@@ -145,7 +145,7 @@ public class OrderServiceImpl implements IOrderService {
 			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
 		}
 		
-		return set;
+		return orders;
 	}
 
 	@Override
@@ -154,13 +154,13 @@ public class OrderServiceImpl implements IOrderService {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
 		
-		List<Order> set = new ArrayList<Order>();
+		List<Order> orders;
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			set = orderDAO.getOrdersByFilmId(id);
+			orders = orderDAO.getOrdersByFilmId(id);
 			
-			if (set.isEmpty()) {
+			if (orders.isEmpty()) {
 				throw new GetOrderServiceException(ExceptionMessages.NO_FILM_ORDERS);
 			}
 			
@@ -168,18 +168,18 @@ public class OrderServiceImpl implements IOrderService {
 			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
 		}
 		
-		return set;
+		return orders;
 	}
 
 	@Override
 	public List<Order> getAllOrders() throws ServiceException {
-		List<Order> set = new ArrayList<Order>();
+		List<Order> orders;
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			set = orderDAO.getAllOrders();
+			orders = orderDAO.getAllOrders();
 			
-			if (set.isEmpty()) {
+			if (orders.isEmpty()) {
 				throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
 			}
 			
@@ -187,7 +187,7 @@ public class OrderServiceImpl implements IOrderService {
 			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
 		}
 		
-		return set;
+		return orders;
 	}
 
 	@Override
@@ -200,13 +200,13 @@ public class OrderServiceImpl implements IOrderService {
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			List<Order> set = orderDAO.getAllOrdersPart(start, ORDERS_AMOUNT_ON_PAGE);
+			List<Order> orders = orderDAO.getAllOrdersPart(start, ORDERS_AMOUNT_ON_PAGE);
 			
-			if (set.isEmpty()) {
+			if (orders.isEmpty()) {
 				throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
 			}
 			
-			return set;
+			return orders;
 			
 		} catch (DAOException e) {
 			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
@@ -242,13 +242,13 @@ public class OrderServiceImpl implements IOrderService {
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			List<Order> set = orderDAO.getOrdersPartByUserId(id, start, ORDERS_AMOUNT_ON_PAGE);
+			List<Order> orders = orderDAO.getOrdersPartByUserId(id, start, ORDERS_AMOUNT_ON_PAGE);
 			
-			if (set.isEmpty()) {
+			if (orders.isEmpty()) {
 				throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
 			}
 			
-			return set;
+			return orders;
 			
 		} catch (DAOException e) {
 			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
@@ -265,13 +265,13 @@ public class OrderServiceImpl implements IOrderService {
 		try {
 			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
 			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			List<Order> set = orderDAO.getOrdersPartByFilmId(id, start, ORDERS_AMOUNT_ON_PAGE);
+			List<Order> orders = orderDAO.getOrdersPartByFilmId(id, start, ORDERS_AMOUNT_ON_PAGE);
 			
-			if (set.isEmpty()) {
+			if (orders.isEmpty()) {
 				throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
 			}
 			
-			return set;
+			return orders;
 			
 		} catch (DAOException e) {
 			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);

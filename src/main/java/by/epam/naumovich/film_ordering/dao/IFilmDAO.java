@@ -3,7 +3,6 @@ package by.epam.naumovich.film_ordering.dao;
 import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Film;
-import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -23,7 +22,6 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
 	 * 
 	 * @param id ID of a film
 	 * @return found film or null if it was not found
-	 * @throws DAOException
 	 */
     @Query(value = "SELECT f.f_id, COALESCE(lf.loc_name, f.f_name) AS f_name, f.f_year, " +
             "COALESCE(lf.loc_direct, f.f_direct) AS f_direct, COALESCE(lf.loc_country, f.f_country) AS f_country, " +
@@ -32,7 +30,7 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
             "COALESCE(lf.loc_description, f.f_description) AS f_description, f.f_length, f.f_rating, f.f_price " +
             "FROM films AS f LEFT JOIN (SELECT * FROM films_local WHERE loc_lang = :lang) AS lf ON f.f_id = lf.loc_id " +
             "WHERE f.f_id = :id", nativeQuery = true)
-	Film getById(@Param("id") int id, @Param("lang") String lang) throws DAOException;
+	Film getById(@Param("id") int id, @Param("lang") String lang);
 
 	/**
 	 * Returns film name by its ID
@@ -40,19 +38,17 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
 	 * @param id ID of a film
 	 * @param lang language of the source data to be returned
 	 * @return the name of the film or null if it was not found
-	 * @throws DAOException
 	 */
 	@Query(value = "SELECT COALESCE(lf.loc_name, f.f_name)" +
             "FROM films AS f LEFT JOIN (SELECT * FROM films_local WHERE loc_lang = :lang) AS lf ON f.f_id = lf.loc_id " +
             "WHERE f.f_id = :id", nativeQuery = true)
-	String getFilmNameByID(@Param("id") int id, @Param("lang") String lang) throws DAOException;
+	String getFilmNameByID(@Param("id") int id, @Param("lang") String lang);
 	
 	/**
 	 * Returns twelve last added to the data source films
 	 * 
 	 * @param lang language of the source data to be returned
 	 * @return a set of films
-	 * @throws DAOException
 	 */
 	@Query(value = "SELECT f.f_id, COALESCE(lf.loc_name, f.f_name) AS f_name, f.f_year, " +
             "COALESCE(lf.loc_direct, f.f_direct) AS f_direct, COALESCE(lf.loc_country, f.f_country) AS f_country, " +
@@ -61,14 +57,13 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
             "COALESCE(lf.loc_description, f.f_description) AS f_description, f.f_length, f.f_rating, f.f_price " +
             "FROM films AS f LEFT JOIN (SELECT * FROM films_local WHERE loc_lang = :lang) AS lf ON f.f_id = lf.loc_id " +
             "ORDER BY f.f_id DESC LIMIT 12", nativeQuery = true)
-	List<Film> getTwelveLastAddedFilms(@Param("lang") String lang) throws DAOException;
+	List<Film> getTwelveLastAddedFilms(@Param("lang") String lang);
 	
 	/**
 	 * Returns all films that a present in the data source
 	 * 
 	 * @param lang language of the source data to be returned
 	 * @return a set of all films
-	 * @throws DAOException
 	 */
 	@Query(value = "SELECT f.f_id, COALESCE(lf.loc_name, f.f_name) AS f_name, f.f_year, " +
             "COALESCE(lf.loc_direct, f.f_direct) AS f_direct, COALESCE(lf.loc_country, f.f_country) AS f_country, " +
@@ -77,7 +72,7 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
             "COALESCE(lf.loc_description, f.f_description) AS f_description, f.f_length, f.f_rating, f.f_price " +
             "FROM films AS f LEFT JOIN (SELECT * FROM films_local WHERE loc_lang = :lang) AS lf ON f.f_id = lf.loc_id " +
             "ORDER BY f_rating DESC", nativeQuery = true)
-	List<Film> getAll(@Param("lang") String lang) throws DAOException;
+	List<Film> getAll(@Param("lang") String lang);
 	
 	/**
 	 * Returns a necessary part of all films from the data source
@@ -86,7 +81,6 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
 	 * @param amount amount of films to be returned
 	 * @param lang language of the source data to be returned
 	 * @return a part of the set of all films
-	 * @throws DAOException
 	 */
 	@Query(value = "SELECT f.f_id, COALESCE(lf.loc_name, f.f_name) AS f_name, f.f_year," +
             "COALESCE(lf.loc_direct, f.f_direct) AS f_direct, COALESCE(lf.loc_country, f.f_country) AS f_country, " +
@@ -95,7 +89,7 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
             "COALESCE(lf.loc_description, f.f_description) AS f_description, f.f_length, f.f_rating, f.f_price " +
             "FROM films AS f LEFT JOIN (SELECT * FROM films_local WHERE loc_lang = :lang) AS lf ON f.f_id = lf.loc_id " +
             "ORDER BY f_rating DESC LIMIT :start, :amount", nativeQuery = true)
-	List<Film> getAllPart(@Param("start") int start, @Param("amount") int amount, @Param("lang") String lang) throws DAOException;
+	List<Film> getAllPart(@Param("start") int start, @Param("amount") int amount, @Param("lang") String lang);
 	
 	/**
 	 * Searches for films in the data source by name 
@@ -103,7 +97,6 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
 	 * @param name film name
 	 * @param lang language of the source data to be returned
 	 * @return a set of found films
-	 * @throws DAOException
 	 */
 	@Query(value = "SELECT f.f_id, COALESCE(lf.loc_name, f.f_name) AS f_name, f.f_year, " +
             "COALESCE(lf.loc_direct, f.f_direct) AS f_direct, COALESCE(lf.loc_country, f.f_country) AS f_country, " +
@@ -112,7 +105,7 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
             "COALESCE(lf.loc_description, f.f_description) AS f_description, f.f_length, f.f_rating, f.f_price " +
             "FROM films AS f LEFT JOIN (SELECT * FROM films_local WHERE loc_lang = :lang) AS lf ON f.f_id = lf.loc_id " +
             "WHERE f.f_name = :name OR lf.loc_name = :name", nativeQuery = true)
-	List<Film> getFilmsByName(@Param("name") String name, @Param("lang") String lang) throws DAOException;
+	List<Film> getFilmsByName(@Param("name") String name, @Param("lang") String lang);
 	
 	/**
 	 * Searches for films in the data source by year
@@ -120,7 +113,6 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
 	 * @param year film year
 	 * @param lang language of the source data to be returned
 	 * @return a set of found films
-	 * @throws DAOException
 	 */
 	@Query(value = "SELECT f.f_id, COALESCE(lf.loc_name, f.f_name) AS f_name, f.f_year, " +
             "COALESCE(lf.loc_direct, f.f_direct) AS f_direct, COALESCE(lf.loc_country, f.f_country) AS f_country, " +
@@ -129,7 +121,7 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
             "COALESCE(lf.loc_description, f.f_description) AS f_description, f.f_length, f.f_rating, f.f_price " +
             "FROM films AS f LEFT JOIN (SELECT * FROM films_local WHERE loc_lang = :lang) AS lf ON f.f_id = lf.loc_id " +
             "WHERE f.f_year = :year", nativeQuery = true)
-	List<Film> getFilmsByYear(@Param("year") int year, @Param("lang") String lang) throws DAOException;
+	List<Film> getFilmsByYear(@Param("year") int year, @Param("lang") String lang);
 	
 	/**
 	 * Searches for films in the data source by genre
@@ -137,7 +129,6 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
 	 * @param genre film genre
 	 * @param lang language of the source data to be returned
 	 * @return a set of found films
-	 * @throws DAOException
 	 */
 	@Query(value = "SELECT f.f_id, COALESCE(lf.loc_name, f.f_name) AS f_name, f.f_year, " +
             "COALESCE(lf.loc_direct, f.f_direct) AS f_direct, COALESCE(lf.loc_country, f.f_country) AS f_country, " +
@@ -146,7 +137,7 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
             "COALESCE(lf.loc_description, f.f_description) AS f_description, f.f_length, f.f_rating, f.f_price " +
             "FROM films AS f LEFT JOIN (SELECT * FROM films_local WHERE loc_lang = :lang) AS lf ON f.f_id = lf.loc_id " +
             "WHERE FIND_IN_SET(:genre, f.f_genre) > 0 OR FIND_IN_SET(:genre, lf.loc_genre) > 0", nativeQuery = true)
-	List<Film> getFilmsByGenre(@Param("genre") String genre, @Param("lang") String lang) throws DAOException;
+	List<Film> getFilmsByGenre(@Param("genre") String genre, @Param("lang") String lang);
 	
 	/**
 	 * Searches for films in the data source by country
@@ -154,7 +145,6 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
 	 * @param country film country
 	 * @param lang language of the source data to be returned
 	 * @return a set of found films
-	 * @throws DAOException
 	 */
 	@Query(value = "SELECT f.f_id, COALESCE(lf.loc_name, f.f_name) AS f_name, f.f_year, " +
             "COALESCE(lf.loc_direct, f.f_direct) AS f_direct, COALESCE(lf.loc_country, f.f_country) AS f_country, " +
@@ -163,7 +153,7 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
             "COALESCE(lf.loc_description, f.f_description) AS f_description, f.f_length, f.f_rating, f.f_price " +
             "FROM films AS f LEFT JOIN (SELECT * FROM films_local WHERE loc_lang = :lang) AS lf ON f.f_id = lf.loc_id " +
             "WHERE FIND_IN_SET(:country, f.f_country) > 0 OR FIND_IN_SET(:country, lf.loc_country) > 0", nativeQuery = true)
-	List<Film> getFilmsByCountry(@Param("country") String country, @Param("lang") String lang) throws DAOException;
+	List<Film> getFilmsByCountry(@Param("country") String country, @Param("lang") String lang);
 	
 	/**
 	 * Searches for films in the data source by year range
@@ -172,7 +162,6 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
 	 * @param yearTo right border of the range (including)
 	 * @param lang language of the source data to be returned
 	 * @return a set of found films
-	 * @throws DAOException
 	 */
 	@Query(value = "SELECT f.f_id, COALESCE(lf.loc_name, f.f_name) AS f_name, f.f_year, " +
             "COALESCE(lf.loc_direct, f.f_direct) AS f_direct, COALESCE(lf.loc_country, f.f_country) AS f_country, " +
@@ -181,16 +170,15 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
             "COALESCE(lf.loc_description, f.f_description) AS f_description, f.f_length, f.f_rating, f.f_price " +
             "FROM films AS f LEFT JOIN (SELECT * FROM films_local WHERE loc_lang = :lang) AS lf ON f.f_id = lf.loc_id " +
             "WHERE f.f_year >= :yearFrom AND f.f_year <= :yearTo", nativeQuery = true)
-	List<Film> getFilmsBetweenYears(@Param("yearFrom") int yearFrom, @Param("yearTo") int yearTo, @Param("lang") String lang) throws DAOException;
+	List<Film> getFilmsBetweenYears(@Param("yearFrom") int yearFrom, @Param("yearTo") int yearTo, @Param("lang") String lang);
 	
 	/**
 	 * Returns all film genres that are present in the data source
 	 * 
 	 * @return an array of available genres
-	 * @throws DAOException
 	 */
 	@Query(value = "SHOW COLUMNS FROM films LIKE 'f_genre'", nativeQuery = true)
-	String[] getAvailableGenresDefault() throws DAOException;
+	String[] getAvailableGenresDefault();
 
     /**
      * Returns all film localized genres that are present in the data source
@@ -199,24 +187,22 @@ public interface IFilmDAO extends CrudRepository<Film, Integer> {
      * @throws DAOException
      */
     @Query(value = "SHOW COLUMNS FROM films_local LIKE 'loc_genre'", nativeQuery = true)
-    String[] getAvailableGenresLocalized() throws DAOException;
+    String[] getAvailableGenresLocalized();
 	
 	/**
 	 * Returns all film country names that are present in the data source
 	 * 
 	 * @return an array of available country names
-	 * @throws DAOException
 	 */
 	@Query(value = "SHOW COLUMNS FROM films LIKE 'f_country'", nativeQuery = true)
-    String[] getAvailableCountriesDefault() throws DAOException;
+    String[] getAvailableCountriesDefault();
 
 	/**
 	 * Returns all film country localized names that are present in the data source
 	 *
 	 * @return an array of available country localized names
-	 * @throws DAOException
 	 */
 	@Query(value = "SHOW COLUMNS FROM films_local LIKE 'loc_country'", nativeQuery = true)
-    String[] getAvailableCountriesLocalized() throws DAOException;
+    String[] getAvailableCountriesLocalized();
 
 }

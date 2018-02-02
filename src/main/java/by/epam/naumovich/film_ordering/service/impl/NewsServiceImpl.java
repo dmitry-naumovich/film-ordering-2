@@ -10,7 +10,6 @@ import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.News;
 import by.epam.naumovich.film_ordering.dao.INewsDAO;
-import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 import by.epam.naumovich.film_ordering.service.INewsService;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.news.AddNewsServiceException;
@@ -92,82 +91,49 @@ public class NewsServiceImpl implements INewsService {
 	
 	@Override
 	public List<News> getAllNews() throws ServiceException {
-		List<News> set;
-		try {
-			set = newsDAO.findAllByOrderByDateDescTimeDesc();
-			
-			if (set.isEmpty()) {
-				throw new GetNewsServiceException(ExceptionMessages.NO_NEWS_IN_DB);
-			}
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
-		
-		return set;
+		List<News> news = newsDAO.findAllByOrderByDateDescTimeDesc();
+        if (news.isEmpty()) {
+            throw new GetNewsServiceException(ExceptionMessages.NO_NEWS_IN_DB);
+        }
+		return news;
 	}
 
 	@Override
 	public List<News> getNewsByYear(int year) throws ServiceException {
-		List<News> set;
-		try {
-			set = newsDAO.findByYear(year);
-			
-			if (set.isEmpty()) {
-				throw new GetNewsServiceException(String.format(ExceptionMessages.NO_NEWS_WITHIN_YEAR, year));
-			}
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
-		
-		return set;
+		List<News> news = newsDAO.findByYear(year);
+        if (news.isEmpty()) {
+            throw new GetNewsServiceException(String.format(ExceptionMessages.NO_NEWS_WITHIN_YEAR, year));
+        }
+		return news;
 	}
 
 	@Override
 	public List<News> getNewsByMonth(int month, int year) throws ServiceException {
-		List<News> set;
-		try {
-			set = newsDAO.findByMonthAndYear(month, year);
-			
-			if (set.isEmpty()) {
-				throw new GetNewsServiceException(String.format(ExceptionMessages.NO_NEWS_WITHIN_MONTH, month, year));
-			}
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
-		
+		List<News> set = newsDAO.findByMonthAndYear(month, year);
+        if (set.isEmpty()) {
+            throw new GetNewsServiceException(String.format(ExceptionMessages.NO_NEWS_WITHIN_MONTH, month, year));
+        }
 		return set;
 	}
 
 	@Override
 	public List<News> getFourLastNews() throws ServiceException {
-		List<News> set;
-		try {
-			set = newsDAO.findAllByOrderByDateDescTimeDesc();
-			
-			if (set.isEmpty()) {
-				throw new GetNewsServiceException(ExceptionMessages.NO_NEWS_IN_DB);
-			}
-			List<News> list = new ArrayList<>(set);
-			set = new ArrayList<>(list.subList(0, 4));
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+		List<News> news = newsDAO.findAllByOrderByDateDescTimeDesc();
+        if (news.isEmpty()) {
+            throw new GetNewsServiceException(ExceptionMessages.NO_NEWS_IN_DB);
+        }
+        List<News> list = new ArrayList<>(news);
+        news = new ArrayList<>(list.subList(0, 4));
 		
-		return set;
+		return news;
 	}
 
 	@Override
 	public News getNewsById(int id) throws ServiceException {
 		News news = newsDAO.findOne(id);
-
         if (news == null) {
             throw new GetNewsServiceException(ExceptionMessages.NEWS_NOT_PRESENT);
         }
-		
 		return news;
 	}
 
@@ -177,16 +143,12 @@ public class NewsServiceImpl implements INewsService {
 			throw new GetNewsServiceException(ExceptionMessages.CORRUPTED_PAGE_NUM);
 		}
 		int start = (pageNum - 1) * NEWS_AMOUNT_ON_PAGE;
-		
-		try {
-			List<News> news = newsDAO.findAllPart(start, NEWS_AMOUNT_ON_PAGE);
-			if (news == null) {
-				throw new GetNewsServiceException(ExceptionMessages.NO_NEWS_IN_DB);
-			}
-			return news;
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);	
-		}	
+
+        List<News> news = newsDAO.findAllPart(start, NEWS_AMOUNT_ON_PAGE);
+        if (news == null) {
+            throw new GetNewsServiceException(ExceptionMessages.NO_NEWS_IN_DB);
+        }
+        return news;
 	}
 
 	@Override
