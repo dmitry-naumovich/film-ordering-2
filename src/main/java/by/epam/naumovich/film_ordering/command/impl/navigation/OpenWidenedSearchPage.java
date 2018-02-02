@@ -38,7 +38,7 @@ public class OpenWidenedSearchPage implements Command {
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		System.out.println(query);
 
-		String lang = Command.fetchLanguageFromSession(session);
+		String lang = fetchLanguageFromSession(session);
 		
 		try {
 			String[] genres = filmService.getAvailableGenres(lang);
