@@ -48,13 +48,8 @@ public class SearchFilmsWidened implements Command {
 		String query = QueryUtil.createHttpQueryString(request);
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		System.out.println(query);
-		
-		String lang;
-		try {
-			lang = session.getAttribute(RequestAndSessionAttributes.LANGUAGE).toString();
-		} catch (NullPointerException e) {
-			lang = RequestAndSessionAttributes.ENG_LANG;
-		}
+
+		String lang = fetchLanguageFromSession(session);
 		
 		String name = request.getParameter(RequestAndSessionAttributes.NAME);
 		String yearFrom = request.getParameter(RequestAndSessionAttributes.YEAR_FROM);

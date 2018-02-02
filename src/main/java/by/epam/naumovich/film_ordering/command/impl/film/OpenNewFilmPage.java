@@ -52,12 +52,9 @@ public class OpenNewFilmPage implements Command {
 		String query = QueryUtil.createHttpQueryString(request);
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		System.out.println(query);
-        String lang;
-        try {
-            lang = session.getAttribute(RequestAndSessionAttributes.LANGUAGE).toString();
-        } catch (NullPointerException e) {
-            lang = RequestAndSessionAttributes.ENG_LANG;
-        }
+
+        String lang = fetchLanguageFromSession(session);
+
 		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) == null) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.ADD_FILM_RESTRICTION);
 			request.getRequestDispatcher(JavaServerPageNames.LOGINATION_PAGE).forward(request, response);

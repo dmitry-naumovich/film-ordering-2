@@ -1,10 +1,15 @@
 package by.epam.naumovich.film_ordering.command;
 
+import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+
+import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ENG_LANG;
 
 /**
  * Defines methods for overriding in all Command implementations which should perform a command with help of which
@@ -25,4 +30,9 @@ public interface Command {
 	 * @throws ServletException
 	 */
 	void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException;
+
+	default String fetchLanguageFromSession(HttpSession session) {
+        Object languageAttribute = session.getAttribute(RequestAndSessionAttributes.LANGUAGE);
+        return languageAttribute == null ? ENG_LANG : languageAttribute.toString();
+    }
 }

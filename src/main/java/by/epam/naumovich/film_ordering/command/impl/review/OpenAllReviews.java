@@ -49,12 +49,7 @@ public class OpenAllReviews implements Command {
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		System.out.println(query);
 
-		String lang;
-		try {
-			lang = session.getAttribute(RequestAndSessionAttributes.LANGUAGE).toString();
-		} catch (NullPointerException e) {
-			lang = RequestAndSessionAttributes.ENG_LANG;
-		}
+		String lang = fetchLanguageFromSession(session);
 		
 		int pageNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.PAGE_NUM));
 		

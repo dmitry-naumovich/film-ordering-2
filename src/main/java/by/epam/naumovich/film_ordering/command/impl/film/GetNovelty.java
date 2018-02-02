@@ -48,12 +48,7 @@ public class GetNovelty implements Command {
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		System.out.println(query);
 
-		String lang;
-		try {
-			lang = session.getAttribute(RequestAndSessionAttributes.LANGUAGE).toString();
-		} catch (NullPointerException e) {
-			lang = RequestAndSessionAttributes.ENG_LANG;
-		}
+		String lang = fetchLanguageFromSession(session);
 		
 		try {
 			List<Film> filmSet = filmService.getTwelveLastAddedFilms(lang);
