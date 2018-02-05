@@ -85,7 +85,7 @@ public class MySQLUserDAO /*implements IUserDAO*/ {
 	
 //	@Override
 //	//TODO: check it
-//	public List<User> findAll() throws DAOException {
+//	public List<User> findAllByOrderByDateDescTimeDesc() throws DAOException {
 //		return new ArrayList<>(jdbcTemplate.query(SELECT_ALL_USERS, new UserRowMapper()));
 //	}
 	

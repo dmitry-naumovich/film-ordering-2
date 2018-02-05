@@ -4,11 +4,9 @@ import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Order;
-import by.epam.naumovich.film_ordering.dao.DAOFactory;
 import by.epam.naumovich.film_ordering.dao.IOrderDAO;
 import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 import by.epam.naumovich.film_ordering.service.IOrderService;
@@ -17,6 +15,7 @@ import by.epam.naumovich.film_ordering.service.exception.order.AddOrderServiceEx
 import by.epam.naumovich.film_ordering.service.exception.order.GetOrderServiceException;
 import by.epam.naumovich.film_ordering.service.util.ExceptionMessages;
 import by.epam.naumovich.film_ordering.service.util.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -28,8 +27,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderServiceImpl implements IOrderService {
 
-	private static final String MYSQL = "mysql";
 	private static final int ORDERS_AMOUNT_ON_PAGE = 10;
+	
+	private final IOrderDAO orderDAO;
+
+	@Autowired
+	public OrderServiceImpl(IOrderDAO orderDAO) {
+		this.orderDAO = orderDAO;
+	}
 
 	@Override
 	public int addOrder(int filmID, int userID, String price, String discount, String payment) throws ServiceException {
@@ -54,21 +59,13 @@ public class OrderServiceImpl implements IOrderService {
 		} catch (NumberFormatException e) {
 			throw new AddOrderServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
-		int orderNum = 0;
-		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			orderNum = orderDAO.addOrder(newOrder);
-			if (orderNum == 0) {
-				throw new AddOrderServiceException(ExceptionMessages.ORDER_NOT_ADDED);
-			}
-			newOrder.setOrdNum(orderNum);
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
-		
-		return orderNum;
+
+		Order order = orderDAO.save(newOrder);
+        if (order == null) {
+            throw new AddOrderServiceException(ExceptionMessages.ORDER_NOT_ADDED);
+        }
+
+		return order.getOrdNum();
 	}
 
 	@Override
@@ -76,14 +73,7 @@ public class OrderServiceImpl implements IOrderService {
 		if (!Validator.validateInt(orderNum)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
-		
-		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			orderDAO.deleteOrder(orderNum);
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+        orderDAO.delete(orderNum);
 	}
 	
 	@Override
@@ -91,18 +81,12 @@ public class OrderServiceImpl implements IOrderService {
 		if (!Validator.validateInt(orderNum)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
-		
-		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			Order order = orderDAO.getOrderByOrderNum(orderNum);
-			if (order == null) {
-				throw new GetOrderServiceException(ExceptionMessages.ORDER_NOT_FOUND);
-			}
-			return order;
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+
+        Order order = orderDAO.findOne(orderNum);
+        if (order == null) {
+            throw new GetOrderServiceException(ExceptionMessages.ORDER_NOT_FOUND);
+        }
+        return order;
 	}
 
 
@@ -113,9 +97,7 @@ public class OrderServiceImpl implements IOrderService {
 		}
 		
 		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			Order order = orderDAO.getOrderByUserAndFilmId(userID, filmID);
+			Order order = orderDAO.findByUserIdAndFilmId(userID, filmID);
 			if (order == null) {
 				throw new GetOrderServiceException(ExceptionMessages.NO_FILM_USER_ORDER);
 			}
@@ -133,9 +115,7 @@ public class OrderServiceImpl implements IOrderService {
 		
 		List<Order> orders;
 		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			orders = orderDAO.getOrdersByUserId(id);
+			orders = orderDAO.findByUserIdOrderByDateDescTimeDesc(id);
 			
 			if (orders.isEmpty()) {
 				throw new GetOrderServiceException(ExceptionMessages.NO_USER_ORDERS_YET);
@@ -156,9 +136,7 @@ public class OrderServiceImpl implements IOrderService {
 		
 		List<Order> orders;
 		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			orders = orderDAO.getOrdersByFilmId(id);
+			orders = orderDAO.findByFilmIdOrderByDateDescTimeDesc(id);
 			
 			if (orders.isEmpty()) {
 				throw new GetOrderServiceException(ExceptionMessages.NO_FILM_ORDERS);
@@ -175,9 +153,7 @@ public class OrderServiceImpl implements IOrderService {
 	public List<Order> getAllOrders() throws ServiceException {
 		List<Order> orders;
 		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			orders = orderDAO.getAllOrders();
+			orders = orderDAO.findAllByOrderByDateDescTimeDesc();
 			
 			if (orders.isEmpty()) {
 				throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
@@ -198,9 +174,7 @@ public class OrderServiceImpl implements IOrderService {
 		
 		int start = (pageNum - 1) * ORDERS_AMOUNT_ON_PAGE;
 		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			List<Order> orders = orderDAO.getAllOrdersPart(start, ORDERS_AMOUNT_ON_PAGE);
+			List<Order> orders = orderDAO.findAllPart(start, ORDERS_AMOUNT_ON_PAGE);
 			
 			if (orders.isEmpty()) {
 				throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
@@ -215,21 +189,13 @@ public class OrderServiceImpl implements IOrderService {
 
 	@Override
 	public int getNumberOfAllOrdersPages() throws ServiceException {
-		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			int numOfOrders = orderDAO.getNumberOfOrders();
-			if (numOfOrders % ORDERS_AMOUNT_ON_PAGE == 0) {
-				return numOfOrders / ORDERS_AMOUNT_ON_PAGE;
-			}
-			else {
-				return numOfOrders / ORDERS_AMOUNT_ON_PAGE + 1;
-			}
-			
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+        int numOfOrders = (int)orderDAO.count(); //todo: return long everywhere
+        if (numOfOrders % ORDERS_AMOUNT_ON_PAGE == 0) {
+            return numOfOrders / ORDERS_AMOUNT_ON_PAGE;
+        }
+        else {
+            return numOfOrders / ORDERS_AMOUNT_ON_PAGE + 1;
+        }
 	}
 
 	@Override
@@ -240,9 +206,7 @@ public class OrderServiceImpl implements IOrderService {
 		
 		int start = (pageNum - 1) * ORDERS_AMOUNT_ON_PAGE;
 		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			List<Order> orders = orderDAO.getOrdersPartByUserId(id, start, ORDERS_AMOUNT_ON_PAGE);
+			List<Order> orders = orderDAO.findPartByUserId(id, start, ORDERS_AMOUNT_ON_PAGE);
 			
 			if (orders.isEmpty()) {
 				throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
@@ -263,9 +227,7 @@ public class OrderServiceImpl implements IOrderService {
 		
 		int start = (pageNum - 1) * ORDERS_AMOUNT_ON_PAGE;
 		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			List<Order> orders = orderDAO.getOrdersPartByFilmId(id, start, ORDERS_AMOUNT_ON_PAGE);
+			List<Order> orders = orderDAO.findPartByFilmId(id, start, ORDERS_AMOUNT_ON_PAGE);
 			
 			if (orders.isEmpty()) {
 				throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
@@ -285,9 +247,7 @@ public class OrderServiceImpl implements IOrderService {
 		}
 		
 		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			int numOfOrders = orderDAO.getNumberOfUserOrders(userID);
+			int numOfOrders = (int)orderDAO.countByUserId(userID); //todo: long
 			if (numOfOrders % ORDERS_AMOUNT_ON_PAGE == 0) {
 				return numOfOrders / ORDERS_AMOUNT_ON_PAGE;
 			}
@@ -307,9 +267,7 @@ public class OrderServiceImpl implements IOrderService {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
 		try {
-			DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-			IOrderDAO orderDAO = daoFactory.getOrderDAO();
-			int numOfOrders = orderDAO.getNumberOfFilmOrders(filmID);
+			int numOfOrders = (int)orderDAO.countByFilmId(filmID); //todo: long
 			if (numOfOrders % ORDERS_AMOUNT_ON_PAGE == 0) {
 				return numOfOrders / ORDERS_AMOUNT_ON_PAGE;
 			}

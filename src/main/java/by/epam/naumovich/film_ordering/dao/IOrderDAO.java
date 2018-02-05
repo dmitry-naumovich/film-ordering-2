@@ -4,6 +4,10 @@ import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Order;
 import by.epam.naumovich.film_ordering.dao.exception.DAOException;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Defines methods for implementing in the DAO layer for the Order entity.
@@ -11,43 +15,19 @@ import by.epam.naumovich.film_ordering.dao.exception.DAOException;
  * @author Dmitry Naumovich
  * @version 1.0
  */
-public interface IOrderDAO {
-
-	/**
-	 * Adds new order to the data source
-	 * 
-	 * @param order new order entity
-	 * @return order number of the newly added order or 0 if it was not added
-	 * @throws DAOException
-	 */
-	int addOrder(Order order) throws DAOException;
-	
-	/**
-	 * Deletes order from the data source
-	 * 
-	 * @param orderNum order number of the order that will be deleted
-	 * @throws DAOException
-	 */
-	void deleteOrder(int orderNum) throws DAOException;
-	
-	/**
-	 * Searches for the order in the data source by its number
-	 * 
-	 * @param orderNum order number of the order
-	 * @return found order or null if it was not found
-	 * @throws DAOException
-	 */
-	Order getOrderByOrderNum(int orderNum) throws DAOException;
+@Transactional
+public interface IOrderDAO extends CrudRepository<Order, Integer> {
 
 	/**
 	 * Searches for the order in the data source by user and film IDs
 	 * 
-	 * @param userID user ID
-	 * @param filmID film ID
+	 * @param userId user ID
+	 * @param filmId film ID
 	 * @return found order or null if it was not found
 	 * @throws DAOException
 	 */
-	Order getOrderByUserAndFilmId(int userID, int filmID) throws DAOException;
+	@Query(value = "SELECT * FROM orders WHERE o_user = :userId AND o_film = :filmId", nativeQuery = true)
+	Order findByUserIdAndFilmId(@Param("userId") int userId, @Param("filmId") int filmId) throws DAOException;
 	
 	/**
 	 * Searches for the orders in the data source by user ID
@@ -56,18 +36,20 @@ public interface IOrderDAO {
 	 * @return a set of found orders
 	 * @throws DAOException
 	 */
-	List<Order> getOrdersByUserId(int id) throws DAOException;
+	List<Order> findByUserIdOrderByDateDescTimeDesc(int id) throws DAOException;
 
 	/**
 	 * Searches for the orders in the data source by user ID and returns the necessary part of them
 	 * 
-	 * @param id user ID
+	 * @param userId user ID
 	 * @param start start index of necessary part
 	 * @param amount amount of orders to be returned
 	 * @return a set of found orders
 	 * @throws DAOException
 	 */
-	List<Order> getOrdersPartByUserId(int id, int start, int amount) throws DAOException;
+	@Query(value = "SELECT * FROM orders WHERE o_user = :userId ORDER BY o_date DESC, o_time DESC " +
+            "LIMIT :start, :amount", nativeQuery = true)
+	List<Order> findPartByUserId(@Param("userId") int userId, @Param("start") int start, @Param("amount") int amount) throws DAOException;
 	
 	/**
 	 * Searches for the orders in the data source by film ID
@@ -76,26 +58,28 @@ public interface IOrderDAO {
 	 * @return a set of found orders
 	 * @throws DAOException
 	 */
-	List<Order> getOrdersByFilmId(int id) throws DAOException;
+	List<Order> findByFilmIdOrderByDateDescTimeDesc(int id) throws DAOException;
 	
 	/**
 	 * Searches for the orders in the data source by film ID
 	 * 
-	 * @param id film ID
+	 * @param filmId film ID
 	 * @param start start index of necessary part
 	 * @param amount amount of orders to be returned
 	 * @return a set of found orders
 	 * @throws DAOException
 	 */
-	List<Order> getOrdersPartByFilmId(int id, int start, int amount) throws DAOException;
+	@Query(value = "SELECT * FROM orders WHERE o_film = :filmId ORDER BY o_date DESC, o_time DESC " +
+            "LIMIT :start, :amount", nativeQuery = true)
+	List<Order> findPartByFilmId(@Param("filmId") int filmId, @Param("start") int start, @Param("amount") int amount) throws DAOException;
 	
 	/**
 	 * Returns all orders that are present in the data source
-	 * 
+	 *
 	 * @return a set of all orders
 	 * @throws DAOException
 	 */
-	List<Order> getAllOrders() throws DAOException;
+	List<Order> findAllByOrderByDateDescTimeDesc() throws DAOException;
 	
 	/**
 	 * Returns a necessary part of all orders from the data source
@@ -105,15 +89,8 @@ public interface IOrderDAO {
 	 * @return a part of the set of all orders
 	 * @throws DAOException
 	 */
-	List<Order> getAllOrdersPart(int start, int amount) throws DAOException;
-	
-	/**
-	 * Counts the number of all orders in the data source
-	 * 
-	 * @return total order amount
-	 * @throws DAOException
-	 */
-	int getNumberOfOrders() throws DAOException;
+	@Query(value = "SELECT * FROM orders ORDER BY o_date DESC, o_time DESC LIMIT :start, :amount", nativeQuery = true)
+	List<Order> findAllPart(@Param("start") int start, @Param("amount") int amount) throws DAOException;
 	
 	/**
 	 * Counts the number of user orders in the data source
@@ -122,7 +99,7 @@ public interface IOrderDAO {
 	 * @return total user orders amount
 	 * @throws DAOException
 	 */
-	int getNumberOfUserOrders(int userID) throws DAOException;
+	long countByUserId(int userID) throws DAOException;
 	
 	/**
 	 * Counts the number of film orders in the data source
@@ -131,5 +108,5 @@ public interface IOrderDAO {
 	 * @return total film orders amount
 	 * @throws DAOException
 	 */
-	int getNumberOfFilmOrders(int filmID) throws DAOException;
+	long countByFilmId(int filmID) throws DAOException;
 }

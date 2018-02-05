@@ -13,12 +13,6 @@ import by.epam.naumovich.film_ordering.dao.util.ExceptionMessages;
 public abstract class DAOFactory {
 	
 	/**
-	 * return a singleton object of IOrderDAO implementation class
-	 * @return IOrderDAO implementation class object
-	 */
-	public abstract IOrderDAO getOrderDAO();
-
-	/**
 	 * Enumeration of available and implemented data source types
 	 * 
 	 * @author Dmitry

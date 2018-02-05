@@ -5,16 +5,13 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import by.epam.naumovich.film_ordering.bean.Order;
-import by.epam.naumovich.film_ordering.dao.DAOFactory;
 import by.epam.naumovich.film_ordering.dao.IOrderDAO;
 import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 
@@ -27,6 +24,7 @@ import by.epam.naumovich.film_ordering.dao.exception.DAOException;
  */
 public class MySQLOrderDAOTest {
 
+	private IOrderDAO dao;
 
 	/**
 	 * Database type used in this test suite.
@@ -63,12 +61,9 @@ public class MySQLOrderDAOTest {
 	 */
 	@Test
 	public void addOrder() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IOrderDAO dao = daoFactory.getOrderDAO();
-		
-		int orderNum = dao.addOrder(expectedOrder);
-        Order actualOrder = dao.getOrderByOrderNum(orderNum);
-        dao.deleteOrder(orderNum);
+		int orderNum = dao.save(expectedOrder).getOrdNum();
+        Order actualOrder = dao.findOne(orderNum);
+        dao.delete(orderNum);
 
         Assert.assertEquals(expectedOrder.getUserId(), actualOrder.getUserId());
         Assert.assertEquals(expectedOrder.getFilmId(), actualOrder.getFilmId());
@@ -87,12 +82,9 @@ public class MySQLOrderDAOTest {
 	 */
 	@Test
 	public void deleteOrder() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IOrderDAO dao = daoFactory.getOrderDAO();
-		
-		int orderNum = dao.addOrder(expectedOrder);
-        dao.deleteOrder(orderNum);
-        Order actualOrder = dao.getOrderByOrderNum(orderNum);
+		int orderNum = dao.save(expectedOrder).getOrdNum();
+        dao.delete(orderNum);
+        Order actualOrder = dao.findOne(orderNum);
 		
         Assert.assertNull(actualOrder);
 	}
@@ -105,12 +97,9 @@ public class MySQLOrderDAOTest {
 	 */
 	@Test
 	public void getOrderByOrderNum() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IOrderDAO dao = daoFactory.getOrderDAO();
-		
-		int orderNum = dao.addOrder(expectedOrder);
-        Order actualOrder = dao.getOrderByOrderNum(orderNum);
-        dao.deleteOrder(orderNum);
+		int orderNum = dao.save(expectedOrder).getOrdNum();
+        Order actualOrder = dao.findOne(orderNum);
+        dao.delete(orderNum);
         
         Assert.assertEquals(expectedOrder.getUserId(), actualOrder.getUserId());
         Assert.assertEquals(expectedOrder.getFilmId(), actualOrder.getFilmId());
@@ -130,12 +119,9 @@ public class MySQLOrderDAOTest {
 	 */
 	@Test
 	public void getOrderByUserAndFilmId() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IOrderDAO dao = daoFactory.getOrderDAO();
-		
-		int orderNum = dao.addOrder(expectedOrder);
-        Order actualOrder = dao.getOrderByUserAndFilmId(expectedOrder.getUserId(), expectedOrder.getFilmId());
-        dao.deleteOrder(orderNum);
+		int orderNum = dao.save(expectedOrder).getOrdNum();
+        Order actualOrder = dao.findByUserIdAndFilmId(expectedOrder.getUserId(), expectedOrder.getFilmId());
+        dao.delete(orderNum);
         
         Assert.assertEquals(expectedOrder.getUserId(), actualOrder.getUserId());
         Assert.assertEquals(expectedOrder.getFilmId(), actualOrder.getFilmId());
@@ -145,7 +131,7 @@ public class MySQLOrderDAOTest {
         Assert.assertEquals(expectedOrder.getDiscount(), actualOrder.getDiscount());
         Assert.assertEquals(expectedOrder.getPayment(), actualOrder.getPayment(), 0.00f);	
         
-        Order nullOrder = dao.getOrderByUserAndFilmId(expectedOrder.getUserId(), expectedOrder.getFilmId());
+        Order nullOrder = dao.findByUserIdAndFilmId(expectedOrder.getUserId(), expectedOrder.getFilmId());
         Assert.assertNull(nullOrder);
 	}
 	
@@ -156,12 +142,9 @@ public class MySQLOrderDAOTest {
 	 */
 	@Test
 	public void getOrdersByUserId() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IOrderDAO dao = daoFactory.getOrderDAO();
-		
-		List<Order> userOrders1 = dao.getOrdersByUserId(1);
-		List<Order> userOrders2 = new ArrayList<Order>();
-		for (Order o : dao.getAllOrders()) {
+		List<Order> userOrders1 = dao.findByUserIdOrderByDateDescTimeDesc(1);
+		List<Order> userOrders2 = new ArrayList<>();
+		for (Order o : dao.findAllByOrderByDateDescTimeDesc()) {
 			if (o.getUserId() == 1) {
 				userOrders2.add(o);
 			}
@@ -177,18 +160,15 @@ public class MySQLOrderDAOTest {
 	 */
 	@Test
 	public void getOrdersPartByUserId() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IOrderDAO dao = daoFactory.getOrderDAO();
-		
-		List<Order> userOrders1 = dao.getOrdersPartByUserId(1, 0, 3);
-		List<Order> userOrders2 = new ArrayList<Order>();
-		for (Order o : dao.getAllOrders()) {
+		List<Order> userOrders1 = dao.findPartByUserId(1, 0, 3);
+		List<Order> userOrders2 = new ArrayList<>();
+		for (Order o : dao.findAllByOrderByDateDescTimeDesc()) {
 			if (o.getUserId() == 1) {
 				userOrders2.add(o);
 			}
 		}
-		List<Order> list = new ArrayList<Order>(userOrders2);
-		userOrders2 = new ArrayList<Order>(list.subList(0, 3));
+		List<Order> list = new ArrayList<>(userOrders2);
+		userOrders2 = new ArrayList<>(list.subList(0, 3));
 		
 		Assert.assertEquals(userOrders1, userOrders2);	
 	}
@@ -200,12 +180,9 @@ public class MySQLOrderDAOTest {
 	 */
 	@Test
 	public void getOrdersByFilmId() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IOrderDAO dao = daoFactory.getOrderDAO();
-		
-		List<Order> filmOrders1 = dao.getOrdersByFilmId(1);
-		List<Order> filmOrders2 = new ArrayList<Order>();
-		for (Order o : dao.getAllOrders()) {
+		List<Order> filmOrders1 = dao.findByFilmIdOrderByDateDescTimeDesc(1);
+		List<Order> filmOrders2 = new ArrayList<>();
+		for (Order o : dao.findAllByOrderByDateDescTimeDesc()) {
 			if (o.getFilmId() == 1) {
 				filmOrders2.add(o);
 			}
@@ -221,18 +198,15 @@ public class MySQLOrderDAOTest {
 	 */
 	@Test
 	public void getOrdersPartByFilmId() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IOrderDAO dao = daoFactory.getOrderDAO();
-		
-		List<Order> filmOrders1 = dao.getOrdersPartByFilmId(1, 0, 3);
-		List<Order> filmOrders2 = new ArrayList<Order>();
-		for (Order o : dao.getAllOrders()) {
+		List<Order> filmOrders1 = dao.findPartByFilmId(1, 0, 3);
+		List<Order> filmOrders2 = new ArrayList<>();
+		for (Order o : dao.findAllByOrderByDateDescTimeDesc()) {
 			if (o.getFilmId() == 1) {
 				filmOrders2.add(o);
 			}
 		}
-		List<Order> list = new ArrayList<Order>(filmOrders2);
-		filmOrders2 = new ArrayList<Order>(list.subList(0, 3));
+		List<Order> list = new ArrayList<>(filmOrders2);
+		filmOrders2 = new ArrayList<>(list.subList(0, 3));
 		
 		Assert.assertEquals(filmOrders1, filmOrders2);	
 	}
@@ -244,11 +218,8 @@ public class MySQLOrderDAOTest {
 	 */
 	@Test
 	public void getNumberOfOrders() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IOrderDAO orderDAO = daoFactory.getOrderDAO();
-		
-		int ordersNum1 = orderDAO.getNumberOfOrders();
-		List<Order> allOrders = orderDAO.getAllOrders();
+		int ordersNum1 = (int)dao.count();
+		List<Order> allOrders = dao.findAllByOrderByDateDescTimeDesc();
 		int ordersNum2 = allOrders.size();
 		
 		Assert.assertEquals(ordersNum1, ordersNum2);
@@ -261,12 +232,9 @@ public class MySQLOrderDAOTest {
 	 */
 	@Test
 	public void getAllOrdersPart() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IOrderDAO orderDAO = daoFactory.getOrderDAO();
-		
-		List<Order> particularOrders1 = orderDAO.getAllOrdersPart(0, 6);
-		List<Order> allOrders = new ArrayList<Order>(orderDAO.getAllOrders());
-		List<Order> particularOrders2 = new ArrayList<Order>(allOrders.subList(0, 6));
+		List<Order> particularOrders1 = dao.findAllPart(0, 6);
+		List<Order> allOrders = new ArrayList<>(dao.findAllByOrderByDateDescTimeDesc());
+		List<Order> particularOrders2 = new ArrayList<>(allOrders.subList(0, 6));
 		
 		Assert.assertEquals(particularOrders1, particularOrders2);	
 	}
@@ -278,12 +246,9 @@ public class MySQLOrderDAOTest {
 	 */
 	@Test
 	public void getNumberOfUserOrders() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IOrderDAO orderDAO = daoFactory.getOrderDAO();
-		
-		int ordersNum1 = orderDAO.getNumberOfUserOrders(1);
-		List<Order> userOrders = new ArrayList<Order>();
-		for (Order o : orderDAO.getAllOrders()) {
+		int ordersNum1 = (int)dao.countByUserId(1);
+		List<Order> userOrders = new ArrayList<>();
+		for (Order o : dao.findAllByOrderByDateDescTimeDesc()) {
 			if (o.getUserId() == 1) {
 				userOrders.add(o);
 			}
@@ -300,12 +265,9 @@ public class MySQLOrderDAOTest {
 	 */
 	@Test
 	public void getNumberOfFilmOrders() throws DAOException {
-		DAOFactory daoFactory = DAOFactory.getDAOFactory(MYSQL);
-		IOrderDAO orderDAO = daoFactory.getOrderDAO();
-		
-		int ordersNum1 = orderDAO.getNumberOfFilmOrders(1);
-		List<Order> filmOrders = new ArrayList<Order>();
-		for (Order o : orderDAO.getAllOrders()) {
+		int ordersNum1 = (int)dao.countByFilmId(1);
+		List<Order> filmOrders = new ArrayList<>();
+		for (Order o : dao.findAllByOrderByDateDescTimeDesc()) {
 			if (o.getFilmId() == 1) {
 				filmOrders.add(o);
 			}

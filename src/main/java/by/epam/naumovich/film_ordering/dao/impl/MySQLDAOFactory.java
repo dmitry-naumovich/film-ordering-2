@@ -1,8 +1,6 @@
 package by.epam.naumovich.film_ordering.dao.impl;
 
 import by.epam.naumovich.film_ordering.dao.DAOFactory;
-import by.epam.naumovich.film_ordering.dao.IOrderDAO;
-import by.epam.naumovich.film_ordering.dao.IReviewDAO;
 
 /**
  * DAOFactory that works with the MySQL database as data source and overrides abstract methods from DAOFactory
@@ -22,10 +20,5 @@ public class MySQLDAOFactory extends DAOFactory {
 
 	public static DAOFactory getInstance() {
 		return instance;
-	}
-
-	@Override
-	public IOrderDAO getOrderDAO() {
-		return MySQLOrderDAO.getInstance();
 	}
 }
