@@ -3,15 +3,12 @@ package by.epam.naumovich.film_ordering.command.impl.navigation;
 import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.ErrorMessages;
 import by.epam.naumovich.film_ordering.command.util.JavaServerPageNames;
-import by.epam.naumovich.film_ordering.command.util.QueryUtil;
-import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpRequest;
 
 
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;

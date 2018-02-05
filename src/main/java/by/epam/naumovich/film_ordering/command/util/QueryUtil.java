@@ -1,7 +1,6 @@
 package by.epam.naumovich.film_ordering.command.util;
 
 import java.util.Enumeration;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**

@@ -4,7 +4,6 @@ import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.ErrorMessages;
 import by.epam.naumovich.film_ordering.command.util.JavaServerPageNames;
 import by.epam.naumovich.film_ordering.command.util.LogMessages;
-import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
 import by.epam.naumovich.film_ordering.service.IUserService;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
@@ -52,6 +51,7 @@ public class UnbanUser implements Command {
 		}
 		else {
             userService.unbanUser(userID);
+
             log.debug(String.format(LogMessages.USER_UNBANNED, userID));
             request.setAttribute(SUCCESS_MESSAGE, SuccessMessages.USER_UNBANNED);
             //Thread.sleep(1000);
