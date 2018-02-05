@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import by.epam.naumovich.film_ordering.bean.Review;
 import by.epam.naumovich.film_ordering.dao.IReviewDAO;
-import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 import org.junit.Assert;
 
 /**
@@ -52,12 +51,9 @@ public class MySQLReviewDAOTest {
 	/**
 	 * Adds expectedReview to the data source via DAO layer, gets it back and compares two results.
 	 * Tests if the review was correctly added.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void addReview() throws DAOException {
-
+	public void addReview() {
 		dao.save(expectedReview);
         ReviewPK reviewPK = new ReviewPK(expectedReview.getAuthor(), expectedReview.getFilmId());
         Review actualReview = dao.findOne(reviewPK);
@@ -75,11 +71,9 @@ public class MySQLReviewDAOTest {
 	/**
 	 * Adds expectedFilm to the data source via DAO layer, deletes it and then tries to get it back expecting the null result.
 	 * Tests if the film was correctly deleted.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void deleteReview() throws DAOException {
+	public void deleteReview() {
 		dao.save(expectedReview);
 		dao.delete(expectedReview);
         ReviewPK reviewPK = new ReviewPK(expectedReview.getAuthor(), expectedReview.getFilmId());
@@ -90,13 +84,9 @@ public class MySQLReviewDAOTest {
 	
 	/**
 	 * Gets reviews by user ID in two different ways and compares results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getReviewsByUserId() throws DAOException {
-		
-		
+	public void getReviewsByUserId() {
 		List<Review> userReviews1 = dao.findByUserId(1);
 		List<Review> userReviews2 = new ArrayList<>();
 		for (Review r : dao.findAll()) {
@@ -110,13 +100,9 @@ public class MySQLReviewDAOTest {
 	
 	/**
 	 * Gets reviews by film ID in two different ways and compares results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getReviewsByFilmId() throws DAOException {
-		
-		
+	public void getReviewsByFilmId() {
 		List<Review> filmReviews1 = dao.getReviewsByFilmId(1);
 		List<Review> filmReviews2 = new ArrayList<>();
 		for (Review r : dao.findAll()) {
@@ -132,13 +118,9 @@ public class MySQLReviewDAOTest {
 	 * Adds expectedReview to the data source via DAO layer, gets it back by user and film IDs and compares two results.
 	 * Tests if the valid review entity is returned by user and film IDs.
 	 * Then tests if null object is returned again by same IDs after it deletion.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getReviewByUserAndFilmId() throws DAOException {
-		
-
+	public void getReviewByUserAndFilmId() {
 		dao.save(expectedReview);
 		ReviewPK reviewPK = new ReviewPK(expectedReview.getAuthor(), expectedReview.getFilmId());
 		Review actualReview = dao.findOne(reviewPK);
@@ -155,11 +137,9 @@ public class MySQLReviewDAOTest {
 	
 	/**
 	 * Gets the amount of reviews in the data source in two different ways and compares the results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getNumberOfReviews() throws DAOException {
+	public void getNumberOfReviews() {
 		int reviewsNum1 = (int)dao.count();
 		int reviewsNum2 = dao.findAllByOrderByDateDescTimeDesc().size();
 		
@@ -168,11 +148,9 @@ public class MySQLReviewDAOTest {
 	
 	/**
 	 * Gets the part of all reviews from the data source in two different ways and compares the results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getAllReviewsPart() throws DAOException {
+	public void getAllReviewsPart() {
 		List<Review> particularReviews1 = dao.findAllPart(0, 6);
 		List<Review> allReviews = new ArrayList<>(dao.findAllByOrderByDateDescTimeDesc());
 		List<Review> particularReviews2 = new ArrayList<>(allReviews.subList(0, 6));
@@ -182,37 +160,29 @@ public class MySQLReviewDAOTest {
 	
 	/**
 	 * Gets reviews part by user ID in two different ways and compares results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getReviewsPartByUserId() throws DAOException {
-		
-		
+	public void getReviewsPartByUserId() {
 		List<Review> userReviews1 = dao.getReviewsPartByUserId(1, 0, 3);
-		List<Review> userReviews2 = new ArrayList<Review>();
+		List<Review> userReviews2 = new ArrayList<>();
 		for (Review o : dao.findAll()) {
 			if (o.getAuthor() == 1) {
 				userReviews2.add(o);
 			}
 		}
-		List<Review> list = new ArrayList<Review>(userReviews2);
-		userReviews2 = new ArrayList<Review>(list.subList(0, 3));
+		List<Review> list = new ArrayList<>(userReviews2);
+		userReviews2 = new ArrayList<>(list.subList(0, 3));
 		
 		Assert.assertEquals(userReviews1, userReviews2);	
 	}
 	
 	/**
 	 * Gets reviews part by film ID in two different ways and compares results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getReviewsPartByFilmId() throws DAOException {
-		
-		
+	public void getReviewsPartByFilmId() {
 		List<Review> filmReviews1 = dao.getReviewsPartByFilmId(1, 0, 3);
-		List<Review> filmReviews2 = new ArrayList<Review>();
+		List<Review> filmReviews2 = new ArrayList<>();
 		for (Review o : dao.findAll()) {
 			if (o.getFilmId() == 1) {
 				filmReviews2.add(o);
@@ -226,11 +196,9 @@ public class MySQLReviewDAOTest {
 	
 	/**
 	 * Gets the amount of user reviews in the data source in two different ways and compares the results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getNumberOfUserReviews() throws DAOException {
+	public void getNumberOfUserReviews() {
 		int reviewsNum1 = dao.countByAuthor(4);
 		List<Review> userReviews = new ArrayList<>();
 		for (Review o : dao.findAll()) {
@@ -245,11 +213,9 @@ public class MySQLReviewDAOTest {
 	
 	/**
 	 * Gets the amount of film reviews in the data source in two different ways and compares the results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getNumberOfFilmReviews() throws DAOException {
+	public void getNumberOfFilmReviews() {
 		int reviewsNum1 = dao.countByFilmId(1);
 		List<Review> filmReviews = new ArrayList<>();
 		for (Review o : dao.findAll()) {

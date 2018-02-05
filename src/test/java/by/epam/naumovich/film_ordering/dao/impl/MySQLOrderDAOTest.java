@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import by.epam.naumovich.film_ordering.bean.Order;
 import by.epam.naumovich.film_ordering.dao.IOrderDAO;
-import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 
 /**
  * Tests DAO layer methods overridden in MySQLOrderDAO class in a way of comparing expected and actual results with the help of JUnit 4 framework.
@@ -26,11 +25,6 @@ public class MySQLOrderDAOTest {
 
 	private IOrderDAO dao;
 
-	/**
-	 * Database type used in this test suite.
-	 * 
-	 */
-	private static final String MYSQL = "mysql";
 	/**
 	 * This object will be compared to the actual object taken from the DAO layer.
 	 * 
@@ -56,11 +50,9 @@ public class MySQLOrderDAOTest {
 	/**
 	 * Adds expectedOrder to the data source via DAO layer, gets it back and compares two results.
 	 * Tests if the order was correctly added.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void addOrder() throws DAOException {
+	public void addOrder() {
 		int orderNum = dao.save(expectedOrder).getOrdNum();
         Order actualOrder = dao.findOne(orderNum);
         dao.delete(orderNum);
@@ -77,11 +69,9 @@ public class MySQLOrderDAOTest {
 	/**
 	 * Adds expectedOrder to the data source via DAO layer, deletes it and then tries to get it back expecting the null result.
 	 * Tests if the order was correctly deleted.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void deleteOrder() throws DAOException {
+	public void deleteOrder() {
 		int orderNum = dao.save(expectedOrder).getOrdNum();
         dao.delete(orderNum);
         Order actualOrder = dao.findOne(orderNum);
@@ -92,11 +82,9 @@ public class MySQLOrderDAOTest {
 	/**
 	 * Adds expectedOrder to the data source via DAO layer, gets it back by ID and compares two results.
 	 * Tests if the valid order entity is returned by orderNum.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getOrderByOrderNum() throws DAOException {
+	public void getOrderByOrderNum() {
 		int orderNum = dao.save(expectedOrder).getOrdNum();
         Order actualOrder = dao.findOne(orderNum);
         dao.delete(orderNum);
@@ -114,11 +102,9 @@ public class MySQLOrderDAOTest {
 	 * Adds expectedOrder to the data source via DAO layer, gets it back by ID and compares two results.
 	 * Tests if the valid order entity is returned by user and film IDs.
 	 * Then tests if null object is returned again by same IDs after it deletion.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getOrderByUserAndFilmId() throws DAOException {
+	public void getOrderByUserAndFilmId() {
 		int orderNum = dao.save(expectedOrder).getOrdNum();
         Order actualOrder = dao.findByUserIdAndFilmId(expectedOrder.getUserId(), expectedOrder.getFilmId());
         dao.delete(orderNum);
@@ -137,11 +123,9 @@ public class MySQLOrderDAOTest {
 	
 	/**
 	 * Gets orders by user ID in two different ways and compares results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getOrdersByUserId() throws DAOException {
+	public void getOrdersByUserId() {
 		List<Order> userOrders1 = dao.findByUserIdOrderByDateDescTimeDesc(1);
 		List<Order> userOrders2 = new ArrayList<>();
 		for (Order o : dao.findAllByOrderByDateDescTimeDesc()) {
@@ -155,11 +139,9 @@ public class MySQLOrderDAOTest {
 	
 	/**
 	 * Gets orders part by user ID in two different ways and compares results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getOrdersPartByUserId() throws DAOException {
+	public void getOrdersPartByUserId() {
 		List<Order> userOrders1 = dao.findPartByUserId(1, 0, 3);
 		List<Order> userOrders2 = new ArrayList<>();
 		for (Order o : dao.findAllByOrderByDateDescTimeDesc()) {
@@ -175,11 +157,9 @@ public class MySQLOrderDAOTest {
 	
 	/**
 	 * Gets orders by film ID in two different ways and compares results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getOrdersByFilmId() throws DAOException {
+	public void getOrdersByFilmId() {
 		List<Order> filmOrders1 = dao.findByFilmIdOrderByDateDescTimeDesc(1);
 		List<Order> filmOrders2 = new ArrayList<>();
 		for (Order o : dao.findAllByOrderByDateDescTimeDesc()) {
@@ -193,11 +173,9 @@ public class MySQLOrderDAOTest {
 	
 	/**
 	 * Gets orders part by film ID in two different ways and compares results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getOrdersPartByFilmId() throws DAOException {
+	public void getOrdersPartByFilmId() {
 		List<Order> filmOrders1 = dao.findPartByFilmId(1, 0, 3);
 		List<Order> filmOrders2 = new ArrayList<>();
 		for (Order o : dao.findAllByOrderByDateDescTimeDesc()) {
@@ -213,11 +191,9 @@ public class MySQLOrderDAOTest {
 	
 	/**
 	 * Gets the amount of orders in the data source in two different ways and compares the results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getNumberOfOrders() throws DAOException {
+	public void getNumberOfOrders() {
 		int ordersNum1 = (int)dao.count();
 		List<Order> allOrders = dao.findAllByOrderByDateDescTimeDesc();
 		int ordersNum2 = allOrders.size();
@@ -227,11 +203,9 @@ public class MySQLOrderDAOTest {
 	
 	/**
 	 * Gets the part of all orders from the data source in two different ways and compares the results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getAllOrdersPart() throws DAOException {
+	public void getAllOrdersPart() {
 		List<Order> particularOrders1 = dao.findAllPart(0, 6);
 		List<Order> allOrders = new ArrayList<>(dao.findAllByOrderByDateDescTimeDesc());
 		List<Order> particularOrders2 = new ArrayList<>(allOrders.subList(0, 6));
@@ -241,11 +215,9 @@ public class MySQLOrderDAOTest {
 	
 	/**
 	 * Gets the amount of user orders in the data source in two different ways and compares the results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getNumberOfUserOrders() throws DAOException {
+	public void getNumberOfUserOrders() {
 		int ordersNum1 = (int)dao.countByUserId(1);
 		List<Order> userOrders = new ArrayList<>();
 		for (Order o : dao.findAllByOrderByDateDescTimeDesc()) {
@@ -260,11 +232,9 @@ public class MySQLOrderDAOTest {
 	
 	/**
 	 * Gets the amount of film orders in the data source in two different ways and compares the results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getNumberOfFilmOrders() throws DAOException {
+	public void getNumberOfFilmOrders() {
 		int ordersNum1 = (int)dao.countByFilmId(1);
 		List<Order> filmOrders = new ArrayList<>();
 		for (Order o : dao.findAllByOrderByDateDescTimeDesc()) {

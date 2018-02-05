@@ -14,7 +14,6 @@ import org.junit.Test;
 
 import by.epam.naumovich.film_ordering.bean.News;
 import by.epam.naumovich.film_ordering.dao.INewsDAO;
-import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 
 /**
  * Tests DAO layer methods overridden in MySQLNewsDAO class in a way of comparing expected and actual results with the help of JUnit 4 framework.
@@ -49,11 +48,9 @@ public class MySQLNewsDAOTest {
 	/**
 	 * Adds expectedNews to the data source via DAO layer, gets it back and compares two results.
 	 * Tests if the news was correctly added.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void addNews() throws DAOException {		
+	public void addNews() {
 		int id = dao.save(expectedNews).getId();
 		News actualNews = dao.findOne(id);
 		dao.delete(id);
@@ -67,11 +64,9 @@ public class MySQLNewsDAOTest {
 	/**
 	 * Adds expectedNews to the data source via DAO layer, deletes it and then tries to get it back expecting the null result.
 	 * Tests if the news was correctly deleted.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void deleteNews() throws DAOException {		
+	public void deleteNews() {
 		int id = dao.save(expectedNews).getId();
 		dao.delete(id);
 		News actualNews = dao.findOne(id);
@@ -82,12 +77,9 @@ public class MySQLNewsDAOTest {
 	/**
 	 * Adds expectedNews to the data source via DAO layer, edits it, gets it back and compares two results.
 	 * Tests if the news was correctly edited.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void editNews() throws DAOException {
-		
+	public void editNews() {
 		int id = dao.save(expectedNews).getId();
 		expectedNews.setId(id);
 		expectedNews.setTitle("updated title");
@@ -105,13 +97,9 @@ public class MySQLNewsDAOTest {
 	/**
 	 * Adds expectedNews to the data source via DAO layer, gets it back by ID and compares two results.
 	 * Tests if valid news entity is returned by id.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getNewsById() throws DAOException {
-		
-		
+	public void getNewsById() {
 		int id = dao.save(expectedNews).getId();
 		News actualNews = dao.findOne(id);
 		dao.delete(id);
@@ -124,33 +112,23 @@ public class MySQLNewsDAOTest {
 
 	/**
 	 * Gets all news in two different ways and compares results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getAllNews() throws DAOException {
-		
-		
+	public void getAllNews() {
 		List<News> allNews1 = dao.findAllByOrderByDateDescTimeDesc();
 		List<News> allNews2 = new ArrayList<>();
 		for (int i = 2016; i < 2050; i++) {
 			allNews2.addAll(dao.findByYear(i));
 		}
-		
 		Assert.assertEquals(allNews1, allNews2);
-		
 	}
 	
 	/**
 	 * Gets news by year and iterates over all news finding news of same year, 
 	 * removing them from the first collection if found. The expected result is empty collection.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getNewsByYear() throws DAOException {
-		
-		
+	public void getNewsByYear()  {
 		List<News> yearNews = dao.findByYear(2016);
 		List<News> allNews = dao.findAllByOrderByDateDescTimeDesc();
 		Calendar calendar = Calendar.getInstance();
@@ -167,18 +145,13 @@ public class MySQLNewsDAOTest {
 	/**
 	 * Gets news by year and month and iterates over all news finding news of same year and month, 
 	 * removing them from the first collection if found. The expected result is empty collection.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getNewsByMonthAndYear() throws DAOException {
-		
-		
+	public void getNewsByMonthAndYear()  {
 		List<News> yearNews = dao.findByMonthAndYear(8, 2016);
 		List<News> allNews = dao.findAllByOrderByDateDescTimeDesc();
 		Calendar calendar = Calendar.getInstance();
 		for (News n : allNews) {
-			
 			calendar.setTime(n.getDate());
 			if (calendar.get(Calendar.YEAR) == 2016 && calendar.get(Calendar.MONTH) == 8) {
 				yearNews.remove(n);				
@@ -190,11 +163,9 @@ public class MySQLNewsDAOTest {
 	
 	/**
 	 * Gets the amount of news in the data source in two different ways and compares the results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getNumberOfNews() throws DAOException {
+	public void getNumberOfNews()  {
 		int newsNum1 = (int)dao.count();
 		List<News> allNews = dao.findAllByOrderByDateDescTimeDesc();
 		int newsNum2 = allNews.size();
@@ -204,11 +175,9 @@ public class MySQLNewsDAOTest {
 	
 	/**
 	 * Gets the part of all news from the data source in two different ways and compares the results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getAllNewsPart() throws DAOException {
+	public void getAllNewsPart()  {
 		List<News> particularNews1 = dao.findAllPart(0, 6);
 		List<News> allNews = new ArrayList<>(dao.findAllByOrderByDateDescTimeDesc());
 		List<News> particularNews2 = new ArrayList<>(allNews.subList(0, 6));

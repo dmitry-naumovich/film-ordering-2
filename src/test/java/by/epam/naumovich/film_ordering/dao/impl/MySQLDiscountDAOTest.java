@@ -1,9 +1,7 @@
 package by.epam.naumovich.film_ordering.dao.impl;
 
-
 import by.epam.naumovich.film_ordering.bean.Discount;
 import by.epam.naumovich.film_ordering.dao.IDiscountDAO;
-import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
@@ -47,11 +45,9 @@ public class MySQLDiscountDAOTest {
     /**
      * Adds expectedDiscount to the data source via DAO layer, gets it back by user ID and compares two results.
      * Tests if valid discount entity is returned by user ID.
-     *
-     * @throws DAOException
      */
     @Test
-    public void getCurrentUserDiscountByID() throws DAOException, InterruptedException {
+    public void getCurrentUserDiscountByID() throws InterruptedException {
 
 
         dao.save(expectedDiscount);
@@ -71,11 +67,9 @@ public class MySQLDiscountDAOTest {
     /**
      * Adds expectedDiscount to the data source via DAO layer, gets it back by user ID and compares two results.
      * Tests if the discount was correctly added.
-     *
-     * @throws DAOException
      */
 //	@Test
-//	public void addDiscount() throws DAOException, InterruptedException {
+//	public void addDiscount() throws InterruptedException {
 //
 //
 //		int discountID = dao.save(expectedDiscount).getId();
@@ -94,11 +88,9 @@ public class MySQLDiscountDAOTest {
     /**
      * Adds expectedDiscount to the data source via DAO layer, edits it, gets it back and compares two results.
      * Tests if the discount was correctly edited.
-     *
-     * @throws DAOException
      */
 //	@Test
-//	public void editDiscount() throws DAOException, InterruptedException {
+//	public void editDiscount() throws InterruptedException {
 //
 //
 //		int discountID = dao.save(expectedDiscount).getId();
@@ -122,11 +114,9 @@ public class MySQLDiscountDAOTest {
     /**
      * Adds expectedDiscount to the data source via DAO layer, deletes it and then tries to get it back expecting the null result.
      * Tests if the discount was correctly deleted.
-     *
-     * @throws DAOException
      */
 //	@Test
-//	public void delete() throws DAOException {
+//	public void delete() {
 //
 //
 //		int discountID = dao.save(expectedDiscount).getId();

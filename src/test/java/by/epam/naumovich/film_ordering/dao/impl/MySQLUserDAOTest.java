@@ -11,12 +11,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import by.epam.naumovich.film_ordering.bean.Discount;
 import by.epam.naumovich.film_ordering.bean.User;
-import by.epam.naumovich.film_ordering.dao.DAOFactory;
 import by.epam.naumovich.film_ordering.dao.IUserDAO;
-import by.epam.naumovich.film_ordering.dao.exception.DAOException;
-
 
 /**
  * Tests DAO layer methods overridden in MySQLUserDAO class in a way of comparing expected and actual results with the help of JUnit 4 framework.
@@ -28,12 +24,6 @@ import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 public class MySQLUserDAOTest {
 
 	private IUserDAO dao;
-
-	/**
-	 * Database type used in this test suite.
-	 * 
-	 */
-	private static final String MYSQL = "mysql";
 	
 	/**
 	 * This object will be compared to the actual object taken from the DAO layer.
@@ -66,11 +56,9 @@ public class MySQLUserDAOTest {
 	/**
 	 * Adds expectedUser to the data source via DAO layer, gets it back and compares two results.
 	 * Tests if the user was correctly added.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void addUser() throws DAOException {
+	public void addUser() {
         User actualUser = dao.save(expectedUser);
 		dao.delete(actualUser.getId());
 		
@@ -89,11 +77,9 @@ public class MySQLUserDAOTest {
 	/**
 	 * Adds expectedUser to the data source via DAO layer, updates it, gets it back and compares two results.
 	 * Tests if the user was correctly edited.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void updateUser() throws DAOException {
+	public void updateUser() {
 		User user = dao.save(expectedUser);
 		expectedUser.setName("upd text name");
 		expectedUser.setPassword("new-password");
@@ -117,11 +103,9 @@ public class MySQLUserDAOTest {
 	/**
 	 * Adds expectedUser to the data source via DAO layer, deletes it and then tries to get it back expecting the null result.
 	 * Tests if the user was correctly deleted.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void deleteUser() throws DAOException {
+	public void deleteUser() {
         User user = dao.save(expectedUser);
 		dao.delete(user.getId());
 		User actualUser = dao.findOne(user.getId());
@@ -132,11 +116,9 @@ public class MySQLUserDAOTest {
 	/**
 	 * Gets users in ban and separately iterates over all users checking every one of them if he is in ban, 
 	 * removing them from the first collection if true. The expected result is empty collection.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getUsersInBan() throws DAOException {
+	public void getUsersInBan() {
         List<User> usersInBan = dao.findBanned();
 		
 		for (User u : dao.findAll()) {
@@ -151,11 +133,9 @@ public class MySQLUserDAOTest {
 	/**
 	 * Adds expectedUser to the data source via DAO layer, gets it back by ID and compares two results.
 	 * Tests if valid user is returned by id.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getUserByID() throws DAOException {
+	public void getUserByID() {
         User newUser = dao.save(expectedUser);
         User actualUser = dao.findOne(newUser.getId());
 		dao.delete(actualUser.getId());
@@ -175,11 +155,9 @@ public class MySQLUserDAOTest {
 	/**
 	 * Adds expectedUser to the data source via DAO layer, gets it back by login and compares two results.
 	 * Tests if valid user is returned by login.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getUserByLogin() throws DAOException {
+	public void getUserByLogin() {
 		int id = dao.save(expectedUser).getId();
 		User actualUser = dao.findByLogin(expectedUser.getLogin());
 		dao.delete(id);
@@ -199,11 +177,9 @@ public class MySQLUserDAOTest {
 	/**
 	 * Adds expectedUser to the data source via DAO layer, gets its password back by login and compares two results.
 	 * Tests if valid user password is returned by login.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getPasswordByLogin() throws DAOException {
+	public void getPasswordByLogin() {
 
 		
 		int id = dao.save(expectedUser).getId();
@@ -216,12 +192,10 @@ public class MySQLUserDAOTest {
 	/**
 	 * Bans user, then returns boolean value if user is banned and unbans him.
 	 * Tests if user was correctly banned.
-	 * 
-	 * @throws DAOException
 	 * @throws InterruptedException 
 	 */
 	@Test
-	public void userIsInBan() throws DAOException, InterruptedException {
+	public void userIsInBan() throws InterruptedException {
 
 		
 		int testUserID = 1;
@@ -236,12 +210,10 @@ public class MySQLUserDAOTest {
 	/**
 	 * Bans user, then returns boolean value if user is banned and unbans him.
 	 * Tests if user was correctly banned.
-	 * 
-	 * @throws DAOException
 	 * @throws InterruptedException 
 	 */
 	@Test
-	public void banUser() throws DAOException, InterruptedException {
+	public void banUser() throws InterruptedException {
 
 		
 		int testUserID = 2;
@@ -256,11 +228,9 @@ public class MySQLUserDAOTest {
 	/**
 	 * Bans user, then unbans him and expects false value checking.
 	 * Tests if user was correctly unbanned.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void unbanUser() throws DAOException {
+	public void unbanUser() {
 
 		
 		int testUserID = 3;
@@ -274,12 +244,10 @@ public class MySQLUserDAOTest {
 	/**
 	 * Bans user, get ban reason and unbans him.
 	 * Tests if correct ban reason value is returned.
-	 * 
-	 * @throws DAOException
 	 * @throws InterruptedException 
 	 */
 	@Test
-	public void getCurrentBanReason() throws DAOException, InterruptedException {
+	public void getCurrentBanReason() throws InterruptedException {
 
 		
 		int testUserID = 5;
@@ -294,11 +262,9 @@ public class MySQLUserDAOTest {
 	
 	/**
 	 * Gets the amount of users in the data source in two different ways and compares the results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getNumberOfUsers() throws DAOException {
+	public void getNumberOfUsers() {
 		int usersNum1 = (int)dao.count();
 		List<User> allUsers = dao.findAll();
 		int usersNum2 = allUsers.size();
@@ -308,11 +274,9 @@ public class MySQLUserDAOTest {
 	
 	/**
 	 * Gets the part of all users from the data source in two different ways and compares the results which must be equal.
-	 * 
-	 * @throws DAOException
 	 */
 	@Test
-	public void getAllUsersPart() throws DAOException {
+	public void getAllUsersPart() {
 		List<User> particularUsers1 = dao.findAllPart(0, 6);
 		List<User> allUsers = new ArrayList<>(dao.findAll());
 		List<User> particularUsers2 = new ArrayList<>(allUsers.subList(0, 6));

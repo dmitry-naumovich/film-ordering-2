@@ -8,7 +8,6 @@ import java.util.List;
 
 import by.epam.naumovich.film_ordering.bean.Order;
 import by.epam.naumovich.film_ordering.dao.IOrderDAO;
-import by.epam.naumovich.film_ordering.dao.exception.DAOException;
 import by.epam.naumovich.film_ordering.service.IOrderService;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.order.AddOrderServiceException;
@@ -96,15 +95,11 @@ public class OrderServiceImpl implements IOrderService {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
 		
-		try {
-			Order order = orderDAO.findByUserIdAndFilmId(userID, filmID);
-			if (order == null) {
-				throw new GetOrderServiceException(ExceptionMessages.NO_FILM_USER_ORDER);
-			}
-			return order;
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+        Order order = orderDAO.findByUserIdAndFilmId(userID, filmID);
+        if (order == null) {
+            throw new GetOrderServiceException(ExceptionMessages.NO_FILM_USER_ORDER);
+        }
+        return order;
 	}
 	
 	@Override
@@ -113,17 +108,10 @@ public class OrderServiceImpl implements IOrderService {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
 		
-		List<Order> orders;
-		try {
-			orders = orderDAO.findByUserIdOrderByDateDescTimeDesc(id);
-			
-			if (orders.isEmpty()) {
-				throw new GetOrderServiceException(ExceptionMessages.NO_USER_ORDERS_YET);
-			}
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+		List<Order> orders = orderDAO.findByUserIdOrderByDateDescTimeDesc(id);
+        if (orders.isEmpty()) {
+            throw new GetOrderServiceException(ExceptionMessages.NO_USER_ORDERS_YET);
+        }
 		
 		return orders;
 	}
@@ -134,35 +122,19 @@ public class OrderServiceImpl implements IOrderService {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
 		
-		List<Order> orders;
-		try {
-			orders = orderDAO.findByFilmIdOrderByDateDescTimeDesc(id);
-			
-			if (orders.isEmpty()) {
-				throw new GetOrderServiceException(ExceptionMessages.NO_FILM_ORDERS);
-			}
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
-		
+		List<Order> orders = orderDAO.findByFilmIdOrderByDateDescTimeDesc(id);
+        if (orders.isEmpty()) {
+            throw new GetOrderServiceException(ExceptionMessages.NO_FILM_ORDERS);
+        }
 		return orders;
 	}
 
 	@Override
 	public List<Order> getAllOrders() throws ServiceException {
-		List<Order> orders;
-		try {
-			orders = orderDAO.findAllByOrderByDateDescTimeDesc();
-			
-			if (orders.isEmpty()) {
-				throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
-			}
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
-		
+		List<Order> orders = orderDAO.findAllByOrderByDateDescTimeDesc();
+        if (orders.isEmpty()) {
+            throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
+        }
 		return orders;
 	}
 
@@ -173,18 +145,12 @@ public class OrderServiceImpl implements IOrderService {
 		}
 		
 		int start = (pageNum - 1) * ORDERS_AMOUNT_ON_PAGE;
-		try {
-			List<Order> orders = orderDAO.findAllPart(start, ORDERS_AMOUNT_ON_PAGE);
-			
-			if (orders.isEmpty()) {
-				throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
-			}
-			
-			return orders;
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+        List<Order> orders = orderDAO.findAllPart(start, ORDERS_AMOUNT_ON_PAGE);
+
+        if (orders.isEmpty()) {
+            throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
+        }
+        return orders;
 	}
 
 	@Override
@@ -205,18 +171,13 @@ public class OrderServiceImpl implements IOrderService {
 		}
 		
 		int start = (pageNum - 1) * ORDERS_AMOUNT_ON_PAGE;
-		try {
-			List<Order> orders = orderDAO.findPartByUserId(id, start, ORDERS_AMOUNT_ON_PAGE);
-			
-			if (orders.isEmpty()) {
-				throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
-			}
-			
-			return orders;
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+        List<Order> orders = orderDAO.findPartByUserId(id, start, ORDERS_AMOUNT_ON_PAGE);
+
+        if (orders.isEmpty()) {
+            throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
+        }
+
+        return orders;
 	}
 
 	@Override
@@ -226,18 +187,13 @@ public class OrderServiceImpl implements IOrderService {
 		}
 		
 		int start = (pageNum - 1) * ORDERS_AMOUNT_ON_PAGE;
-		try {
-			List<Order> orders = orderDAO.findPartByFilmId(id, start, ORDERS_AMOUNT_ON_PAGE);
-			
-			if (orders.isEmpty()) {
-				throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
-			}
-			
-			return orders;
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+        List<Order> orders = orderDAO.findPartByFilmId(id, start, ORDERS_AMOUNT_ON_PAGE);
+
+        if (orders.isEmpty()) {
+            throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
+        }
+
+        return orders;
 	}
 
 	@Override
@@ -246,19 +202,13 @@ public class OrderServiceImpl implements IOrderService {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
 		
-		try {
-			int numOfOrders = (int)orderDAO.countByUserId(userID); //todo: long
-			if (numOfOrders % ORDERS_AMOUNT_ON_PAGE == 0) {
-				return numOfOrders / ORDERS_AMOUNT_ON_PAGE;
-			}
-			else {
-				return numOfOrders / ORDERS_AMOUNT_ON_PAGE + 1;
-			}
-			
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+        int numOfOrders = (int)orderDAO.countByUserId(userID); //todo: long
+        if (numOfOrders % ORDERS_AMOUNT_ON_PAGE == 0) {
+            return numOfOrders / ORDERS_AMOUNT_ON_PAGE;
+        }
+        else {
+            return numOfOrders / ORDERS_AMOUNT_ON_PAGE + 1;
+        }
 	}
 
 	@Override
@@ -266,18 +216,12 @@ public class OrderServiceImpl implements IOrderService {
 		if (!Validator.validateInt(filmID)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
-		try {
-			int numOfOrders = (int)orderDAO.countByFilmId(filmID); //todo: long
-			if (numOfOrders % ORDERS_AMOUNT_ON_PAGE == 0) {
-				return numOfOrders / ORDERS_AMOUNT_ON_PAGE;
-			}
-			else {
-				return numOfOrders / ORDERS_AMOUNT_ON_PAGE + 1;
-			}
-			
-			
-		} catch (DAOException e) {
-			throw new ServiceException(ExceptionMessages.SOURCE_ERROR, e);
-		}
+        int numOfOrders = (int)orderDAO.countByFilmId(filmID); //todo: long
+        if (numOfOrders % ORDERS_AMOUNT_ON_PAGE == 0) {
+            return numOfOrders / ORDERS_AMOUNT_ON_PAGE;
+        }
+        else {
+            return numOfOrders / ORDERS_AMOUNT_ON_PAGE + 1;
+        }
 	}
 }
