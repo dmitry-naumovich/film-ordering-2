@@ -6,7 +6,6 @@ import by.epam.naumovich.film_ordering.bean.Review;
 import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.JavaServerPageNames;
 import by.epam.naumovich.film_ordering.command.util.LogMessages;
-import by.epam.naumovich.film_ordering.command.util.QueryUtil;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.IFilmService;
 import by.epam.naumovich.film_ordering.service.IOrderService;
@@ -41,7 +40,8 @@ public class OpenSingleFilm implements Command {
 	private final IReviewService reviewService;
 	private final IUserService userService;
 
-    public OpenSingleFilm(IFilmService filmService, IOrderService orderService, IReviewService reviewService, IUserService userService) {
+    public OpenSingleFilm(IFilmService filmService, IOrderService orderService, IReviewService reviewService,
+						  IUserService userService) {
         this.filmService = filmService;
         this.orderService = orderService;
         this.reviewService = reviewService;
@@ -49,14 +49,12 @@ public class OpenSingleFilm implements Command {
     }
 
     @Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
-		String query = QueryUtil.createHttpQueryString(request);
-		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		log.info(query);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+            throws IOException, ServletException, ServiceException {
+
+        setPrevQueryAttributeToSession(request, session, log);
 
 		String lang = fetchLanguageFromSession(session);
-		
 		int filmID = fetchFilmIdFromRequest(request);
 		int pageNum = fetchPageNumberFromRequest(request);
 		
@@ -102,11 +100,6 @@ public class OpenSingleFilm implements Command {
 		
 		} catch (GetReviewServiceException e) {
 			request.getRequestDispatcher(JavaServerPageNames.SINGLE_FILM_PAGE).forward(request, response);
-		}
-		catch (ServiceException e) {
-			log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-			request.setAttribute(ERROR_MESSAGE, e.getMessage());
-			request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 		}
 
 	}

@@ -36,27 +36,21 @@ public class OpenNewsEditPage implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
-		String query = QueryUtil.createHttpQueryString(request);
-		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		log.info(query);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
+
+        setPrevQueryAttributeToSession(request, session, log);
 		
 		int newsID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
 		if (!isAuthorized(session) || !isAdmin(session)) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.EDIT_NEWS_RESTRICTION);
-			request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID).forward(request, response);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.EDIT_NEWS_RESTRICTION);
+			request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID)
+					.forward(request, response);
 		}
 		else {
-			try {
-				News news = newsService.getById(newsID);
-				request.setAttribute(RequestAndSessionAttributes.NEWS, news);
-				request.getRequestDispatcher(JavaServerPageNames.EDIT_NEWS_JSP_PAGE).forward(request, response);	
-			} catch (ServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
-			}
+            News news = newsService.getById(newsID);
+            request.setAttribute(RequestAndSessionAttributes.NEWS, news);
+            request.getRequestDispatcher(JavaServerPageNames.EDIT_NEWS_JSP_PAGE).forward(request, response);
 		}
 	}
 }

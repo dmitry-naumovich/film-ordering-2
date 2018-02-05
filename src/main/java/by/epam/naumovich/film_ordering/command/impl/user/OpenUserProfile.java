@@ -42,27 +42,23 @@ public class OpenUserProfile implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
-		String query = QueryUtil.createHttpQueryString(request);
-		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		log.info(query);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+            throws IOException, ServletException, ServiceException {
+
+        setPrevQueryAttributeToSession(request, session, log);
 		
 		if (request.getParameter(RequestAndSessionAttributes.USER_ID).equals(RequestAndSessionAttributes.EMPTY_STRING)) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_PROFILE);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_PROFILE);
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else {
 			int userID = fetchUserIdFromRequest(request);
 			try {
 				User user = userService.getByID(userID);
+
 				request.setAttribute(RequestAndSessionAttributes.USER, user);
-				
-				if (userService.isBanned(userID)) {
-					request.setAttribute(RequestAndSessionAttributes.BANNED, true);
-				} else {
-					request.setAttribute(RequestAndSessionAttributes.BANNED, false);
-				}
+				request.setAttribute(RequestAndSessionAttributes.BANNED, userService.isBanned(userID));
+
 				try {
 					Discount discount = discountService.getCurrentUserDiscountByID(userID);
 					request.setAttribute(RequestAndSessionAttributes.USER_DISCOUNT, discount);
@@ -70,13 +66,10 @@ public class OpenUserProfile implements Command {
 				
 				request.getRequestDispatcher(JavaServerPageNames.PROFILE_PAGE).forward(request, response);	
 			} catch (GetUserServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
+                        e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.PROFILE_PAGE).forward(request, response);
-			} catch (ServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			}
 		}
 	}

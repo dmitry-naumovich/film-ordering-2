@@ -8,6 +8,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -20,11 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 public class OpenHelpPage implements Command {
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		String query = QueryUtil.createHttpQueryString(request);
-		request.getSession(true).setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		log.info(query);
-		
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException {
+		setPrevQueryAttributeToSession(request, session, log);
 		request.getRequestDispatcher(JavaServerPageNames.HELP_PAGE).forward(request, response);
 	}
 

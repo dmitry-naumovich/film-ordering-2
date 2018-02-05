@@ -42,8 +42,9 @@ public class OpenSingleOrder implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
+
 		String query = QueryUtil.createHttpQueryString(request);
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		log.info(query);
@@ -51,25 +52,19 @@ public class OpenSingleOrder implements Command {
 		String lang = fetchLanguageFromSession(session);
 		
 		if (!isAuthorized(session)) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_SINGLE_ORDER);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_SINGLE_ORDER);
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else {
 			int orderNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.ORDER_NUM));
-			try {
-				Order order = orderService.getByOrderNum(orderNum);
-				String filmName = filmService.getNameByID(order.getFilmId(), lang);
-				String userLogin = userService.getLoginByID(order.getUserId());
-				
-				request.setAttribute(RequestAndSessionAttributes.ORDER, order);
-				request.setAttribute(RequestAndSessionAttributes.FILM_NAME, filmName);
-				request.setAttribute(RequestAndSessionAttributes.USER_LOGIN, userLogin);
-				request.getRequestDispatcher(JavaServerPageNames.SINGLE_ORDER_PAGE).forward(request, response);
-			} catch (ServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
-			}
+            Order order = orderService.getByOrderNum(orderNum);
+            String filmName = filmService.getNameByID(order.getFilmId(), lang);
+            String userLogin = userService.getLoginByID(order.getUserId());
+
+            request.setAttribute(RequestAndSessionAttributes.ORDER, order);
+            request.setAttribute(RequestAndSessionAttributes.FILM_NAME, filmName);
+            request.setAttribute(RequestAndSessionAttributes.USER_LOGIN, userLogin);
+            request.getRequestDispatcher(JavaServerPageNames.SINGLE_ORDER_PAGE).forward(request, response);
 		}
 	}
 }

@@ -16,7 +16,9 @@ import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 
+import static by.epam.naumovich.film_ordering.command.util.LogMessages.REVIEW_DELETED;
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
+import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.SUCCESS_MESSAGE;
 
 /**
  * Performs the command that reads review user and film IDs parameters from the JSP and sends them to the relevant service class.
@@ -35,31 +37,27 @@ public class DeleteReview implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
+
 		int userID = Integer.valueOf(request.getParameter(RequestAndSessionAttributes.USER_ID));
 		int filmID = Integer.valueOf(request.getParameter(RequestAndSessionAttributes.FILM_ID));
 		 
 		if (!isAuthorized(session)) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.DELETE_REVIEW_RESTRICTION);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.DELETE_REVIEW_RESTRICTION);
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
-		else if (!isAdmin(session) &&
-				userID != Integer.valueOf(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString())) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.DELETE_REVIEW_RESTRICTION);
+		else if (!isAdmin(session) && userID != fetchUserIdFromSession(session)) {
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.DELETE_REVIEW_RESTRICTION);
 			request.getRequestDispatcher("/Controller?command=open_single_review&userID=" + userID + "&filmID=" + filmID).forward(request, response);
 		}
 		else {
-			try {
-				reviewService.delete(userID, filmID);
-				log.debug(String.format(LogMessages.REVIEW_DELETED, userID, filmID));
-				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.REVIEW_DELETED);
-				request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1").forward(request, response);
-			} catch (ServiceException e) {
-                log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
-			}
+			reviewService.delete(userID, filmID);
+
+			log.debug(String.format(REVIEW_DELETED, userID, filmID));
+			request.setAttribute(SUCCESS_MESSAGE, SuccessMessages.REVIEW_DELETED);
+			request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1")
+					.forward(request, response);
 		}
 	}
 

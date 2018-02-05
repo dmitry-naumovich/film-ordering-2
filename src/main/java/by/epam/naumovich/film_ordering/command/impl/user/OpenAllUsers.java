@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 
+import static by.epam.naumovich.film_ordering.command.util.LogMessages.EXCEPTION_IN_COMMAND;
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
 
 /**
@@ -44,20 +45,19 @@ public class OpenAllUsers implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
-		String query = QueryUtil.createHttpQueryString(request);
-		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		log.info(query);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
+
+		setPrevQueryAttributeToSession(request, session, log);
 		
 		int pageNum = fetchPageNumberFromRequest(request);
 		
 		if (!isAuthorized(session)) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.OPEN_ALL_USERS_RESTRICTION);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.OPEN_ALL_USERS_RESTRICTION);
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else if (!isAdmin(session)) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.OPEN_ALL_USERS_RESTRICTION);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.OPEN_ALL_USERS_RESTRICTION);
 			request.getRequestDispatcher(JavaServerPageNames.INDEX_PAGE).forward(request, response);
 		}
 		else {
@@ -87,13 +87,10 @@ public class OpenAllUsers implements Command {
 				request.getRequestDispatcher(JavaServerPageNames.USERS_PAGE).forward(request, response);
 				
 			} catch (GetUserServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(EXCEPTION_IN_COMMAND,
+                        e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.USERS_PAGE).forward(request, response);	
-			} catch (ServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			}
 		}
 	}

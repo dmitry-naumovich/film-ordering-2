@@ -13,9 +13,11 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 
+import static by.epam.naumovich.film_ordering.command.util.LogMessages.EXCEPTION_IN_COMMAND;
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
 
 /**
@@ -34,26 +36,22 @@ public class OpenSingleNews implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		String query = QueryUtil.createHttpQueryString(request);
-		request.getSession(true).setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		log.info(query);
-		
-		try {
-			int newsID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
+		setPrevQueryAttributeToSession(request, session, log);
+
+        int newsID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
+
+        try {
 			News news = newsService.getById(newsID);
 			request.setAttribute(RequestAndSessionAttributes.NEWS, news);
 			request.getRequestDispatcher(JavaServerPageNames.SINGLE_NEWS_PAGE).forward(request, response);
-		} catch (GetNewsServiceException e) {	
-			log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-			request.setAttribute(ERROR_MESSAGE, e.getMessage());
-			request.getRequestDispatcher(JavaServerPageNames.SINGLE_NEWS_PAGE).forward(request, response);
-		} catch (ServiceException e) {
-			log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-			request.setAttribute(ERROR_MESSAGE, e.getMessage());
-			request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
-		}
-
+		} catch (GetNewsServiceException e) {
+            log.error(String.format(EXCEPTION_IN_COMMAND,
+                    e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+            request.setAttribute(ERROR_MESSAGE, e.getMessage());
+            request.getRequestDispatcher(JavaServerPageNames.SINGLE_NEWS_PAGE).forward(request, response);
+        }
 	}
 
 }

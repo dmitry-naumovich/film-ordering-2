@@ -33,24 +33,16 @@ public class OpenWidenedSearchPage implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
-		String query = QueryUtil.createHttpQueryString(request);
-		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		log.info(query);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
 
+        setPrevQueryAttributeToSession(request, session, log);
 		String lang = fetchLanguageFromSession(session);
 		
-		try {
-			String[] genres = filmService.getAvailableGenres(lang);
-			String[] countries = filmService.getAvailableCountries(lang);
-			request.setAttribute(RequestAndSessionAttributes.AVAILABLE_GENRES, genres);
-			request.setAttribute(RequestAndSessionAttributes.AVAILABLE_COUNTRIES, countries);
-			request.getRequestDispatcher(JavaServerPageNames.WIDEN_SEARCH_PAGE).forward(request, response);
-		} catch (ServiceException e) {
-			log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-			request.setAttribute(ERROR_MESSAGE, e.getMessage());
-			request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
-		}
+        String[] genres = filmService.getAvailableGenres(lang);
+        String[] countries = filmService.getAvailableCountries(lang);
+        request.setAttribute(RequestAndSessionAttributes.AVAILABLE_GENRES, genres);
+        request.setAttribute(RequestAndSessionAttributes.AVAILABLE_COUNTRIES, countries);
+        request.getRequestDispatcher(JavaServerPageNames.WIDEN_SEARCH_PAGE).forward(request, response);
 	}
 }

@@ -27,55 +27,49 @@ import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttr
 
 /**
  * Performs the command that gets twelve last added films from the service layer and passes it to the relevant JSP.
- * 
+ *
  * @author Dmitry Naumovich
  * @version 1.0
  */
 @Slf4j
 public class GetNovelty implements Command {
 
-	private final IFilmService filmService;
-	private final IOrderService orderService;
+    private final IFilmService filmService;
+    private final IOrderService orderService;
 
-	public GetNovelty(IFilmService filmService, IOrderService orderService) {
-		this.filmService = filmService;
-		this.orderService = orderService;
-	}
+    public GetNovelty(IFilmService filmService, IOrderService orderService) {
+        this.filmService = filmService;
+        this.orderService = orderService;
+    }
 
-	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
-		String query = QueryUtil.createHttpQueryString(request);
-		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		log.info(query);
+    @Override
+    public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+            throws IOException, ServletException, ServiceException {
 
-		String lang = fetchLanguageFromSession(session);
-		
-		try {
-			List<Film> filmSet = filmService.getTwelveLastAddedFilms(lang);
-			//request.setAttribute(RequestAndSessionAttributes.NOVELTY_LIST, filmSet);
-			session.setAttribute(RequestAndSessionAttributes.NOVELTY_LIST, filmSet);
+        setPrevQueryAttributeToSession(request, session, log);
+        String lang = fetchLanguageFromSession(session);
 
-			if (isAuthorized(session) && !isAdmin(session)) {
-				int userID = fetchUserIdFromSession(session);
-				try {
-					List<Order> orders = orderService.getAllByUserId(userID);
-					List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
-					request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
-				} catch (GetOrderServiceException e) {
-					request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, Collections.emptyList());
-				}
-			}
-		} catch (GetFilmServiceException e) {
-			log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-			request.setAttribute(ERROR_MESSAGE, e.getMessage());
-			request.getRequestDispatcher(JavaServerPageNames.INDEX_PAGE).forward(request, response);
-		}
-		catch (ServiceException e) {
-			log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-			request.setAttribute(ERROR_MESSAGE, e.getMessage());
-			request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
-		}
-	}
+        try {
+            List<Film> filmSet = filmService.getTwelveLastAddedFilms(lang);
+            //request.setAttribute(RequestAndSessionAttributes.NOVELTY_LIST, filmSet);
+            session.setAttribute(RequestAndSessionAttributes.NOVELTY_LIST, filmSet);
+
+            if (isAuthorized(session) && !isAdmin(session)) {
+                int userID = fetchUserIdFromSession(session);
+                try {
+                    List<Order> orders = orderService.getAllByUserId(userID);
+                    List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
+                    request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
+                } catch (GetOrderServiceException e) {
+                    request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, Collections.emptyList());
+                }
+            }
+        } catch (GetFilmServiceException e) {
+            log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
+                    e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+            request.setAttribute(ERROR_MESSAGE, e.getMessage());
+            request.getRequestDispatcher(JavaServerPageNames.INDEX_PAGE).forward(request, response);
+        }
+    }
 
 }

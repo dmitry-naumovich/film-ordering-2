@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 
+import static by.epam.naumovich.film_ordering.command.util.LogMessages.EXCEPTION_IN_COMMAND;
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
 
 /**
@@ -36,11 +37,11 @@ public class Login implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
-		
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
+
 		if (isAuthorized(session)) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.LOG_OUT_FOR_ANOTHER_ACC);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.LOG_OUT_FOR_ANOTHER_ACC);
 			request.getRequestDispatcher(JavaServerPageNames.INDEX_PAGE).forward(request, response);
 		}
 		else {
@@ -49,27 +50,25 @@ public class Login implements Command {
 			
 			try {
 				User user = userService.authenticate(login, password);
+
 				log.debug(String.format(LogMessages.USER_LOGGED_IN, login, user.getId()));
 				request.setAttribute(RequestAndSessionAttributes.USER, user);
 				session.setAttribute(RequestAndSessionAttributes.AUTHORIZED_USER, user.getLogin());
 				session.setAttribute(RequestAndSessionAttributes.USER_ID, user.getId());
 				session.setAttribute(RequestAndSessionAttributes.IS_ADMIN, 'a' == user.getType());
 				
-				String prev_query = (String) session.getAttribute(RequestAndSessionAttributes.PREV_QUERY);
-				if (prev_query != null) {
-					response.sendRedirect(prev_query);
+				String prevQuery = (String) session.getAttribute(RequestAndSessionAttributes.PREV_QUERY);
+				if (prevQuery != null) {
+					response.sendRedirect(prevQuery);
 				}
 				else {
 					request.getRequestDispatcher(JavaServerPageNames.INDEX_PAGE).forward(request, response);
 				}
 			} catch (ServiceAuthException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(EXCEPTION_IN_COMMAND,
+                        e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
-			}  catch (ServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);		
 			}
 		}
 	}

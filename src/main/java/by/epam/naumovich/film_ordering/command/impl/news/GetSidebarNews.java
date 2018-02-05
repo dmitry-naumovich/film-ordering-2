@@ -34,18 +34,10 @@ public class GetSidebarNews implements Command {
     }
 
     @Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		try {
-			HttpSession session = request.getSession(true);
-
-			List<News> newsSet = newsService.getFourLastNews();
-			//request.setAttribute(RequestAndSessionAttributes.SIDEBAR_NEWS, newsSet);
-			session.setAttribute(RequestAndSessionAttributes.SIDEBAR_NEWS, newsSet);
-		} catch (ServiceException e) {
-			log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-			request.setAttribute(ERROR_MESSAGE, e.getMessage());
-			request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);		
-		}
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+            throws IOException, ServletException, ServiceException {
+        List<News> newsSet = newsService.getFourLastNews();
+        //request.setAttribute(RequestAndSessionAttributes.SIDEBAR_NEWS, newsSet);
+        session.setAttribute(RequestAndSessionAttributes.SIDEBAR_NEWS, newsSet);
 	}
-
 }

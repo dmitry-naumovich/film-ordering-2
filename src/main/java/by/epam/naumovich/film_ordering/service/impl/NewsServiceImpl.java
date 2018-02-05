@@ -113,10 +113,7 @@ public class NewsServiceImpl implements INewsService {
         if (news.isEmpty()) {
             throw new GetNewsServiceException(ExceptionMessages.NO_NEWS_IN_DB);
         }
-        List<News> list = new ArrayList<>(news);
-        news = new ArrayList<>(list.subList(0, 4));
-		
-		return news;
+		return news.subList(0, 4);
 	}
 
 	@Override

@@ -46,16 +46,16 @@ public class EditNews implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
-		String query = QueryUtil.createHttpQueryString(request);
-		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		log.info(query);
-		
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
+
+		setPrevQueryAttributeToSession(request, session, log);
+
 		int newsID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
 		if (!isAuthorized(session) || !isAdmin(session)) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.EDIT_NEWS_RESTRICTION);
-			request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID).forward(request, response);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.EDIT_NEWS_RESTRICTION);
+			request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID)
+					.forward(request, response);
 		}
 		else {
 			String title = null;
@@ -97,38 +97,39 @@ public class EditNews implements Command {
 				if (imgItem != null) {
 					try {
 						String fileName = new File(FileUploadConstants.NEWS_IMG_FILE_NAME).getName(); 
-		        		String absoluteFilePath = session.getServletContext().getRealPath(FileUploadConstants.NEWS_IMGS_UPLOAD_DIR);
+		        		String absoluteFilePath = session.getServletContext()
+                                .getRealPath(FileUploadConstants.NEWS_IMGS_UPLOAD_DIR);
 		        		File image = new File(absoluteFilePath, fileName);
 		        		imgItem.write(image);
 		        		
-		        		String absTargetFilePath = session.getServletContext().getRealPath(FileUploadConstants.NEWS_IMGS_UPLOAD_DIR + newsID + "/");
+		        		String absTargetFilePath = session.getServletContext()
+                                .getRealPath(FileUploadConstants.NEWS_IMGS_UPLOAD_DIR + newsID + "/");
 		        		File targetImg = new File(absTargetFilePath, fileName);
 		        		
 					    Files.move(image.toPath(), targetImg.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 					} catch (IOException e) {
-						log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+						log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
+                                e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 						request.setAttribute(ERROR_MESSAGE, e.getMessage());
 					}
 				}
 				
 				log.debug(String.format(LogMessages.NEWS_UPDATED, newsID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.NEWS_EDITED);
-				request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID).forward(request, response);
+				request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID)
+                        .forward(request, response);
 			} catch (EditNewsServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
+                        e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher("/Controller?command=open_news_edit_page&newsID=" + newsID).forward(request, response);
-			} catch (ServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
+				request.getRequestDispatcher("/Controller?command=open_news_edit_page&newsID=" + newsID)
+                        .forward(request, response);
 			} catch (Exception e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
+                        e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			}
 		}
-
 	}
-
 }

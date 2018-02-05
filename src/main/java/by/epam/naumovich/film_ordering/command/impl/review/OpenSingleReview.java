@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 
+import static by.epam.naumovich.film_ordering.command.util.LogMessages.EXCEPTION_IN_COMMAND;
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
 
 /**
@@ -41,34 +42,28 @@ public class OpenSingleReview implements Command {
     }
 
     @Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
-		String query = QueryUtil.createHttpQueryString(request);
-		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		log.info(query);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
+
+		setPrevQueryAttributeToSession(request, session, log);
 
 		String lang = fetchLanguageFromSession(session);
-		
 		int userID = fetchUserIdFromRequest(request);
 		int filmID = fetchFilmIdFromRequest(request);
 		
 		try {
 			Review rev = reviewService.getByUserAndFilmId(userID, filmID);
-			
 			String userLogin = userService.getLoginByID(userID);
-			
 			String filmName = filmService.getByID(filmID, lang).getName();
 			
 			request.setAttribute(RequestAndSessionAttributes.REVIEW, rev);
 			request.setAttribute(RequestAndSessionAttributes.LOGIN, userLogin);
 			request.setAttribute(RequestAndSessionAttributes.FILM_NAME, filmName);
+
 			request.getRequestDispatcher(JavaServerPageNames.SINGLE_REVIEW_PAGE).forward(request, response);
 		} catch (GetReviewServiceException e) {
-			log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-			request.setAttribute(ERROR_MESSAGE, e.getMessage());
-			request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
-		} catch (ServiceException e) {
-			log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+			log.error(String.format(EXCEPTION_IN_COMMAND,
+                    e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 			request.setAttribute(ERROR_MESSAGE, e.getMessage());
 			request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 		}

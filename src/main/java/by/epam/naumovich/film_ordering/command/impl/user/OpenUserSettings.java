@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
+import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.USER_ID;
 
 /**
  * Performs the command that gets user entity from the service layer and passes it to the relevant JSP.
@@ -36,37 +37,29 @@ public class OpenUserSettings implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
-		String query = QueryUtil.createHttpQueryString(request);
-		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		log.info(query);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
+
+		setPrevQueryAttributeToSession(request, session, log);
 		
 		if (!isAuthorized(session)) {
-			if (request.getParameter(RequestAndSessionAttributes.USER_ID).isEmpty() || request.getParameter(RequestAndSessionAttributes.USER_ID) == null) {
-				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_SETTINGS);
+			if (request.getParameter(USER_ID).isEmpty() || request.getParameter(USER_ID) == null) {
+				request.setAttribute(ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_SETTINGS);
 			}
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 			
 		}
 		else {
-			int userID;
-			if (!session.getAttribute(RequestAndSessionAttributes.USER_ID).toString().equals(request.getParameter(RequestAndSessionAttributes.USER_ID))) {
-				userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
+			int userID; //todo: consider
+			if (!session.getAttribute(USER_ID).toString().equals(request.getParameter(USER_ID))) {
+				userID = fetchUserIdFromSession(session);
 			}
 			else {
-				userID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.USER_ID));
+				userID = fetchUserIdFromRequest(request);
 			}
-
-			try {
-				User user = userService.getByLogin(userService.getLoginByID(userID));
-				request.setAttribute(RequestAndSessionAttributes.USER, user);
-				request.getRequestDispatcher(JavaServerPageNames.PROFILE_SETTINGS_PAGE).forward(request, response);	
-			} catch (ServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
-			}
+			User user = userService.getByLogin(userService.getLoginByID(userID));
+			request.setAttribute(RequestAndSessionAttributes.USER, user);
+			request.getRequestDispatcher(JavaServerPageNames.PROFILE_SETTINGS_PAGE).forward(request, response);
 		}
 	}
 }

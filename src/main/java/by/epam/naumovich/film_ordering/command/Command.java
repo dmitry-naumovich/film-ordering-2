@@ -1,12 +1,16 @@
 package by.epam.naumovich.film_ordering.command;
 
+import by.epam.naumovich.film_ordering.command.util.QueryUtil;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
+import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ENG_LANG;
@@ -29,7 +33,14 @@ public interface Command {
 	 * @throws IOException
 	 * @throws ServletException
 	 */
-	void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException;
+	void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+            throws IOException, ServletException, ServiceException;
+
+	default void setPrevQueryAttributeToSession(HttpServletRequest request, HttpSession session, Logger logger) {
+        String query = QueryUtil.createHttpQueryString(request);
+        session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
+        logger.info(query);
+    }
 
 	default String fetchLanguageFromSession(HttpSession session) {
         Object languageAttribute = session.getAttribute(RequestAndSessionAttributes.LANGUAGE);

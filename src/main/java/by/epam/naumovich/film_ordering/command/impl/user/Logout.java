@@ -21,19 +21,20 @@ import lombok.extern.slf4j.Slf4j;
 public class Logout implements Command {
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
-		String prev_query = (String) session.getAttribute(RequestAndSessionAttributes.PREV_QUERY);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException {
+
+		String prevQuery = (String) session.getAttribute(RequestAndSessionAttributes.PREV_QUERY);
 		
 		if (isAuthorized(session)) {
 			String login = session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER).toString();
-			int id = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
-			log.debug(String.format(LogMessages.USER_LOGGED_OUT, login, id));
+			int userId = fetchUserIdFromSession(session);
+			log.debug(String.format(LogMessages.USER_LOGGED_OUT, login, userId));
 			session.invalidate();
 		}
 		
-		if (prev_query != null) {
-			response.sendRedirect(prev_query);
+		if (prevQuery != null) {
+			response.sendRedirect(prevQuery);
 		}
 		else {
 			request.getRequestDispatcher(JavaServerPageNames.INDEX_PAGE).forward(request, response);

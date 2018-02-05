@@ -25,7 +25,9 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 
+import static by.epam.naumovich.film_ordering.command.util.LogMessages.EXCEPTION_IN_COMMAND;
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
+import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.SUCCESS_MESSAGE;
 
 /**
  * Performs the command that reads new user parameters from the JSP and sends them to the relevant service class.
@@ -45,12 +47,14 @@ public class SignUp implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
+
 		if (isAuthorized(session)) {
 			int userID = fetchUserIdFromSession(session);
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.LOG_OUT_FOR_SIGN_UP);
-			request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.LOG_OUT_FOR_SIGN_UP);
+			request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+                    .forward(request, response);
 		} else {
 			String login = null;
 			String name = null;
@@ -115,34 +119,37 @@ public class SignUp implements Command {
 				
 				if (avatarItem != null) {
 					try {
-						String fileName = new File(FileUploadConstants.AVATAR_FILE_NAME_TEMPLATE + userID + FileUploadConstants.AVATAR_FILE_EXTENSION).getName(); 
-			        	String absoluteFilePath = session.getServletContext().getRealPath(FileUploadConstants.AVATARS_UPLOAD_DIR);
+						String fileName = new File(FileUploadConstants.AVATAR_FILE_NAME_TEMPLATE + userID +
+                                FileUploadConstants.AVATAR_FILE_EXTENSION).getName();
+			        	String absoluteFilePath = session.getServletContext()
+                                .getRealPath(FileUploadConstants.AVATARS_UPLOAD_DIR);
 		                File avatar = new File(absoluteFilePath, fileName);
 		                avatarItem.write(avatar);
 					} catch (IOException e) {
-						log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+						log.error(String.format(EXCEPTION_IN_COMMAND,
+                                e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 						request.setAttribute(ERROR_MESSAGE, e.getMessage());
 					}
 				}
 				
-				
 				User user = userService.getByLogin(login);
+
 				session.setAttribute(RequestAndSessionAttributes.AUTHORIZED_USER, login);
 				session.setAttribute(RequestAndSessionAttributes.USER_ID, user.getId());
 				session.setAttribute(RequestAndSessionAttributes.IS_ADMIN, 'a' == user.getType());
+
 				log.debug(String.format(LogMessages.USER_CREATED, login, userID));
-				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.SUCCESSFUL_SIGN_UP);
+				request.setAttribute(SUCCESS_MESSAGE, SuccessMessages.SUCCESSFUL_SIGN_UP);
 				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
+
 			} catch (ServiceSignUpException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(EXCEPTION_IN_COMMAND,
+                        e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher("/Controller?command=open_sign_up_page").forward(request, response);
-			} catch (ServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			} catch (Exception e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(EXCEPTION_IN_COMMAND,
+                        e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			}

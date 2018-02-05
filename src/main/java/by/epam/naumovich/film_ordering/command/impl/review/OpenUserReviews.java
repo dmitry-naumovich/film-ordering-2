@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 
+import static by.epam.naumovich.film_ordering.command.util.LogMessages.EXCEPTION_IN_COMMAND;
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
 
 /**
@@ -42,18 +43,16 @@ public class OpenUserReviews implements Command {
     }
 
     @Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
-		String query = QueryUtil.createHttpQueryString(request);
-		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		log.info(query);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
+
+		setPrevQueryAttributeToSession(request, session, log);
 
 		String lang = fetchLanguageFromSession(session);
-		
 		int pageNum = fetchPageNumberFromRequest(request);
 		
 		if (request.getParameter(RequestAndSessionAttributes.USER_ID).equals(RequestAndSessionAttributes.EMPTY_STRING)) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_YOUR_REVIEWS);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_YOUR_REVIEWS);
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else {
@@ -76,14 +75,12 @@ public class OpenUserReviews implements Command {
 				request.setAttribute(RequestAndSessionAttributes.REVIEWS, reviews);
 				request.setAttribute(RequestAndSessionAttributes.FILM_NAMES, reviewFilmNames);
 				request.getRequestDispatcher(JavaServerPageNames.REVIEWS_PAGE).forward(request, response);
+
 			} catch (GetReviewServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(EXCEPTION_IN_COMMAND,
+						e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
-			} catch (ServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			}
 		}
 		

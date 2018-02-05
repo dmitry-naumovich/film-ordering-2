@@ -35,25 +35,21 @@ public class DeleteNews implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
+
 		int newsID = Integer.valueOf(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
 		 
 		if (!isAuthorized(session) || !isAdmin(session)) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.DELETE_NEWS_RESTRICTION);
-			request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID).forward(request, response);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.DELETE_NEWS_RESTRICTION);
+			request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID)
+					.forward(request, response);
 		}
 		else {
-			try {
-				newsService.delete(newsID);
-				log.debug(String.format(LogMessages.NEWS_DELETED, newsID));
-				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.NEWS_DELETED);
-				request.getRequestDispatcher("/Controller?command=open_all_news&pageNum=1").forward(request, response);
-			} catch (ServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
-			}
+            newsService.delete(newsID);
+            log.debug(String.format(LogMessages.NEWS_DELETED, newsID));
+            request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.NEWS_DELETED);
+            request.getRequestDispatcher("/Controller?command=open_all_news&pageNum=1").forward(request, response);
 		}
 	}
 }

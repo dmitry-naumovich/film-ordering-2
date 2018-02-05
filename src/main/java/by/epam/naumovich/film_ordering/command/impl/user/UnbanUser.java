@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 
 
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
+import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.SUCCESS_MESSAGE;
 
 /**
  * Performs the command that reads user ID parameter from the JSP and sends them to the relevant service class.
@@ -35,30 +36,27 @@ public class UnbanUser implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
+
 		int userID = fetchUserIdFromRequest(request);
 		
 		if (!isAuthorized(session)) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.UNBAN_USER_RESTRICTION);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.UNBAN_USER_RESTRICTION);
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else if (!isAdmin(session)) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.UNBAN_USER_RESTRICTION);
-			request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.UNBAN_USER_RESTRICTION);
+			request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+                    .forward(request, response);
 		}
 		else {
-			try {
-				userService.unbanUser(userID);
-				log.debug(String.format(LogMessages.USER_UNBANNED, userID));
-				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.USER_UNBANNED);
-				Thread.sleep(1000);
-				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
-			} catch (ServiceException | InterruptedException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
-			}
+            userService.unbanUser(userID);
+            log.debug(String.format(LogMessages.USER_UNBANNED, userID));
+            request.setAttribute(SUCCESS_MESSAGE, SuccessMessages.USER_UNBANNED);
+            //Thread.sleep(1000);
+            request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+                    .forward(request, response);
 		}
 	}
 }

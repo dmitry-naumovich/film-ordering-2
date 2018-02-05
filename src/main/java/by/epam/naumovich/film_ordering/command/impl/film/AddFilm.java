@@ -48,8 +48,8 @@ public class AddFilm implements Command {
     }
 
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        HttpSession session = request.getSession(true);
+    public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+            throws IOException, ServletException, ServiceException {
         if (!isAuthorized(session)) {
             request.setAttribute(ERROR_MESSAGE, ErrorMessages.ADD_FILM_RESTRICTION);
             request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
@@ -58,15 +58,18 @@ public class AddFilm implements Command {
             request.getRequestDispatcher("/Controller?command=open_all_films&pageNum=1").forward(request, response);
         } else {
             try {
-                int filmID = proceedAddFilmRequest(request, session);
+                int filmID = processAddFilmRequest(request);
                 request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.FILM_ADDED);
-                request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1").forward(request, response);
+                request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1")
+                        .forward(request, response);
             } catch (AddFilmServiceException e) {
-                log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+                log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
+                        e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
                 request.setAttribute(ERROR_MESSAGE, e.getMessage());
                 request.getRequestDispatcher(JavaServerPageNames.FILM_ADDING_PAGE).forward(request, response);
-            } catch (Exception e) {
-                log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+            } catch (FileUploadException | FileNotUploadedException e) {
+                log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
+                        e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
                 request.setAttribute(ERROR_MESSAGE, e.getMessage());
                 request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
             }
@@ -74,7 +77,7 @@ public class AddFilm implements Command {
 
     }
 
-    private int proceedAddFilmRequest(HttpServletRequest request, HttpSession session) throws FileUploadException,
+    private int processAddFilmRequest(HttpServletRequest request) throws FileUploadException,
             UnsupportedEncodingException, ServiceException, FileNotUploadedException {
         String name = null;
         String year = null;
@@ -169,9 +172,11 @@ public class AddFilm implements Command {
         return filmID;
     }
 
-    private void proceedFilmImages(int filmID, HttpSession session, FileItem posterItem, FileItem frameItem) throws FileNotUploadedException {
+    private void proceedFilmImages(int filmID, HttpSession session, FileItem posterItem, FileItem frameItem)
+            throws FileNotUploadedException {
 
-        String absoluteFilePath = session.getServletContext().getRealPath(FileUploadConstants.FILM_IMGS_UPLOAD_DIR + filmID + "/");
+        String absoluteFilePath = session.getServletContext()
+                .getRealPath(FileUploadConstants.FILM_IMGS_UPLOAD_DIR + filmID + "/");
         if (absoluteFilePath != null) {
             new File(absoluteFilePath).mkdir();
         }

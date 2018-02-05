@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 
+import static by.epam.naumovich.film_ordering.command.util.LogMessages.EXCEPTION_IN_COMMAND;
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
 
 /**
@@ -41,16 +42,14 @@ public class OpenNewReviewPage implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {		
-		HttpSession session = request.getSession(true);
-		String query = QueryUtil.createHttpQueryString(request);
-		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		log.info(query);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
 
+		setPrevQueryAttributeToSession(request, session, log);
 		String lang = fetchLanguageFromSession(session);
 		
 		if (!isAuthorized(session)) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_REVIEWING);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_REVIEWING);
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else {
@@ -60,25 +59,18 @@ public class OpenNewReviewPage implements Command {
 			try {
 				film = filmService.getByID(filmID, lang);
 				reviewService.getByUserAndFilmId(userID, filmID);
-				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.REVIEW_AMOUNT_RESTRICTION);
+
+				request.setAttribute(ERROR_MESSAGE, ErrorMessages.REVIEW_AMOUNT_RESTRICTION);
 				request.getRequestDispatcher("/Controller?command=open_single_review&userID=" + userID + "&filmID=" + filmID).forward(request, response);
 			} catch (GetFilmServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(EXCEPTION_IN_COMMAND,
+						e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			} catch (GetReviewServiceException e) {
 				request.setAttribute(RequestAndSessionAttributes.FILM, film);
 				request.getRequestDispatcher(JavaServerPageNames.NEW_REVIEW_PAGE).forward(request, response);
-			} catch (ServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			}
-			
-			
 		}
-		
-		
 	}
-
 }

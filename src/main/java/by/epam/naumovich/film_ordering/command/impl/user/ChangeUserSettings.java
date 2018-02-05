@@ -25,7 +25,9 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 
+import static by.epam.naumovich.film_ordering.command.util.LogMessages.EXCEPTION_IN_COMMAND;
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
+import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.SUCCESS_MESSAGE;
 
 /**
  * Performs the command that reads updated user parameters from the JSP and sends them to the relevant service class.
@@ -45,18 +47,17 @@ public class ChangeUserSettings implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
-		String query = QueryUtil.createHttpQueryString(request);
-		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		log.info(query);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
+
+		setPrevQueryAttributeToSession(request, session, log);
 		
 		if (!isAuthorized(session)) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_SETTINGS);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_SETTINGS);
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else {
-			int userID = (int)session.getAttribute(RequestAndSessionAttributes.USER_ID);
+			int userID = fetchUserIdFromSession(session);
 			String name = null;
 			String surname = null;
 			String pwd = null;
@@ -79,8 +80,10 @@ public class ChangeUserSettings implements Command {
 				    while (iter.hasNext()) {
 				        FileItem item = iter.next();
 				        if (!item.isFormField()) {
-				        	String fileName = new File(FileUploadConstants.AVATAR_FILE_NAME_TEMPLATE + userID + FileUploadConstants.AVATAR_FILE_EXTENSION).getName(); 
-			                String absoluteFilePath = session.getServletContext().getRealPath(FileUploadConstants.AVATARS_UPLOAD_DIR);
+				        	String fileName = new File(FileUploadConstants.AVATAR_FILE_NAME_TEMPLATE
+                                    + userID + FileUploadConstants.AVATAR_FILE_EXTENSION).getName();
+			                String absoluteFilePath = session.getServletContext()
+                                    .getRealPath(FileUploadConstants.AVATARS_UPLOAD_DIR);
 			                File uploadedFile = new File(absoluteFilePath, fileName);
 			                
 			                item.write(uploadedFile);
@@ -116,19 +119,20 @@ public class ChangeUserSettings implements Command {
 				}
 				
 				userService.update(userID, name, surname, pwd, sex, bDate, phone, email, about);
+
 				log.debug(String.format(LogMessages.USER_SETTINGS_UPDATED, userID));
-				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.SETTINGS_UPDATED);
-				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
+				request.setAttribute(SUCCESS_MESSAGE, SuccessMessages.SETTINGS_UPDATED);
+				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+                        .forward(request, response);
 			} catch (UserUpdateServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(EXCEPTION_IN_COMMAND,
+                        e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher("/Controller?command=open_user_settings&userID=" + userID).forward(request, response);
-			} catch (ServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
+				request.getRequestDispatcher("/Controller?command=open_user_settings&userID=" + userID)
+                        .forward(request, response);
 			} catch (Exception e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(EXCEPTION_IN_COMMAND,
+                        e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			}

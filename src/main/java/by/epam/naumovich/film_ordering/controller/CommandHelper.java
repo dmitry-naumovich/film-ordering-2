@@ -1,5 +1,8 @@
 package by.epam.naumovich.film_ordering.controller;
 
+import by.epam.naumovich.film_ordering.command.impl.user.discount.AddDiscount;
+import by.epam.naumovich.film_ordering.command.impl.user.discount.DeleteDiscount;
+import by.epam.naumovich.film_ordering.command.impl.user.discount.EditDiscount;
 import by.epam.naumovich.film_ordering.service.IDiscountService;
 import by.epam.naumovich.film_ordering.service.IFilmService;
 import by.epam.naumovich.film_ordering.service.INewsService;

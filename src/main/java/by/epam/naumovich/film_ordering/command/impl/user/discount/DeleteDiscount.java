@@ -1,4 +1,4 @@
-package by.epam.naumovich.film_ordering.command.impl.user;
+package by.epam.naumovich.film_ordering.command.impl.user.discount;
 
 import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.ErrorMessages;
@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 
+import static by.epam.naumovich.film_ordering.command.util.LogMessages.EXCEPTION_IN_COMMAND;
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
 
 /**
@@ -36,34 +37,35 @@ public class DeleteDiscount implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+            throws IOException, ServletException, ServiceException {
+
 		int discountID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.DISCOUNT_ID));
 		int userID = fetchUserIdFromRequest(request);
 		
 		if (!isAuthorized(session)) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.DELETE_DISCOUNT_RESTRICTION);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.DELETE_DISCOUNT_RESTRICTION);
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else if (!isAdmin(session)) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.DELETE_DISCOUNT_RESTRICTION);
-			request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.DELETE_DISCOUNT_RESTRICTION);
+			request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+                    .forward(request, response);
 		}
 		else {
 			try {
 				discountService.delete(discountID);
 				log.debug(String.format(LogMessages.DISCOUNT_DELETED, discountID, userID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.DISCOUNT_DELETED);
-				Thread.sleep(1000);
-				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
+				//Thread.sleep(1000);
+				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+                        .forward(request, response);
 			} catch (DiscountServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(EXCEPTION_IN_COMMAND,
+                        e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
-			} catch (ServiceException | InterruptedException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
+				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+                        .forward(request, response);
 			}
 		}
 	}

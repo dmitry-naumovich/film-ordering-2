@@ -15,8 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 
+import static by.epam.naumovich.film_ordering.command.util.LogMessages.EXCEPTION_IN_COMMAND;
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
 
 /**
@@ -36,15 +38,17 @@ public class AddOrder implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+            throws IOException, ServletException, ServiceException {
+
 		if (!isAuthorized(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.ADD_ORDER_RESTRICTION);
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else if (isAdmin(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.ADMIN_CAN_NOT_ORDER);
-			request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + Integer.parseInt(request.getParameter(RequestAndSessionAttributes.FILM_ID)) + "&pageNum=1");
+			request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" +
+                    Integer.parseInt(request.getParameter(RequestAndSessionAttributes.FILM_ID)) + "&pageNum=1");
 		}
 		else {
 			int filmID = fetchFilmIdFromRequest(request);
@@ -58,18 +62,16 @@ public class AddOrder implements Command {
 				int orderNum = orderService.create(filmID, userID, price, discount, payment);
 				log.debug(String.format(LogMessages.ORDER_CREATED, orderNum, payment));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.ORDER_ADDED);
-				request.getRequestDispatcher("/Controller?command=open_single_order&orderNum=" + orderNum).forward(request, response);
+				request.getRequestDispatcher("/Controller?command=open_single_order&orderNum=" + orderNum)
+                        .forward(request, response);
 			} catch (AddOrderServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(EXCEPTION_IN_COMMAND,
+                        e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher("/Controller?command=open_new_order_page&filmID=" + filmID).forward(request, response);
-			} catch (ServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
+				request.getRequestDispatcher("/Controller?command=open_new_order_page&filmID=" + filmID)
+                        .forward(request, response);
 			}
 		}
-
 	}
 
 }

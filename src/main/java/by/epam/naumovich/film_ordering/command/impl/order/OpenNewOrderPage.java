@@ -40,34 +40,30 @@ public class OpenNewOrderPage implements Command {
 
     private final IFilmService filmService;
     private final IOrderService orderService;
-    private final IUserService userService;
     private final IDiscountService discountService;
 
-    public OpenNewOrderPage(IFilmService filmService, IOrderService orderService, IUserService userService,
-                            IDiscountService discountService) {
+    public OpenNewOrderPage(IFilmService filmService, IOrderService orderService, IDiscountService discountService) {
         this.filmService = filmService;
         this.orderService = orderService;
-        this.userService = userService;
         this.discountService = discountService;
     }
 
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        HttpSession session = request.getSession(true);
-        String query = QueryUtil.createHttpQueryString(request);
-        session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-        log.info(query);
+    public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+            throws IOException, ServletException, ServiceException {
+
+        setPrevQueryAttributeToSession(request, session, log);
 
         String lang = fetchLanguageFromSession(session);
-
         int filmID = fetchFilmIdFromRequest(request);
 
         if (!isAuthorized(session)) {
-            request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_ORDERING);
+            request.setAttribute(ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_ORDERING);
             request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
         } else if (isAdmin(session)) {
-            request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.ADMIN_CAN_NOT_ORDER);
-            request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1").forward(request, response);
+            request.setAttribute(ERROR_MESSAGE, ErrorMessages.ADMIN_CAN_NOT_ORDER);
+            request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1")
+                    .forward(request, response);
         } else {
             boolean already = false;
             int userID = fetchUserIdFromSession(session);
@@ -76,15 +72,17 @@ public class OpenNewOrderPage implements Command {
                 for (Order o : orders) {
                     if (o.getFilmId() == filmID) {
                         already = true;
-                        request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.FILM_ALREADY_ORDERED);
-                        request.getRequestDispatcher("/Controller?command=open_single_order&orderNum=" + o.getOrdNum()).forward(request, response);
+                        request.setAttribute(ERROR_MESSAGE, ErrorMessages.FILM_ALREADY_ORDERED);
+                        request.getRequestDispatcher("/Controller?command=open_single_order&orderNum=" + o.getOrdNum())
+                                .forward(request, response);
                     }
                 }
             } catch (GetOrderServiceException e) {
 
             } catch (ServiceException e) {
                 already = true;
-                log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+                log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
+                        e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
                 request.setAttribute(ERROR_MESSAGE, e.getMessage());
                 request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
             }
@@ -107,18 +105,12 @@ public class OpenNewOrderPage implements Command {
                     request.getRequestDispatcher(JavaServerPageNames.FILM_ORDERING_PAGE).forward(request, response);
 
                 } catch (GetFilmServiceException e) {
-                    log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+                    log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
+                            e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
                     request.setAttribute(ERROR_MESSAGE, e.getMessage());
                     request.getRequestDispatcher(JavaServerPageNames.FILM_ORDERING_PAGE).forward(request, response);
-
-                } catch (ServiceException e) {
-                    log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-                    request.setAttribute(ERROR_MESSAGE, e.getMessage());
-                    request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
                 }
             }
-
         }
     }
-
 }

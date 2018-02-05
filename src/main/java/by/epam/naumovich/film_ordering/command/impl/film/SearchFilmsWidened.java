@@ -44,11 +44,10 @@ public class SearchFilmsWidened implements Command {
     }
 
     @Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
-		String query = QueryUtil.createHttpQueryString(request);
-		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		log.info(query);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
+
+        setPrevQueryAttributeToSession(request, session, log);
 
 		String lang = fetchLanguageFromSession(session);
 		
@@ -78,10 +77,6 @@ public class SearchFilmsWidened implements Command {
 		} catch (GetFilmServiceException e) {
 			request.setAttribute(ERROR_MESSAGE, e.getMessage());
 			request.getRequestDispatcher("/Controller?command=open_widened_search_page").forward(request, response);
-		} catch (ServiceException e) {
-			log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-			request.setAttribute(ERROR_MESSAGE, e.getMessage());
-			request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 		}
 	}
 

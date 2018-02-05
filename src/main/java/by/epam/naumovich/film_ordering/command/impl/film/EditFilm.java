@@ -8,6 +8,7 @@ import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
 import by.epam.naumovich.film_ordering.service.IFilmService;
+import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.film.EditFilmServiceException;
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 
+import static by.epam.naumovich.film_ordering.command.util.FileUploadConstants.FILM_IMGS_UPLOAD_DIR;
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
 
 /**
@@ -45,13 +47,14 @@ public class EditFilm implements Command {
 	}
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
-		
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException {
+
 		int filmID = fetchFilmIdFromRequest(request);
 		if (!isAuthorized(session) || !isAdmin(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.EDIT_FILM_RESTRICTION);
-			request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1").forward(request, response);
+			request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1")
+                    .forward(request, response);
 		}
 		else {
 			String name = null;
@@ -134,50 +137,60 @@ public class EditFilm implements Command {
 			    	genresArray = new String[genres.size()];
 				    genresArray = genres.toArray(genresArray);
 			    }
-				filmService.update(filmID, name, year, director, cast, countriesArray, composer, genresArray, length, price, description);
+				filmService.update(filmID, name, year, director, cast, countriesArray, composer, genresArray,
+                        length, price, description);
 				
 				if (posterItem != null) {
 					try {
 						String folderFileName = new File(FileUploadConstants.POSTER_FILE_NAME).getName();
-						String absoluteFilePath = session.getServletContext().getRealPath(FileUploadConstants.FILM_IMGS_UPLOAD_DIR);
+						String absoluteFilePath = session.getServletContext()
+                                .getRealPath(FILM_IMGS_UPLOAD_DIR);
 						File image = new File(absoluteFilePath, folderFileName);
 						posterItem.write(image);
 						
-						String absTargetFilePath = session.getServletContext().getRealPath(FileUploadConstants.FILM_IMGS_UPLOAD_DIR + filmID + "/");
+						String absTargetFilePath = session.getServletContext()
+                                .getRealPath(FILM_IMGS_UPLOAD_DIR + filmID + "/");
 		        		File targetImg = new File(absTargetFilePath, folderFileName);
 		        		
 					    Files.move(image.toPath(), targetImg.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 					} catch (IOException e) {
-						log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+						log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
+                                e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 						request.setAttribute(ERROR_MESSAGE, e.getMessage());
 					}
 				}
 				if (frameItem != null) {
 					try {
 						String frameFileName = new File(FileUploadConstants.FRAME_FILE_NAME).getName();
-						String absoluteFilePath = session.getServletContext().getRealPath(FileUploadConstants.FILM_IMGS_UPLOAD_DIR);
+						String absoluteFilePath = session.getServletContext().getRealPath(FILM_IMGS_UPLOAD_DIR);
 						File image = new File(absoluteFilePath, frameFileName);
 						frameItem.write(image);
 						
-						String absTargetFilePath = session.getServletContext().getRealPath(FileUploadConstants.FILM_IMGS_UPLOAD_DIR + filmID + "/");
+						String absTargetFilePath = session.getServletContext()
+                                .getRealPath(FILM_IMGS_UPLOAD_DIR + filmID + "/");
 		        		File targetImg = new File(absTargetFilePath, frameFileName);
 		        		
 					    Files.move(image.toPath(), targetImg.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 					} catch (IOException e) {
-						log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+						log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
+                                e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 						request.setAttribute(ERROR_MESSAGE, e.getMessage());
 					}
 				}
 				
 				log.debug(String.format(LogMessages.FILM_UPDATED, name, filmID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.FILM_EDITED);
-				request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1").forward(request, response);
+				request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1")
+                        .forward(request, response);
 			} catch (EditFilmServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
+                        e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher("/Controller?command=open_film_edit_page&filmID=" + filmID).forward(request, response);
+				request.getRequestDispatcher("/Controller?command=open_film_edit_page&filmID=" + filmID)
+                        .forward(request, response);
 			} catch (Exception e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
+				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
+                        e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			}

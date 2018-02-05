@@ -45,17 +45,16 @@ public class SearchFilms implements Command {
     }
 
 	@Override
-	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		HttpSession session = request.getSession(true);
-		String query = QueryUtil.createHttpQueryString(request);
-		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		log.info(query);
+	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+			throws IOException, ServletException, ServiceException {
+
+		setPrevQueryAttributeToSession(request, session, log);
 
 		String lang = fetchLanguageFromSession(session);
-		
-		String text = request.getParameter(RequestAndSessionAttributes.SEARCH_TEXT); 
+		String text = request.getParameter(RequestAndSessionAttributes.SEARCH_TEXT);
+
 		if (text.length() == 0) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.NOTHING_FOUND);
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.NOTHING_FOUND);
 		} else {
 			try {
 				List<Film> foundFilms = filmService.searchByName(text, lang);
@@ -76,13 +75,9 @@ public class SearchFilms implements Command {
 				}
 				request.getRequestDispatcher(JavaServerPageNames.FILMS_JSP_PAGE).forward(request, response);
 			} catch (GetFilmServiceException e) {
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.FILMS_JSP_PAGE).forward(request, response);
-			} catch (ServiceException e) {
-				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
-			}
+                request.setAttribute(ERROR_MESSAGE, e.getMessage());
+                request.getRequestDispatcher(JavaServerPageNames.FILMS_JSP_PAGE).forward(request, response);
+            }
 		}
 
 	}

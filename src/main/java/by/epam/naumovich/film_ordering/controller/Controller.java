@@ -1,5 +1,6 @@
 package by.epam.naumovich.film_ordering.controller;
 
+import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -13,6 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+
+import static by.epam.naumovich.film_ordering.command.util.LogMessages.EXCEPTION_IN_COMMAND;
+import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
 
 /**
  * HttpServlet implementation class Controller which receives incoming HttpServletRequest, serves it by defining the necessary command and
@@ -57,13 +62,20 @@ public class Controller {
      */
 	@RequestMapping(method = RequestMethod.POST)
 	public void post(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
-			String commandName = request.getParameter(COMMAND);
-			log.debug("Controller::post, commandName = {}, requestUrl = {}", commandName, request.getRequestURL());
-			Command command  = commandHelper.getCommand(commandName.toUpperCase());
-			command.execute(request, response);
+        String commandName = request.getParameter(COMMAND);
+        log.debug("Controller::post, commandName = {}, requestUrl = {}", commandName, request.getRequestURL());
+        Command command = commandHelper.getCommand(commandName.toUpperCase());
+
+	    try {
+			command.execute(request, response, request.getSession(true));
+		} catch (ServiceException e) {
+            log.error(String.format(EXCEPTION_IN_COMMAND,
+                    e.getClass().getSimpleName(), command.getClass().getSimpleName(), e.getMessage()), e);
+
+            request.setAttribute(ERROR_MESSAGE, e.getMessage());
+            request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 		} catch (RuntimeException e) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
+			request.setAttribute(ERROR_MESSAGE, e.getMessage());
 			request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 		}
 	}
