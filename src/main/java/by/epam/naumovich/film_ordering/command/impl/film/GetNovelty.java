@@ -56,7 +56,7 @@ public class GetNovelty implements Command {
 			session.setAttribute(RequestAndSessionAttributes.NOVELTY_LIST, filmSet);
 
 			if (isAuthorized(session) && !isAdmin(session)) {
-				int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
+				int userID = fetchUserIdFromSession(session);
 				try {
 					List<Order> orders = orderService.getAllByUserId(userID);
 					List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
@@ -71,7 +71,6 @@ public class GetNovelty implements Command {
 			request.getRequestDispatcher(JavaServerPageNames.INDEX_PAGE).forward(request, response);
 		}
 		catch (ServiceException e) {
-			e.printStackTrace();
 			log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
 			request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);

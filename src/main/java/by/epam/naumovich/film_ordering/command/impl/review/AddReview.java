@@ -44,15 +44,15 @@ public class AddReview implements Command {
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else {
-			int userID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.USER_ID));
-			int filmID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.FILM_ID));
+			int userID = fetchUserIdFromRequest(request);
+			int filmID = fetchFilmIdFromRequest(request);
 			String mark = request.getParameter(RequestAndSessionAttributes.REVIEW_MARK);
 			String type = request.getParameter(RequestAndSessionAttributes.REVIEW_TYPE);
 			String text = request.getParameter(RequestAndSessionAttributes.REVIEW_TEXT);
 			
 			try {
 				reviewService.create(userID, filmID, mark, type, text);
-				log.debug(String.format(LogMessages.REVIEW_ADDED, userID, filmID));
+				log.debug(String.format(LogMessages.REVIEW_CREATED, userID, filmID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.REVIEW_ADDED);
 				request.getRequestDispatcher("/Controller?command=open_single_review&userID=" + userID + "&filmID=" + filmID).forward(request, response);
 			} catch (AddReviewServiceException e) {

@@ -49,8 +49,8 @@ public class OpenAllFilms implements Command {
 		log.info(query);
 
 		String lang = fetchLanguageFromSession(session);
-		
-		int pageNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.PAGE_NUM));
+		int pageNum = fetchPageNumberFromRequest(request);
+
 		try {
 			List<Film> films = filmService.getAllPart(pageNum, lang);
 			request.setAttribute(RequestAndSessionAttributes.FILMS, films);
@@ -59,17 +59,15 @@ public class OpenAllFilms implements Command {
 			request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 			request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 			
-			if (isAuthorized(session)) {
-				if (!isAdmin(session)) {
-					int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
-					try {
-						List<Order> orders = orderService.getAllByUserId(userID);
-						List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
-						request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
-					} catch (GetOrderServiceException e) {
-						request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, Collections.emptyList());
+			if (isAuthorized(session) && !isAdmin(session)) {
+                int userID = fetchUserIdFromSession(session);
+                try {
+                    List<Order> orders = orderService.getAllByUserId(userID);
+                    List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
+                    request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
+                } catch (GetOrderServiceException e) {
+                    request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, Collections.emptyList());
 					}
-				}
 			}
 			
 			request.getRequestDispatcher(JavaServerPageNames.FILMS_JSP_PAGE).forward(request, response);

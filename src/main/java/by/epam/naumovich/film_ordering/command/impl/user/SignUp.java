@@ -48,7 +48,7 @@ public class SignUp implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
 		if (isAuthorized(session)) {
-			int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
+			int userID = fetchUserIdFromSession(session);
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.LOG_OUT_FOR_SIGN_UP);
 			request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
 		} else {
@@ -130,7 +130,7 @@ public class SignUp implements Command {
 				session.setAttribute(RequestAndSessionAttributes.AUTHORIZED_USER, login);
 				session.setAttribute(RequestAndSessionAttributes.USER_ID, user.getId());
 				session.setAttribute(RequestAndSessionAttributes.IS_ADMIN, 'a' == user.getType());
-				log.debug(String.format(LogMessages.USER_REGISTRATED, login, userID));
+				log.debug(String.format(LogMessages.USER_CREATED, login, userID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.SUCCESSFUL_SIGN_UP);
 				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
 			} catch (ServiceSignUpException e) {

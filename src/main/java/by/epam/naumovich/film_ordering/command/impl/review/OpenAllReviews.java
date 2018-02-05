@@ -51,7 +51,7 @@ public class OpenAllReviews implements Command {
 
 		String lang = fetchLanguageFromSession(session);
 		
-		int pageNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.PAGE_NUM));
+		int pageNum = fetchPageNumberFromRequest(request);
 		
 		try {
 			List<Review> reviews = reviewService.getAllPart(pageNum);

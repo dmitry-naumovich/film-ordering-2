@@ -109,7 +109,7 @@ public class AddNews implements Command {
 					}
 				}
 				
-				log.debug(String.format(LogMessages.NEWS_ADDED, newsID));
+				log.debug(String.format(LogMessages.NEWS_CREATED, newsID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.NEWS_ADDED);
 				request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID).forward(request, response);
 			} catch (AddNewsServiceException e) {

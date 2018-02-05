@@ -29,6 +29,9 @@ import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
 import by.epam.naumovich.film_ordering.service.IFilmService;
 import by.epam.naumovich.film_ordering.service.exception.film.EditFilmServiceException;
 
+
+import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
+
 /**
  * Performs the command that reads updated film parameters from the JSP and sends them to the relevant service class.
  * Uploads updated images to the required directories.
@@ -50,10 +53,9 @@ public class EditFilm implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
 		
-		int filmID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.FILM_ID));
-		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) == null |
-				!isAdmin(session)) {
-			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.EDIT_FILM_RESTRICTION);
+		int filmID = fetchFilmIdFromRequest(request);
+		if (!isAuthorized(session) || !isAdmin(session)) {
+			request.setAttribute(ERROR_MESSAGE, ErrorMessages.EDIT_FILM_RESTRICTION);
 			request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1").forward(request, response);
 		}
 		else {
@@ -152,7 +154,7 @@ public class EditFilm implements Command {
 					    Files.move(image.toPath(), targetImg.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 					} catch (IOException e) {
 						log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-						request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
+						request.setAttribute(ERROR_MESSAGE, e.getMessage());
 					}
 				}
 				if (frameItem != null) {
@@ -168,20 +170,20 @@ public class EditFilm implements Command {
 					    Files.move(image.toPath(), targetImg.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 					} catch (IOException e) {
 						log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-						request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
+						request.setAttribute(ERROR_MESSAGE, e.getMessage());
 					}
 				}
 				
-				log.debug(String.format(LogMessages.FILM_EDITED, name, filmID));
+				log.debug(String.format(LogMessages.FILM_UPDATED, name, filmID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.FILM_EDITED);
 				request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1").forward(request, response);
 			} catch (EditFilmServiceException e) {
 				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
+				request.setAttribute(ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher("/Controller?command=open_film_edit_page&filmID=" + filmID).forward(request, response);
 			} catch (Exception e) {
 				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND, e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, e.getMessage());
+				request.setAttribute(ERROR_MESSAGE, e.getMessage());
 				request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 			}
 		}

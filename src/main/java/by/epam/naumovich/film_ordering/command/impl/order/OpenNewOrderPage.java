@@ -59,7 +59,7 @@ public class OpenNewOrderPage implements Command {
 
 		String lang = fetchLanguageFromSession(session);
 		
-		int filmID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.FILM_ID));
+		int filmID = fetchFilmIdFromRequest(request);
 		
 		if (!isAuthorized(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_ORDERING);
@@ -71,7 +71,7 @@ public class OpenNewOrderPage implements Command {
 		}
 		else {
 			boolean already = false;
-			int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
+			int userID = fetchUserIdFromSession(session);
 			try {
 				List<Order> orders = orderService.getAllByUserId(userID);
 				for (Order o : orders) {

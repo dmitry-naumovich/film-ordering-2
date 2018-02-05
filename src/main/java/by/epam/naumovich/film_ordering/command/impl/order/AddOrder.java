@@ -46,15 +46,16 @@ public class AddOrder implements Command {
 			request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + Integer.parseInt(request.getParameter(RequestAndSessionAttributes.FILM_ID)) + "&pageNum=1");
 		}
 		else {
-			int filmID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.FILM_ID));
-			int userID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.USER_ID));
+			int filmID = fetchFilmIdFromRequest(request);
+			int userID = fetchUserIdFromRequest(request);
+
 			String price = request.getParameter(RequestAndSessionAttributes.PRICE);
 			String discount = request.getParameter(RequestAndSessionAttributes.DISCOUNT);
 			String payment = request.getParameter(RequestAndSessionAttributes.PAYMENT);
 			
 			try {
 				int orderNum = orderService.create(filmID, userID, price, discount, payment);
-				log.debug(String.format(LogMessages.ORDER_ADDED, orderNum, payment));
+				log.debug(String.format(LogMessages.ORDER_CREATED, orderNum, payment));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.ORDER_ADDED);
 				request.getRequestDispatcher("/Controller?command=open_single_order&orderNum=" + orderNum).forward(request, response);
 			} catch (AddOrderServiceException e) {

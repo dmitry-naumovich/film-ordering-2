@@ -52,7 +52,7 @@ public class OpenAllOrders implements Command {
 
 		String lang = fetchLanguageFromSession(session);
 		
-		int pageNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.PAGE_NUM));
+		int pageNum = fetchPageNumberFromRequest(request);
 		if (!isAuthorized(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.OPEN_ALL_ORDERS_RESTRICTION);
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);

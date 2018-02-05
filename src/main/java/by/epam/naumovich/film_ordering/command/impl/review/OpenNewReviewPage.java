@@ -54,8 +54,8 @@ public class OpenNewReviewPage implements Command {
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else {
-			int filmID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.FILM_ID));
-			int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
+			int filmID = fetchFilmIdFromRequest(request);
+			int userID = fetchUserIdFromSession(session);
 			Film film = null;
 			try {
 				film = filmService.getByID(filmID, lang);

@@ -37,7 +37,7 @@ public class BanUser implements Command {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
-		int userID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.USER_ID));
+		int userID = fetchUserIdFromRequest(request);
 		
 		if (!isAuthorized(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.BAN_USER_RESTRICTION);

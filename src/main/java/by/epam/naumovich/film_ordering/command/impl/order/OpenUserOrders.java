@@ -52,7 +52,7 @@ public class OpenUserOrders implements Command {
 
 		String lang = fetchLanguageFromSession(session);
 		
-		int pageNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.PAGE_NUM));
+		int pageNum = fetchPageNumberFromRequest(request);
 		
 		if (!isAuthorized(session)) {
 			if (request.getParameter(RequestAndSessionAttributes.USER_ID).isEmpty() || request.getParameter(RequestAndSessionAttributes.USER_ID) == null) {

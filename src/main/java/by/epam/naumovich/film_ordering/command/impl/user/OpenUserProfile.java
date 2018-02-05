@@ -52,7 +52,7 @@ public class OpenUserProfile implements Command {
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else {
-			int userID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.USER_ID));
+			int userID = fetchUserIdFromRequest(request);
 			try {
 				User user = userService.getByID(userID);
 				request.setAttribute(RequestAndSessionAttributes.USER, user);

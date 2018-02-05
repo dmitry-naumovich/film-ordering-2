@@ -38,8 +38,7 @@ public class DeleteNews implements Command {
 		HttpSession session = request.getSession(true);
 		int newsID = Integer.valueOf(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
 		 
-		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) == null |
-				!isAdmin(session)) {
+		if (!isAuthorized(session) || !isAdmin(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.DELETE_NEWS_RESTRICTION);
 			request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID).forward(request, response);
 		}

@@ -22,7 +22,7 @@ public final class ErrorMessages {
 	public static final String EDIT_DISCOUNT_RESTRICTION = "Only administrator is able to edit user discounts";
 	public static final String EDIT_FILM_RESTRICTION = "Only administrator is able to edit films";
 	public static final String EDIT_NEWS_RESTRICTION = "Only administrator is able to edit news";
-	public static final String FILE_NOT_UPLOADED = "The file was not succesfully uploaded to the server";
+	public static final String FILE_NOT_UPLOADED = "The file was not successfully uploaded to the server";
 	public static final String FILM_ALREADY_ORDERED = "Sorry! You have already ordered this film.";
 	public static final String FILM_ORDERS_RESTRICTION = "Only administrator is able to view film orders";
 	public static final String LOG_OUT_FOR_ANOTHER_ACC = "Log out to sign into another account!";

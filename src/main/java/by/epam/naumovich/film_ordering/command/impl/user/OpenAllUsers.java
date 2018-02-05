@@ -49,7 +49,7 @@ public class OpenAllUsers implements Command {
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		log.info(query);
 		
-		int pageNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.PAGE_NUM));
+		int pageNum = fetchPageNumberFromRequest(request);
 		
 		if (!isAuthorized(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.OPEN_ALL_USERS_RESTRICTION);

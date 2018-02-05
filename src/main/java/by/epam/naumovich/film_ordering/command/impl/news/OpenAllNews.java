@@ -39,7 +39,7 @@ public class OpenAllNews implements Command {
 		request.getSession(true).setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		log.info(query);
 		
-		int pageNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.PAGE_NUM));
+		int pageNum = fetchPageNumberFromRequest(request);
 		
 		try {
 			List<News> news = newsService.getAllPart(pageNum);

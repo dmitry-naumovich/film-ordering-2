@@ -52,8 +52,8 @@ public class OpenSingleFilm implements Command {
 
 		String lang = fetchLanguageFromSession(session);
 		
-		int filmID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.FILM_ID));
-		int pageNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.PAGE_NUM));
+		int filmID = fetchFilmIdFromRequest(request);
+		int pageNum = fetchPageNumberFromRequest(request);
 		
 		try {
 			Film film = filmService.getByID(filmID, lang);
@@ -61,7 +61,7 @@ public class OpenSingleFilm implements Command {
 			
 			if (isAuthorized(session)) {
 				if (!isAdmin(session)) {
-					int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
+					int userID = fetchUserIdFromSession(session);
 					try {
 						reviewService.getByUserAndFilmId(userID, filmID);
 						request.setAttribute(RequestAndSessionAttributes.OWN_REVIEW_EXISTS, true);

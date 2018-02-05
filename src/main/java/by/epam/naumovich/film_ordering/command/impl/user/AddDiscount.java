@@ -37,7 +37,7 @@ public class AddDiscount implements Command {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
-		int userID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.USER_ID));
+		int userID = fetchUserIdFromRequest(request);
 		
 		if (!isAuthorized(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.ADD_DISCOUNT_RESTRICTION);
@@ -54,7 +54,7 @@ public class AddDiscount implements Command {
 			
 			try {
 				discountService.create(userID, amount, endDate, endTime);
-				log.debug(String.format(LogMessages.DISCOUNT_ADDED, userID, amount));
+				log.debug(String.format(LogMessages.DISCOUNT_CREATED, userID, amount));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.DISCOUNT_ADDED);
 				Thread.sleep(1000);
 				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);

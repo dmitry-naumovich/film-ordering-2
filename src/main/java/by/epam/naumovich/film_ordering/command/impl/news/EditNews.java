@@ -53,8 +53,7 @@ public class EditNews implements Command {
 		log.info(query);
 		
 		int newsID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
-		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) == null |
-				!isAdmin(session)) {
+		if (!isAuthorized(session) || !isAdmin(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.EDIT_NEWS_RESTRICTION);
 			request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID).forward(request, response);
 		}
@@ -112,7 +111,7 @@ public class EditNews implements Command {
 					}
 				}
 				
-				log.debug(String.format(LogMessages.NEWS_EDITED, newsID));
+				log.debug(String.format(LogMessages.NEWS_UPDATED, newsID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.NEWS_EDITED);
 				request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID).forward(request, response);
 			} catch (EditNewsServiceException e) {

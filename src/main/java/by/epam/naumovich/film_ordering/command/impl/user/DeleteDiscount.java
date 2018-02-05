@@ -38,7 +38,7 @@ public class DeleteDiscount implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
 		int discountID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.DISCOUNT_ID));
-		int userID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.USER_ID));
+		int userID = fetchUserIdFromRequest(request);
 		
 		if (!isAuthorized(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.DELETE_DISCOUNT_RESTRICTION);

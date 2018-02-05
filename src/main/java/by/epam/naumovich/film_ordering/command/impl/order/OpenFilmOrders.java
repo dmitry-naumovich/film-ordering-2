@@ -52,8 +52,8 @@ public class OpenFilmOrders implements Command {
 
 		String lang = fetchLanguageFromSession(session);
 		
-		int filmID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.FILM_ID));
-		int pageNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.PAGE_NUM));
+		int filmID = fetchFilmIdFromRequest(request);
+		int pageNum = fetchPageNumberFromRequest(request);
 		
 		if (!isAuthorized(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.FILM_ORDERS_RESTRICTION);

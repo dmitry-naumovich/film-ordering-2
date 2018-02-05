@@ -167,7 +167,7 @@ public class AddFilm implements Command {
 					genresArray, length, price, description);
 			
 			//proceedFilmImages(filmID, session, posterItem, frameItem); //TODO: return file upload using Spring!
-			log.debug(String.format(LogMessages.FILM_ADDED, name, filmID));
+			log.debug(String.format(LogMessages.FILM_CREATED, name, filmID));
 			return filmID;
 	}
 	

@@ -116,7 +116,7 @@ public class ChangeUserSettings implements Command {
 				}
 				
 				userService.update(userID, name, surname, pwd, sex, bDate, phone, email, about);
-				log.debug(String.format(LogMessages.USER_SETTINGS_EDITED, userID));
+				log.debug(String.format(LogMessages.USER_SETTINGS_UPDATED, userID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.SETTINGS_UPDATED);
 				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
 			} catch (UserUpdateServiceException e) {

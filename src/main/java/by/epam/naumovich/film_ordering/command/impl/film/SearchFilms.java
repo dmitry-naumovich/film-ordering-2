@@ -63,7 +63,7 @@ public class SearchFilms implements Command {
 				
 				if (isAuthorized(session)) {
 					if (!isAdmin(session)) {
-						int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
+						int userID = fetchUserIdFromSession(session);
 						try {
 							List<Order> orders = orderService.getAllByUserId(userID);
 							List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());

@@ -42,8 +42,7 @@ public class OpenNewsEditPage implements Command {
 		log.info(query);
 		
 		int newsID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
-		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) == null |
-				!isAdmin(session)) {
+		if (!isAuthorized(session) || !isAdmin(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.EDIT_NEWS_RESTRICTION);
 			request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID).forward(request, response);
 		}

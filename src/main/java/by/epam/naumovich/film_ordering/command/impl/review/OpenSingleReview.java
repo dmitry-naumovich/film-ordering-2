@@ -49,8 +49,8 @@ public class OpenSingleReview implements Command {
 
 		String lang = fetchLanguageFromSession(session);
 		
-		int userID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.USER_ID));
-		int filmID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.FILM_ID));
+		int userID = fetchUserIdFromRequest(request);
+		int filmID = fetchFilmIdFromRequest(request);
 		
 		try {
 			Review rev = reviewService.getByUserAndFilmId(userID, filmID);

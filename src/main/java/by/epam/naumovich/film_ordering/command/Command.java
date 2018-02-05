@@ -43,4 +43,20 @@ public interface Command {
     default boolean isAdmin(HttpSession session) {
         return Boolean.parseBoolean(session.getAttribute(RequestAndSessionAttributes.IS_ADMIN).toString());
     }
+
+    default int fetchUserIdFromSession(HttpSession session) {
+        return Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
+    }
+
+    default int fetchUserIdFromRequest(HttpServletRequest request) {
+        return Integer.parseInt(request.getParameter(RequestAndSessionAttributes.USER_ID));
+    }
+
+    default int fetchFilmIdFromRequest(HttpServletRequest request) {
+        return Integer.parseInt(request.getParameter(RequestAndSessionAttributes.FILM_ID));
+    }
+
+    default int fetchPageNumberFromRequest(HttpServletRequest request) {
+        return Integer.parseInt(request.getParameter(RequestAndSessionAttributes.PAGE_NUM));
+    }
 }
