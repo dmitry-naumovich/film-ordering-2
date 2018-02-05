@@ -291,8 +291,8 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public int countPages() {
-        int numOfUsers = (int)userDAO.count(); //todo: return long everywhere
+    public long countPages() {
+        long numOfUsers = userDAO.count();
         if (numOfUsers % USERS_AMOUNT_ON_PAGE == 0) {
             return numOfUsers / USERS_AMOUNT_ON_PAGE;
         }

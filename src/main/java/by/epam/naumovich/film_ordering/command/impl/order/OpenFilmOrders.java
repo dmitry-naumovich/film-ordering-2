@@ -74,8 +74,8 @@ public class OpenFilmOrders implements Command {
 					userLogins.add(userLogin);
 				}
 				String filmName = filmService.getNameByID(filmID, lang);
-				
-				int totalPageAmount = orderService.countPagesByFilmId(filmID);
+
+				long totalPageAmount = orderService.countPagesByFilmId(filmID);
 				request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 				request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 				

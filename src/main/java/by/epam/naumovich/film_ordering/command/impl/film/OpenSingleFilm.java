@@ -84,7 +84,7 @@ public class OpenSingleFilm implements Command {
 			request.setAttribute(RequestAndSessionAttributes.REVIEWS, reviews);
 			request.setAttribute(RequestAndSessionAttributes.REVIEW_VIEW_TYPE, RequestAndSessionAttributes.VIEW_TYPE_FILM);
 			
-			int totalPageAmount = reviewService.countByFilmId(filmID);
+			long totalPageAmount = reviewService.countByFilmId(filmID);
 			request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 			request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 			

@@ -62,8 +62,8 @@ public class OpenAllReviews implements Command {
 				reviewLogins.add(userService.getLoginByID(r.getAuthor()));
 				reviewFilmNames.add(filmService.getByID(r.getFilmId(), lang).getName());
 			}
-			
-			int totalPageAmount = reviewService.countPages();
+
+			long totalPageAmount = reviewService.countPages();
 			request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 			request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 			

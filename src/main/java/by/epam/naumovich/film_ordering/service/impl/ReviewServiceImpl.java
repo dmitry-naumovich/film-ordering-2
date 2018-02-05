@@ -170,8 +170,8 @@ public class ReviewServiceImpl implements IReviewService {
 	}
 
     @Override
-    public int countPages() {
-        int numOfReviews = (int)reviewDAO.count(); //todo: return long everywhere
+    public long countPages() {
+        long numOfReviews = reviewDAO.count();
         if (numOfReviews % REVIEWS_AMOUNT_ON_PAGE == 0) {
             return numOfReviews / REVIEWS_AMOUNT_ON_PAGE;
         }
@@ -181,11 +181,11 @@ public class ReviewServiceImpl implements IReviewService {
     }
 
 	@Override
-	public int countByUserId(int userId) throws ServiceException {
+	public long countByUserId(int userId) throws ServiceException {
 		if (!Validator.validateInt(userId)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
-        int numOfReviews = reviewDAO.countByAuthor(userId);
+        long numOfReviews = reviewDAO.countByAuthor(userId);
         if (numOfReviews % REVIEWS_AMOUNT_ON_PAGE == 0) {
             return numOfReviews / REVIEWS_AMOUNT_ON_PAGE;
         }
@@ -195,11 +195,11 @@ public class ReviewServiceImpl implements IReviewService {
 	}
 
 	@Override
-	public int countByFilmId(int filmId) throws ServiceException {
+	public long countByFilmId(int filmId) throws ServiceException {
 		if (!Validator.validateInt(filmId)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
-        int numOfReviews = reviewDAO.countByFilmId(filmId);
+        long numOfReviews = reviewDAO.countByFilmId(filmId);
         if (numOfReviews % REVIEWS_AMOUNT_ON_PAGE == 0) {
             return numOfReviews / REVIEWS_AMOUNT_ON_PAGE;
         }

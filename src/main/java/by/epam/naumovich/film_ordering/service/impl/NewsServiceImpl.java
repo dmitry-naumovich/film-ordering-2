@@ -49,12 +49,12 @@ public class NewsServiceImpl implements INewsService {
 		news.setDate(Date.valueOf(LocalDate.now()));
 		news.setTime(Time.valueOf(LocalTime.now()));
 
-        int newsID = newsDAO.save(news).getId(); //todo: reimplement
-        if (newsID == 0) {
+        News createdNews = newsDAO.save(news);
+        if (createdNews == null) {
             throw new AddNewsServiceException(ExceptionMessages.NEWS_NOT_ADDED);
         }
 		
-		return newsID;
+		return createdNews.getId();
 	}
 
 	@Override
@@ -143,8 +143,8 @@ public class NewsServiceImpl implements INewsService {
 	}
 
 	@Override
-	public int countPages() {
-        int numOfNews = (int) newsDAO.count(); //todo: return long everywhere
+	public long countPages() {
+        long numOfNews = newsDAO.count();
         if (numOfNews % NEWS_AMOUNT_ON_PAGE == 0) {
             return numOfNews / NEWS_AMOUNT_ON_PAGE;
         } else {

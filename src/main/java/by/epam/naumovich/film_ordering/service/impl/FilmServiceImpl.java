@@ -359,8 +359,8 @@ public class FilmServiceImpl implements IFilmService {
 	}
 
 	@Override
-	public int countPages() {
-		int numOfFilms = (int)filmDAO.count(); //todo: return long everywhere
+	public long countPages() {
+		long numOfFilms = filmDAO.count();
 		if (numOfFilms % FILMS_AMOUNT_ON_PAGE == 0) {
 			return numOfFilms / FILMS_AMOUNT_ON_PAGE;
 		}

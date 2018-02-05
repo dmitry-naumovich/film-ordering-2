@@ -14,16 +14,6 @@ import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 public interface IDiscountService {
 
     /**
-     * Verifies the input parameter and passes it to the DAO layer, receives the Discount entity and passes it to the Controller
-     * or throws an exception if it equals null
-     *
-     * @param id user ID
-     * @return found discount object
-     * @throws ServiceException
-     */
-    Discount getCurrentUserDiscountByID(int id) throws ServiceException;
-
-    /**
      * Constructs a new discount entity based on input parameters received from the Controller layer, verifies them and either
      * passes to the DAO layer or throws an exception
      *
@@ -46,6 +36,16 @@ public interface IDiscountService {
      * @throws ServiceException
      */
     void update(int discountID, String amount, String endDate, String endTime) throws ServiceException;
+
+    /**
+     * Verifies the input parameter and passes it to the DAO layer, receives the Discount entity and passes it to the Controller
+     * or throws an exception if it equals null
+     *
+     * @param id user ID
+     * @return found discount object
+     * @throws ServiceException
+     */
+    Discount getCurrentUserDiscountByID(int id) throws ServiceException;
 
     /**
      * Verifies the input parameter and either passes it to the DAO layer or throws an exception

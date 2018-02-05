@@ -172,13 +172,12 @@ public class OrderServiceImpl implements IOrderService {
         if (orders.isEmpty()) {
             throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
         }
-
         return orders;
 	}
 
     @Override
-    public int countPages() {
-        int numOfOrders = (int)orderDAO.count(); //todo: return long everywhere
+    public long countPages() {
+        long numOfOrders = orderDAO.count();
         if (numOfOrders % ORDERS_AMOUNT_ON_PAGE == 0) {
             return numOfOrders / ORDERS_AMOUNT_ON_PAGE;
         }
@@ -188,12 +187,12 @@ public class OrderServiceImpl implements IOrderService {
     }
 
 	@Override
-	public int countPagesByUserId(int userId) throws ServiceException {
+	public long countPagesByUserId(int userId) throws ServiceException {
 		if (!Validator.validateInt(userId)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
-		
-        int numOfOrders = (int)orderDAO.countByUserId(userId); //todo: long
+
+        long numOfOrders = orderDAO.countByUserId(userId);
         if (numOfOrders % ORDERS_AMOUNT_ON_PAGE == 0) {
             return numOfOrders / ORDERS_AMOUNT_ON_PAGE;
         }
@@ -203,11 +202,11 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
-	public int countPagesByFilmId(int filmId) throws ServiceException {
+	public long countPagesByFilmId(int filmId) throws ServiceException {
 		if (!Validator.validateInt(filmId)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
-        int numOfOrders = (int)orderDAO.countByFilmId(filmId); //todo: long
+        long numOfOrders = orderDAO.countByFilmId(filmId);
         if (numOfOrders % ORDERS_AMOUNT_ON_PAGE == 0) {
             return numOfOrders / ORDERS_AMOUNT_ON_PAGE;
         }

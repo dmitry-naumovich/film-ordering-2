@@ -199,7 +199,7 @@ public class MySQLReviewDAOTest {
 	 */
 	@Test
 	public void getNumberOfUserReviews() {
-		int reviewsNum1 = dao.countByAuthor(4);
+		int reviewsNum1 = (int)dao.countByAuthor(4);
 		List<Review> userReviews = new ArrayList<>();
 		for (Review o : dao.findAll()) {
 			if (o.getAuthor() == 4) {
@@ -216,7 +216,7 @@ public class MySQLReviewDAOTest {
 	 */
 	@Test
 	public void getNumberOfFilmReviews() {
-		int reviewsNum1 = dao.countByFilmId(1);
+		int reviewsNum1 = (int)dao.countByFilmId(1);
 		List<Review> filmReviews = new ArrayList<>();
 		for (Review o : dao.findAll()) {
 			if (o.getFilmId() == 1) {

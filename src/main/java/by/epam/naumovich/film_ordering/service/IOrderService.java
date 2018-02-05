@@ -114,7 +114,7 @@ public interface IOrderService {
 	 * 
 	 * @return number of pages
 	 */
-	int countPages();
+	long countPages();
 	
 	/**
 	 * Counts the number of pages needed to locate all user orders within the pagination.
@@ -123,7 +123,7 @@ public interface IOrderService {
 	 * @return number of pages
 	 * @throws ServiceException - if userID is not valid
 	 */
-	int countPagesByUserId(int userId) throws ServiceException;
+	long countPagesByUserId(int userId) throws ServiceException;
 	
 	/**
 	 * Counts the number of pages needed to locate all film orders within the pagination.
@@ -132,5 +132,5 @@ public interface IOrderService {
 	 * @return number of pages
 	 * @throws ServiceException - if filmId is not valid
 	 */
-	int countPagesByFilmId(int filmId) throws ServiceException;
+	long countPagesByFilmId(int filmId) throws ServiceException;
 }

@@ -98,5 +98,5 @@ public interface INewsService {
 	 * 
 	 * @return number of pages
 	 */
-	int countPages();
+	long countPages();
 }

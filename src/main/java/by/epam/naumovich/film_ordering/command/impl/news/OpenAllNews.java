@@ -44,7 +44,7 @@ public class OpenAllNews implements Command {
 		try {
 			List<News> news = newsService.getAllPart(pageNum);
 			
-			int totalPageAmount = newsService.countPages();
+			long totalPageAmount = newsService.countPages();
 			request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 			request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 			

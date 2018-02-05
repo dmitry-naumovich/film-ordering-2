@@ -66,8 +66,8 @@ public class OpenUserReviews implements Command {
 				for (Review r : reviews) {
 					reviewFilmNames.add(filmService.getNameByID(r.getFilmId(), lang));
 				}
-				
-				int totalPageAmount = reviewService.countByUserId(userID);
+
+				long totalPageAmount = reviewService.countByUserId(userID);
 				request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 				request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 				

@@ -84,7 +84,7 @@ public interface IReviewDAO extends CrudRepository<Review, ReviewPK> {
 	 * @return total user reviews amount
 	 */
 	@Query(value = "SELECT COUNT(*) FROM reviews WHERE r_author = :author", nativeQuery = true)
-	int countByAuthor(@Param("author") int author);
+    long countByAuthor(@Param("author") int author);
 	
 	/**
 	 * Counts the number of film reviews in the data source
@@ -93,7 +93,7 @@ public interface IReviewDAO extends CrudRepository<Review, ReviewPK> {
 	 * @return total film reviews amount
 	 */
 	@Query(value = "SELECT COUNT(*) FROM reviews WHERE r_film = :filmId", nativeQuery = true)
-	int countByFilmId(@Param("filmId") int filmId);
+    long countByFilmId(@Param("filmId") int filmId);
 
     /**
      * Recounts and updates film rating

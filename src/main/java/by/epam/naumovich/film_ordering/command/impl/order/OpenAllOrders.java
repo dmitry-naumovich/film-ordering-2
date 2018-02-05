@@ -75,7 +75,7 @@ public class OpenAllOrders implements Command {
 					userLogins.add(userLogin);
 				}
 				
-				int totalPageAmount = orderService.countPages();
+				long totalPageAmount = orderService.countPages();
 				request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 				request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 				

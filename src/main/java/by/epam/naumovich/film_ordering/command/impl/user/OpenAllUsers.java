@@ -75,8 +75,8 @@ public class OpenAllUsers implements Command {
 						discountList.add(null);
 					}
 				}
-				
-				int totalPageAmount = userService.countPages();
+
+				long totalPageAmount = userService.countPages();
 				request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 				request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 				

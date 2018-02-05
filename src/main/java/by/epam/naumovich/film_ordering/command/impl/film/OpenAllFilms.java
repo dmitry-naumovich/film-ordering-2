@@ -48,19 +48,14 @@ public class OpenAllFilms implements Command {
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		System.out.println(query);
 
-		String lang = null;
-		try {
-			lang = session.getAttribute(RequestAndSessionAttributes.LANGUAGE).toString();
-		} catch (NullPointerException e) {
-			lang = RequestAndSessionAttributes.ENG_LANG;
-		}
+		String lang = fetchLanguageFromSession(session);
 		
 		int pageNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.PAGE_NUM));
 		try {
 			List<Film> films = filmService.getAllPart(pageNum, lang);
 			request.setAttribute(RequestAndSessionAttributes.FILMS, films);
 			
-			int totalPageAmount = filmService.countPages();
+			long totalPageAmount = filmService.countPages();
 			request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 			request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 			

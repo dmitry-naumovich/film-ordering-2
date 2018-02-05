@@ -104,7 +104,7 @@ public interface IReviewService {
 	 * 
 	 * @return number of pages
 	 */
-	int countPages();
+	long countPages();
 	
 	/**
 	 * Counts the number of pages needed to locate all user reviews within the pagination.
@@ -113,7 +113,7 @@ public interface IReviewService {
 	 * @return number of pages
 	 * @throws ServiceException
 	 */
-	int countByUserId(int userId) throws ServiceException;
+	long countByUserId(int userId) throws ServiceException;
 	
 	/**
 	 * Counts the number of pages needed to locate all film reviews within the pagination.
@@ -122,5 +122,5 @@ public interface IReviewService {
 	 * @return number of pages
 	 * @throws ServiceException
 	 */
-	int countByFilmId(int filmId) throws ServiceException;
+	long countByFilmId(int filmId) throws ServiceException;
 }

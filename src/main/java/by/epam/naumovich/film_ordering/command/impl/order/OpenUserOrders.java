@@ -79,8 +79,8 @@ public class OpenUserOrders implements Command {
 					filmNames.add(filmName);
 				}
 				String userLogin = userService.getLoginByID(userID);
-				
-				int totalPageAmount = orderService.countPagesByUserId(userID);
+
+				long totalPageAmount = orderService.countPagesByUserId(userID);
 				request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 				request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 				
