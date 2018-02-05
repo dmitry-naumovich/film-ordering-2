@@ -47,7 +47,7 @@ public class SignUp implements Command {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
-		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) != null) {
+		if (isAuthorized(session)) {
 			int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.LOG_OUT_FOR_SIGN_UP);
 			request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);

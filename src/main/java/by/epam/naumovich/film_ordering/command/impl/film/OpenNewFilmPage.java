@@ -42,11 +42,11 @@ public class OpenNewFilmPage implements Command {
 
         String lang = fetchLanguageFromSession(session);
 
-		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) == null) {
+		if (!isAuthorized(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.ADD_FILM_RESTRICTION);
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
-		else if (!Boolean.parseBoolean(session.getAttribute(RequestAndSessionAttributes.IS_ADMIN).toString())) {
+		else if (!isAdmin(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.ADD_FILM_RESTRICTION);
 			request.getRequestDispatcher("/Controller?command=open_all_films&pageNum=1").forward(request, response);
 		}

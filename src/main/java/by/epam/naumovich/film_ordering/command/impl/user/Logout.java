@@ -27,7 +27,7 @@ public class Logout implements Command {
 		HttpSession session = request.getSession(true);
 		String prev_query = (String) session.getAttribute(RequestAndSessionAttributes.PREV_QUERY);
 		
-		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) != null) {
+		if (isAuthorized(session)) {
 			String login = session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER).toString();
 			int id = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
 			log.debug(String.format(LogMessages.USER_LOGGED_OUT, login, id));

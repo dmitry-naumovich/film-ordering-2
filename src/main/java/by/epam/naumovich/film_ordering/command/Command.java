@@ -35,4 +35,12 @@ public interface Command {
         Object languageAttribute = session.getAttribute(RequestAndSessionAttributes.LANGUAGE);
         return languageAttribute == null ? ENG_LANG : languageAttribute.toString();
     }
+
+    default boolean isAuthorized(HttpSession session) {
+        return session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) != null;
+    }
+
+    default boolean isAdmin(HttpSession session) {
+        return Boolean.parseBoolean(session.getAttribute(RequestAndSessionAttributes.IS_ADMIN).toString());
+    }
 }

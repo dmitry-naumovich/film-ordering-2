@@ -54,7 +54,7 @@ public class OpenUserOrders implements Command {
 		
 		int pageNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.PAGE_NUM));
 		
-		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) == null) {
+		if (!isAuthorized(session)) {
 			if (request.getParameter(RequestAndSessionAttributes.USER_ID).isEmpty() || request.getParameter(RequestAndSessionAttributes.USER_ID) == null) {
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_YOUR_ORDERS);
 			}

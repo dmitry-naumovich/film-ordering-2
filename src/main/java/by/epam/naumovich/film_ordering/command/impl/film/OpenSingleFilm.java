@@ -59,8 +59,8 @@ public class OpenSingleFilm implements Command {
 			Film film = filmService.getByID(filmID, lang);
 			request.setAttribute(RequestAndSessionAttributes.FILM, film);
 			
-			if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) != null) {
-				if (!Boolean.parseBoolean(session.getAttribute(RequestAndSessionAttributes.IS_ADMIN).toString())) {
+			if (isAuthorized(session)) {
+				if (!isAdmin(session)) {
 					int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
 					try {
 						reviewService.getByUserAndFilmId(userID, filmID);

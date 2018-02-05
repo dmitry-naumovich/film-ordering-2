@@ -59,8 +59,8 @@ public class OpenAllFilms implements Command {
 			request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 			request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 			
-			if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) != null) {
-				if (!Boolean.parseBoolean(session.getAttribute(RequestAndSessionAttributes.IS_ADMIN).toString())) {
+			if (isAuthorized(session)) {
+				if (!isAdmin(session)) {
 					int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
 					try {
 						List<Order> orders = orderService.getAllByUserId(userID);

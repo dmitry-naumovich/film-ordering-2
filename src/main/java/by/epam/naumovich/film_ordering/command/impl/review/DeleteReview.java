@@ -40,11 +40,11 @@ public class DeleteReview implements Command {
 		int userID = Integer.valueOf(request.getParameter(RequestAndSessionAttributes.USER_ID));
 		int filmID = Integer.valueOf(request.getParameter(RequestAndSessionAttributes.FILM_ID));
 		 
-		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) == null) {
+		if (!isAuthorized(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.DELETE_REVIEW_RESTRICTION);
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
-		else if (!Boolean.parseBoolean(session.getAttribute(RequestAndSessionAttributes.IS_ADMIN).toString()) && 
+		else if (!isAdmin(session) &&
 				userID != Integer.valueOf(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString())) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.DELETE_REVIEW_RESTRICTION);
 			request.getRequestDispatcher("/Controller?command=open_single_review&userID=" + userID + "&filmID=" + filmID).forward(request, response);

@@ -31,7 +31,7 @@ public class OpenLoginPage implements Command {
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		log.info(query);
 		
-		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) != null) {
+		if (isAuthorized(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.LOG_OUT_FOR_ANOTHER_ACC);
 			request.getRequestDispatcher(JavaServerPageNames.INDEX_PAGE).forward(request, response);
 		} else {

@@ -40,11 +40,11 @@ public class EditDiscount implements Command {
 		int discountID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.DISCOUNT_ID));
 		int userID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.USER_ID));
 		
-		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) == null) {
+		if (!isAuthorized(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.EDIT_DISCOUNT_RESTRICTION);
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
-		else if (!Boolean.parseBoolean(session.getAttribute(RequestAndSessionAttributes.IS_ADMIN).toString())) {
+		else if (!isAdmin(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.EDIT_DISCOUNT_RESTRICTION);
 			request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
 		}

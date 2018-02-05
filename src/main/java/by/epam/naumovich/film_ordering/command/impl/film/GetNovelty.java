@@ -55,16 +55,14 @@ public class GetNovelty implements Command {
 			//request.setAttribute(RequestAndSessionAttributes.NOVELTY_LIST, filmSet);
 			session.setAttribute(RequestAndSessionAttributes.NOVELTY_LIST, filmSet);
 
-			if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) != null) {
-				if (!Boolean.parseBoolean(session.getAttribute(RequestAndSessionAttributes.IS_ADMIN).toString())) {
-					int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
-					try {
-						List<Order> orders = orderService.getAllByUserId(userID);
-						List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
-						request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
-					} catch (GetOrderServiceException e) {
-						request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, Collections.emptyList());
-					}
+			if (isAuthorized(session) && !isAdmin(session)) {
+				int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
+				try {
+					List<Order> orders = orderService.getAllByUserId(userID);
+					List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
+					request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
+				} catch (GetOrderServiceException e) {
+					request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, Collections.emptyList());
 				}
 			}
 		} catch (GetFilmServiceException e) {
@@ -79,6 +77,5 @@ public class GetNovelty implements Command {
 			request.getRequestDispatcher(JavaServerPageNames.ERROR_PAGE).forward(request, response);
 		}
 	}
-	
 
 }

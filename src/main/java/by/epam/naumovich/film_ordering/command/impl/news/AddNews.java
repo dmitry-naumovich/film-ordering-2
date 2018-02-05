@@ -48,11 +48,11 @@ public class AddNews implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		HttpSession session = request.getSession(true);
 		
-		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) == null) {
+		if (!isAuthorized(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.ADD_NEWS_RESTRICTION);
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
-		else if (!Boolean.parseBoolean(session.getAttribute(RequestAndSessionAttributes.IS_ADMIN).toString())) {
+		else if (!isAdmin(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.ADD_NEWS_RESTRICTION);
 			request.getRequestDispatcher("/Controller?command=open_all_news&pageNum=1").forward(request, response);
 		}

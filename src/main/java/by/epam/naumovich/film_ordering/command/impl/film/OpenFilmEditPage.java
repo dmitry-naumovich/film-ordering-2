@@ -45,7 +45,7 @@ public class OpenFilmEditPage implements Command {
 
 		int filmID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.FILM_ID));
 		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) == null |
-				!Boolean.parseBoolean(session.getAttribute(RequestAndSessionAttributes.IS_ADMIN).toString())) {
+				!isAdmin(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.EDIT_FILM_RESTRICTION);
 			request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1").forward(request, response);
 		}

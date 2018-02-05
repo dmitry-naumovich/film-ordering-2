@@ -51,7 +51,7 @@ public class ChangeUserSettings implements Command {
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
 		log.info(query);
 		
-		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) == null) {
+		if (!isAuthorized(session)) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_SETTINGS);
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}

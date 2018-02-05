@@ -61,8 +61,8 @@ public class SearchFilmsWidened implements Command {
 			List<Film> foundFilms = filmService.searchWidened(name, yearFrom, yearTo, genres, countries, lang);
 			request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.FILMS_FOUND);
 			request.setAttribute(RequestAndSessionAttributes.FILMS, foundFilms);
-			if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) != null) {
-				if (!Boolean.parseBoolean(session.getAttribute(RequestAndSessionAttributes.IS_ADMIN).toString())) {
+			if (isAuthorized(session)) {
+				if (!isAdmin(session)) {
 					int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
 					try {
 						List<Order> orders = orderService.getAllByUserId(userID);
