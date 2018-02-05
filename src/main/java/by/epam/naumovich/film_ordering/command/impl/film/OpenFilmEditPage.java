@@ -39,7 +39,7 @@ public class OpenFilmEditPage implements Command {
 		HttpSession session = request.getSession(true);
 		String query = QueryUtil.createHttpQueryString(request);
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		System.out.println(query);
+		log.info(query);
 
         String lang = fetchLanguageFromSession(session);
 

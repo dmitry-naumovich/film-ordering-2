@@ -39,7 +39,7 @@ public class OpenNewsEditPage implements Command {
 		HttpSession session = request.getSession(true);
 		String query = QueryUtil.createHttpQueryString(request);
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		System.out.println(query);
+		log.info(query);
 		
 		int newsID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
 		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) == null |

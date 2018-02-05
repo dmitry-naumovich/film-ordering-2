@@ -36,7 +36,7 @@ public class OpenSingleNews implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String query = QueryUtil.createHttpQueryString(request);
 		request.getSession(true).setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		System.out.println(query);
+		log.info(query);
 		
 		try {
 			int newsID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.NEWS_ID));

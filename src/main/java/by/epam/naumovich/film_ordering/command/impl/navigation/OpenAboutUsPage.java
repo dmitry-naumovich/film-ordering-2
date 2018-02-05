@@ -10,6 +10,7 @@ import by.epam.naumovich.film_ordering.command.Command;
 import by.epam.naumovich.film_ordering.command.util.JavaServerPageNames;
 import by.epam.naumovich.film_ordering.command.util.QueryUtil;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Performs the command that forwards request and response to the relevant JSP.
@@ -17,13 +18,14 @@ import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Slf4j
 public class OpenAboutUsPage implements Command {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String query = QueryUtil.createHttpQueryString(request);
 		request.getSession(true).setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		System.out.println(query);
+		log.info(query);
 		
 		//define language and take about us text from database in appropriate language
 		request.getRequestDispatcher(JavaServerPageNames.ABOUT_US_PAGE).forward(request, response);

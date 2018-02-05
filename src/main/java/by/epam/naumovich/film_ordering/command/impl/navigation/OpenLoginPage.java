@@ -12,6 +12,7 @@ import by.epam.naumovich.film_ordering.command.util.ErrorMessages;
 import by.epam.naumovich.film_ordering.command.util.JavaServerPageNames;
 import by.epam.naumovich.film_ordering.command.util.QueryUtil;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Performs the command that forwards request and response to the relevant JSP.
@@ -20,6 +21,7 @@ import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
  * @author Dmitry Naumovich
  * @version 1.0
  */
+@Slf4j
 public class OpenLoginPage implements Command {
 
 	@Override
@@ -27,7 +29,7 @@ public class OpenLoginPage implements Command {
 		HttpSession session = request.getSession(true);
 		String query = QueryUtil.createHttpQueryString(request);
 		session.setAttribute(RequestAndSessionAttributes.PREV_QUERY, query);
-		System.out.println(query);
+		log.info(query);
 		
 		if (session.getAttribute(RequestAndSessionAttributes.AUTHORIZED_USER) != null) {
 			request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.LOG_OUT_FOR_ANOTHER_ACC);
