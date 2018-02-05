@@ -137,7 +137,7 @@ public class EditFilm implements Command {
 			    	genresArray = new String[genres.size()];
 				    genresArray = genres.toArray(genresArray);
 			    }
-				filmService.editFilm(filmID, name, year, director, cast, countriesArray, composer, genresArray, length, price, description);
+				filmService.update(filmID, name, year, director, cast, countriesArray, composer, genresArray, length, price, description);
 				
 				if (posterItem != null) {
 					try {

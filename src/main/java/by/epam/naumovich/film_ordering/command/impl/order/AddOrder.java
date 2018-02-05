@@ -53,7 +53,7 @@ public class AddOrder implements Command {
 			String payment = request.getParameter(RequestAndSessionAttributes.PAYMENT);
 			
 			try {
-				int orderNum = orderService.addOrder(filmID, userID, price, discount, payment);
+				int orderNum = orderService.create(filmID, userID, price, discount, payment);
 				log.debug(String.format(LogMessages.ORDER_ADDED, orderNum, payment));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.ORDER_ADDED);
 				request.getRequestDispatcher("/Controller?command=open_single_order&orderNum=" + orderNum).forward(request, response);

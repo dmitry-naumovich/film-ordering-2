@@ -45,7 +45,7 @@ public class DeleteNews implements Command {
 		}
 		else {
 			try {
-				newsService.deleteNews(newsID);
+				newsService.delete(newsID);
 				log.debug(String.format(LogMessages.NEWS_DELETED, newsID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.NEWS_DELETED);
 				request.getRequestDispatcher("/Controller?command=open_all_news&pageNum=1").forward(request, response);

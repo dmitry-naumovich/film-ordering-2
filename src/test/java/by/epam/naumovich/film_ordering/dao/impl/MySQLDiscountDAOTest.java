@@ -69,7 +69,7 @@ public class MySQLDiscountDAOTest {
      * Tests if the discount was correctly added.
      */
 //	@Test
-//	public void addDiscount() throws InterruptedException {
+//	public void create() throws InterruptedException {
 //
 //
 //		int discountID = dao.save(expectedDiscount).getId();
@@ -90,7 +90,7 @@ public class MySQLDiscountDAOTest {
      * Tests if the discount was correctly edited.
      */
 //	@Test
-//	public void editDiscount() throws InterruptedException {
+//	public void update() throws InterruptedException {
 //
 //
 //		int discountID = dao.save(expectedDiscount).getId();

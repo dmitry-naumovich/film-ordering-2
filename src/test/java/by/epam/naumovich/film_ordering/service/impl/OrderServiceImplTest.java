@@ -25,7 +25,7 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=AddOrderServiceException.class)
 	public void addOrderWithInvalidFilmID() throws ServiceException {
-		service.addOrder(0, 1, "10", "0", "10");
+		service.create(0, 1, "10", "0", "10");
 	}
 	
 	/**
@@ -35,7 +35,7 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=AddOrderServiceException.class)
 	public void addOrderWithInvalidPayment() throws ServiceException {
-		service.addOrder(1, 1, "10", "0", "sdf10");
+		service.create(1, 1, "10", "0", "sdf10");
 	}
 	
 	/**
@@ -45,7 +45,7 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void deleteOrder() throws ServiceException {
-		service.deleteOrder(0);
+		service.delete(0);
 	}
 	
 	/**
@@ -55,7 +55,7 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void getOrderByOrderNum() throws ServiceException {
-		service.getOrderByOrderNum(0);
+		service.getByOrderNum(0);
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void getOrderByUserAndFilmId() throws ServiceException {
-		service.getOrderByUserAndFilmId(-1, 0);
+		service.getByUserAndFilmId(-1, 0);
 	}
 	
 	/**
@@ -75,7 +75,7 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void getOrdersByUserId() throws ServiceException {
-		service.getOrdersByUserId(-1);
+		service.getAllByUserId(-1);
 	}
 	
 	/**
@@ -85,7 +85,7 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void getOrdersByFilmId() throws ServiceException {
-		service.getOrdersByFilmId(0);
+		service.getAllByFilmId(0);
 	}
 	
 	/**
@@ -95,7 +95,7 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=GetOrderServiceException.class)
 	public void getAllOrdersPart() throws ServiceException {
-		service.getAllOrdersPart(-1);
+		service.getAllPart(-1);
 	}
 	
 	/**
@@ -105,7 +105,7 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=GetOrderServiceException.class)
 	public void getOrdersPartByUserId() throws ServiceException {
-		service.getOrdersPartByUserId(-1, 0);
+		service.getAllPartByUserId(-1, 0);
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=GetOrderServiceException.class)
 	public void getOrdersPartByFilmId() throws ServiceException {
-		service.getOrdersPartByFilmId(-1, 0);
+		service.getAllPartByFilmId(-1, 0);
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void getNumberOfUserOrdersPages() throws ServiceException {
-		service.getNumberOfUserOrdersPages(-1);
+		service.countPagesByUserId(-1);
 	}
 	
 	/**
@@ -135,7 +135,7 @@ public class OrderServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void getNumberOfFilmOrdersPages() throws ServiceException {
-		service.getNumberOfFilmOrdersPages(0);
+		service.countPagesByFilmId(0);
 	}
 	
 }

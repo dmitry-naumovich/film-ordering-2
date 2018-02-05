@@ -33,7 +33,7 @@ public class DiscountServiceImplTest {
      */
     @Test(expected=DiscountServiceException.class)
     public void addDiscountWithInvalidAmount() throws ServiceException {
-        service.addDiscount(1, "105", "2100-01-01", "15:00:00");
+        service.create(1, "105", "2100-01-01", "15:00:00");
     }
 
 
@@ -44,7 +44,7 @@ public class DiscountServiceImplTest {
      */
     @Test(expected=DiscountServiceException.class)
     public void addDiscountWithInvalidEndDate() throws ServiceException {
-        service.addDiscount(1, "10", "2000-01-01", "15:00:00");
+        service.create(1, "10", "2000-01-01", "15:00:00");
     }
 
     /**
@@ -54,7 +54,7 @@ public class DiscountServiceImplTest {
      */
     @Test(expected=DiscountServiceException.class)
     public void addDiscountWithInvalidEndTime() throws ServiceException {
-        service.addDiscount(1, "10", "2100-01-01", null);
+        service.create(1, "10", "2100-01-01", null);
     }
 
     /**
@@ -64,7 +64,7 @@ public class DiscountServiceImplTest {
      */
     @Test(expected=DiscountServiceException.class)
     public void editDiscount() throws ServiceException {
-        service.editDiscount(0, "10", "2100-01-01", "15:00:00");
+        service.update(0, "10", "2100-01-01", "15:00:00");
     }
 
     /**
@@ -74,7 +74,7 @@ public class DiscountServiceImplTest {
      */
     @Test(expected=DiscountServiceException.class)
     public void deleteDiscount() throws ServiceException {
-        service.deleteDiscount(0);
+        service.delete(0);
     }
 
 

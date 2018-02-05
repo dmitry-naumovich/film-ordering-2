@@ -41,8 +41,8 @@ public class ReviewServiceImpl implements IReviewService {
 	private static final int REVIEWS_AMOUNT_ON_PAGE = 5;
 	
 	@Override
-	public void addReview(int userID, int filmID, String mark, String type, String text) throws ServiceException {
-		if (!Validator.validateInt(userID) || !Validator.validateInt(filmID) || !Validator.validateStrings(mark, type, text)) {
+	public void create(int userId, int filmId, String mark, String type, String text) throws ServiceException {
+		if (!Validator.validateInt(userId) || !Validator.validateInt(filmId) || !Validator.validateStrings(mark, type, text)) {
 			throw new AddReviewServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
 		
@@ -58,8 +58,8 @@ public class ReviewServiceImpl implements IReviewService {
 		}
 		
 		Review review = new Review();
-		review.setAuthor(userID);
-		review.setFilmId(filmID);
+		review.setAuthor(userId);
+		review.setFilmId(filmId);
 		review.setMark(rMark);
 		review.setType(type);
 		review.setDate(Date.valueOf(LocalDate.now()));
@@ -67,37 +67,26 @@ public class ReviewServiceImpl implements IReviewService {
 		review.setText(text);
 
         reviewDAO.save(review);
-        reviewDAO.updateFilmRating(filmID);
+        reviewDAO.updateFilmRating(filmId);
 	}
 	
 	@Override
-	public void deleteReview(int userID, int filmID) throws ServiceException {
-		if (!Validator.validateInt(userID) || !Validator.validateInt(filmID)) {
+	public void delete(int userId, int filmId) throws ServiceException {
+		if (!Validator.validateInt(userId) || !Validator.validateInt(filmId)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
 
-        ReviewPK reviewPK = new ReviewPK(userID, filmID);
+        ReviewPK reviewPK = new ReviewPK(userId, filmId);
         reviewDAO.delete(reviewPK);
-        reviewDAO.updateFilmRating(filmID);
+        reviewDAO.updateFilmRating(filmId);
 	}
 
 	@Override
-	public List<Review> getAllReviews() throws ServiceException {
-		List<Review> reviews = reviewDAO.findAllByOrderByDateDescTimeDesc();
-			
-        if (reviews.isEmpty()) {
-            throw new GetReviewServiceException(ExceptionMessages.NO_REVIEWS_IN_DB);
-        }
-		
-		return reviews;
-	}
-
-	@Override
-	public List<Review> getReviewsByUserId(int id) throws ServiceException {
+	public List<Review> getAllByUserId(int id) throws ServiceException {
 		if (!Validator.validateInt(id)) {
 			throw new GetReviewServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
-		List<Review> set = reviewDAO.findByUserId(id);
+		List<Review> set = reviewDAO.findByIdAuthorOrderByDateDescTimeDesc(id);
 			
         if (set.isEmpty()) {
             throw new GetReviewServiceException(ExceptionMessages.NO_USER_REVIEWS_YET);
@@ -107,7 +96,7 @@ public class ReviewServiceImpl implements IReviewService {
 	}
 
 	@Override
-	public List<Review> getReviewsByFilmId(int id) throws ServiceException {
+	public List<Review> getAllByFilmId(int id) throws ServiceException {
 		if (!Validator.validateInt(id)) {
 			throw new GetReviewServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
@@ -121,11 +110,11 @@ public class ReviewServiceImpl implements IReviewService {
 	}
 
 	@Override
-	public Review getReviewByUserAndFilmId(int userID, int filmID) throws ServiceException {
-		if (!Validator.validateInt(userID) || !Validator.validateInt(filmID)) {
+	public Review getByUserAndFilmId(int userId, int filmId) throws ServiceException {
+		if (!Validator.validateInt(userId) || !Validator.validateInt(filmId)) {
 			throw new GetReviewServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
-        Review review = reviewDAO.findOne(new ReviewPK(userID, filmID));
+        Review review = reviewDAO.findOne(new ReviewPK(userId, filmId));
 
         if (review == null) {
             throw new GetReviewServiceException(ExceptionMessages.NO_FILM_USER_REVIEW);
@@ -135,7 +124,7 @@ public class ReviewServiceImpl implements IReviewService {
 	}
 
 	@Override
-	public List<Review> getAllReviewsPart(int pageNum) throws ServiceException {
+	public List<Review> getAllPart(int pageNum) throws ServiceException {
 		if (!Validator.validateInt(pageNum)) {
 			throw new GetReviewServiceException(ExceptionMessages.CORRUPTED_PAGE_NUM);
 		}
@@ -151,23 +140,12 @@ public class ReviewServiceImpl implements IReviewService {
 	}
 
 	@Override
-	public int getNumberOfAllReviewsPages() throws ServiceException {
-        int numOfReviews = (int)reviewDAO.count(); //todo: return long everywhere
-        if (numOfReviews % REVIEWS_AMOUNT_ON_PAGE == 0) {
-            return numOfReviews / REVIEWS_AMOUNT_ON_PAGE;
-        }
-        else {
-            return numOfReviews / REVIEWS_AMOUNT_ON_PAGE + 1;
-        }
-	}
-
-	@Override
-	public List<Review> getReviewsPartByUserId(int userID, int pageNum) throws ServiceException {
-		if (!Validator.validateInt(userID) || !Validator.validateInt(pageNum)) {
+	public List<Review> getAllPartByUserId(int userId, int pageNum) throws ServiceException {
+		if (!Validator.validateInt(userId) || !Validator.validateInt(pageNum)) {
 			throw new GetReviewServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
         int start = (pageNum - 1) * REVIEWS_AMOUNT_ON_PAGE;
-        List<Review> list = reviewDAO.getReviewsPartByUserId(userID, start, REVIEWS_AMOUNT_ON_PAGE);
+        List<Review> list = reviewDAO.getReviewsPartByUserId(userId, start, REVIEWS_AMOUNT_ON_PAGE);
 
         if (list.isEmpty()) {
             throw new GetReviewServiceException(ExceptionMessages.NO_REVIEWS_IN_DB);
@@ -177,13 +155,13 @@ public class ReviewServiceImpl implements IReviewService {
 	}
 
 	@Override
-	public List<Review> getReviewsPartByFilmId(int filmID, int pageNum) throws ServiceException {
-		if (!Validator.validateInt(filmID) || !Validator.validateInt(pageNum)) {
+	public List<Review> getAllPartByFilmId(int filmId, int pageNum) throws ServiceException {
+		if (!Validator.validateInt(filmId) || !Validator.validateInt(pageNum)) {
 			throw new GetReviewServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
 
         int start = (pageNum - 1) * REVIEWS_AMOUNT_ON_PAGE;
-        List<Review> set = reviewDAO.getReviewsPartByFilmId(filmID, start, REVIEWS_AMOUNT_ON_PAGE);
+        List<Review> set = reviewDAO.getReviewsPartByFilmId(filmId, start, REVIEWS_AMOUNT_ON_PAGE);
 			
         if (set.isEmpty()) {
             throw new GetReviewServiceException(ExceptionMessages.NO_REVIEWS_IN_DB);
@@ -191,12 +169,23 @@ public class ReviewServiceImpl implements IReviewService {
 		return set;
 	}
 
+    @Override
+    public int countPages() {
+        int numOfReviews = (int)reviewDAO.count(); //todo: return long everywhere
+        if (numOfReviews % REVIEWS_AMOUNT_ON_PAGE == 0) {
+            return numOfReviews / REVIEWS_AMOUNT_ON_PAGE;
+        }
+        else {
+            return numOfReviews / REVIEWS_AMOUNT_ON_PAGE + 1;
+        }
+    }
+
 	@Override
-	public int getNumberOfUserReviewsPages(int userID) throws ServiceException {
-		if (!Validator.validateInt(userID)) {
+	public int countByUserId(int userId) throws ServiceException {
+		if (!Validator.validateInt(userId)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
-        int numOfReviews = reviewDAO.countByAuthor(userID);
+        int numOfReviews = reviewDAO.countByAuthor(userId);
         if (numOfReviews % REVIEWS_AMOUNT_ON_PAGE == 0) {
             return numOfReviews / REVIEWS_AMOUNT_ON_PAGE;
         }
@@ -206,11 +195,11 @@ public class ReviewServiceImpl implements IReviewService {
 	}
 
 	@Override
-	public int getNumberOfFilmReviewsPages(int filmID) throws ServiceException {
-		if (!Validator.validateInt(filmID)) {
+	public int countByFilmId(int filmId) throws ServiceException {
+		if (!Validator.validateInt(filmId)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
-        int numOfReviews = reviewDAO.countByFilmId(filmID);
+        int numOfReviews = reviewDAO.countByFilmId(filmId);
         if (numOfReviews % REVIEWS_AMOUNT_ON_PAGE == 0) {
             return numOfReviews / REVIEWS_AMOUNT_ON_PAGE;
         }

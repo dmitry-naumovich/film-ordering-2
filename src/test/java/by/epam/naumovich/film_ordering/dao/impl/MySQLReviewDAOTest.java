@@ -87,7 +87,7 @@ public class MySQLReviewDAOTest {
 	 */
 	@Test
 	public void getReviewsByUserId() {
-		List<Review> userReviews1 = dao.findByUserId(1);
+		List<Review> userReviews1 = dao.findByIdAuthorOrderByDateDescTimeDesc(1);
 		List<Review> userReviews2 = new ArrayList<>();
 		for (Review r : dao.findAll()) {
 			if (r.getAuthor() == 1) {

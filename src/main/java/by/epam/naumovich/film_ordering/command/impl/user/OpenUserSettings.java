@@ -58,7 +58,7 @@ public class OpenUserSettings implements Command {
 			}
 
 			try {
-				User user = userService.getUserByLogin(userService.getLoginByID(userID));
+				User user = userService.getByLogin(userService.getLoginByID(userID));
 				request.setAttribute(RequestAndSessionAttributes.USER, user);
 				request.getRequestDispatcher(JavaServerPageNames.PROFILE_SETTINGS_PAGE).forward(request, response);	
 			} catch (ServiceException e) {

@@ -27,7 +27,7 @@ public class DiscountServiceImpl implements IDiscountService {
     }
 
     @Override
-    public void addDiscount(int userID, String amount, String endDate, String endTime) throws ServiceException {
+    public void create(int userID, String amount, String endDate, String endTime) throws ServiceException {
         if (!Validator.validateInt(userID)) {
             throw new DiscountServiceException(ExceptionMessages.CORRUPTED_USER_ID);
         }
@@ -43,7 +43,7 @@ public class DiscountServiceImpl implements IDiscountService {
     }
 
     @Override
-    public void editDiscount(int discountID, String amount, String endDate, String endTime) throws ServiceException {
+    public void update(int discountID, String amount, String endDate, String endTime) throws ServiceException {
         if (!Validator.validateInt(discountID)) {
             throw new DiscountServiceException(ExceptionMessages.CORRUPTED_DISCOUNT_ID);
         }
@@ -77,7 +77,7 @@ public class DiscountServiceImpl implements IDiscountService {
     }
 
     @Override
-    public void deleteDiscount(int discountID) throws ServiceException {
+    public void delete(int discountID) throws ServiceException {
         if (!Validator.validateInt(discountID)) {
             throw new DiscountServiceException(ExceptionMessages.CORRUPTED_DISCOUNT_ID);
         }

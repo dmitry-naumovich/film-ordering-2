@@ -111,7 +111,7 @@ public class SignUp implements Command {
 				}
 				
 				
-				int userID = userService.addUser(login, name, surname, pwd, sex, bDate, phone, email, about);
+				int userID = userService.create(login, name, surname, pwd, sex, bDate, phone, email, about);
 				
 				if (avatarItem != null) {
 					try {
@@ -126,7 +126,7 @@ public class SignUp implements Command {
 				}
 				
 				
-				User user = userService.getUserByLogin(login);
+				User user = userService.getByLogin(login);
 				session.setAttribute(RequestAndSessionAttributes.AUTHORIZED_USER, login);
 				session.setAttribute(RequestAndSessionAttributes.USER_ID, user.getId());
 				session.setAttribute(RequestAndSessionAttributes.IS_ADMIN, 'a' == user.getType());

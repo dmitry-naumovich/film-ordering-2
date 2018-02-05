@@ -66,7 +66,7 @@ public class OpenAllUsers implements Command {
 				List<Boolean> banList = new ArrayList<>();
 				List<Discount> discountList = new ArrayList<>();
 				for (User u : users) {
-					banList.add(userService.userIsInBan(u.getId()));
+					banList.add(userService.isBanned(u.getId()));
 					Discount discount;
 					try {
 						discount = discountService.getCurrentUserDiscountByID(u.getId());
@@ -76,7 +76,7 @@ public class OpenAllUsers implements Command {
 					}
 				}
 				
-				int totalPageAmount = userService.getNumberOfAllUsersPages();
+				int totalPageAmount = userService.countPages();
 				request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 				request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 				

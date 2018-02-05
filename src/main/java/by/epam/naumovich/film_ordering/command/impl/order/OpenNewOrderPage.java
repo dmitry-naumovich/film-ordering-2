@@ -73,7 +73,7 @@ public class OpenNewOrderPage implements Command {
 			boolean already = false;
 			int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
 			try {
-				List<Order> orders = orderService.getOrdersByUserId(userID);
+				List<Order> orders = orderService.getAllByUserId(userID);
 				for (Order o : orders) {
 					if (o.getFilmId() == filmID) {
 						already = true;
@@ -92,7 +92,7 @@ public class OpenNewOrderPage implements Command {
 			
 			if (!already) {
 				try {
-					Film film = filmService.getFilmByID(filmID, lang);
+					Film film = filmService.getByID(filmID, lang);
 					int discount;
 					try {
 						discount = discountService.getCurrentUserDiscountByID(userID).getAmount();

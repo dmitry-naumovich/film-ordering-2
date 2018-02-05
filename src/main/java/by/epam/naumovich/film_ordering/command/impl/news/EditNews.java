@@ -93,7 +93,7 @@ public class EditNews implements Command {
 				    }
 				}
 				
-				newsService.editNews(newsID, title, text);
+				newsService.update(newsID, title, text);
 				
 				if (imgItem != null) {
 					try {

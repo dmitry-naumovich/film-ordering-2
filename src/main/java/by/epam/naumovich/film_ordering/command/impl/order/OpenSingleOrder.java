@@ -56,8 +56,8 @@ public class OpenSingleOrder implements Command {
 		else {
 			int orderNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.ORDER_NUM));
 			try {
-				Order order = orderService.getOrderByOrderNum(orderNum);
-				String filmName = filmService.getFilmNameByID(order.getFilmId(), lang);
+				Order order = orderService.getByOrderNum(orderNum);
+				String filmName = filmService.getNameByID(order.getFilmId(), lang);
 				String userLogin = userService.getLoginByID(order.getUserId());
 				
 				request.setAttribute(RequestAndSessionAttributes.ORDER, order);

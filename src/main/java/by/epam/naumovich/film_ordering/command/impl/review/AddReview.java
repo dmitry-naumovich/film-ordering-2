@@ -51,7 +51,7 @@ public class AddReview implements Command {
 			String text = request.getParameter(RequestAndSessionAttributes.REVIEW_TEXT);
 			
 			try {
-				reviewService.addReview(userID, filmID, mark, type, text);
+				reviewService.create(userID, filmID, mark, type, text);
 				log.debug(String.format(LogMessages.REVIEW_ADDED, userID, filmID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.REVIEW_ADDED);
 				request.getRequestDispatcher("/Controller?command=open_single_review&userID=" + userID + "&filmID=" + filmID).forward(request, response);

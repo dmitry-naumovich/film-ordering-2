@@ -6,18 +6,18 @@ import by.epam.naumovich.film_ordering.bean.Film;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 
 /**
- * Defines methods that receive parameters from Command implementations, verify them, construct necessary entities if needed 
- * and then pass them to the DAO layer, possibly getting some objects or primitive values back and passing them further back to the commands.
- * These methods operate with the Film entity.
- * 
+ * Service layer interface for operating with Film entity.
+ * Defines methods for obligatory implementation in concrete service classes.
+ * The general contract for service layer concrete classes implies input parameters verification, constructing
+ * new or updating existing entities if necessary, passing them to the data access layer.
+ *
  * @author Dmitry Naumovich
  * @version 1.0
  */
 public interface IFilmService {
 
 	/**
-	 * Constructs a new film entity based on input parameters received from the Controller layer, verifies them and either 
-	 * passes to the DAO layer or throws an exception
+	 * Verifies input parameters, constructs a new film entity and passes it to the DAO layer
 	 * 
 	 * @param name film name
 	 * @param year film year
@@ -29,23 +29,22 @@ public interface IFilmService {
 	 * @param length film length
 	 * @param price film price
 	 * @param description film description
-	 * @return ID of newly added film
-	 * @throws ServiceException
+	 * @return ID of created film
+	 * @throws ServiceException - if any input parameters are not valid or the film was not created
 	 */
-	int addNewFilm(String name, String year, String director, String cast, String[] countries, String composer, 
-			String[] genres, String length, String price, String description) throws ServiceException;
+	int create(String name, String year, String director, String cast, String[] countries, String composer,
+               String[] genres, String length, String price, String description) throws ServiceException;
 	
 	/**
-	 * Verifies the input parameter and either passes it to the DAO layer or throws an exception
+	 * Verifies input parameter and passes it to the DAO layer
 	 * 
 	 * @param id ID of the film to be deleted
-	 * @throws ServiceException
+	 * @throws ServiceException - if input parameter is not valid
 	 */
-	void deleteFilm(int id) throws ServiceException; 
+	void delete(int id) throws ServiceException;
 	
 	/**
-	 * Constructs an edited film entity based on input parameters received from the Controller layer, verifies them
-	 * and either passes to the DAO layer or throws an exception
+	 * Verifies input parameters, fetches existing object from the DAO layer, updates it and passes to the DAO layer
 	 * 
 	 * @param id ID of the film to be edited
 	 * @param name film name
@@ -58,20 +57,21 @@ public interface IFilmService {
 	 * @param length film length
 	 * @param price film price
 	 * @param description film description
-	 * @throws ServiceException
+	 * @throws ServiceException - if any input parameters are not valid or the entity is not found in the DAO layer
 	 */
-	void editFilm(int id, String name, String year, String director, String cast, String[] countries,
-			String composer, String[] genres, String length, String price, String description) throws ServiceException;
+	void update(int id, String name, String year, String director, String cast, String[] countries,
+                String composer, String[] genres, String length, String price, String description) throws ServiceException;
 	
 	/**
-	 * Verifies the input parameter and passes it to the DAO layer, receives the film entity, returns it back to the Controller layer
+	 * Verifies input parameter and passes it to the DAO layer, receives the film entity, returns it back to the Controller layer
 	 * or throws an exception if it equals null
 	 * 
 	 * @param id film ID
+     * @param lang language
 	 * @return found film entity
-	 * @throws ServiceException
+	 * @throws ServiceException - if input parameter is not valid or the entity is not found in the DAO layer
 	 */
-	Film getFilmByID(int id, String lang) throws ServiceException;
+	Film getByID(int id, String lang) throws ServiceException;
 	
 	/**
 	 * Verifies the input parameter and passes it to the DAO layer, receives the String name of the film back and passes it to the Controller
@@ -80,38 +80,28 @@ public interface IFilmService {
 	 * @param id film ID
 	 * @param lang language of the current user session
 	 * @return String object : film name
-	 * @throws ServiceException
+	 * @throws ServiceException - if input parameter is not valid or the film name is not found in the DAO layer
 	 */
-	String getFilmNameByID(int id, String lang) throws ServiceException;
+	String getNameByID(int id, String lang) throws ServiceException;
 	
 	/**
 	 * Receives a set of twelve last added films from the DAO layer and passes it back to the Controller layer or throws an exception if it is empty
 	 * 
 	 * @param lang language of the current user session
 	 * @return a set of films
-	 * @throws ServiceException
+	 * @throws ServiceException - if no entities found in the DAO layer
 	 */
 	List<Film> getTwelveLastAddedFilms(String lang) throws ServiceException;
-	
-	/**
-	 * Receives a set of all present films from the DAO layer and passes it back to the Controller layer or throws an exception if it is empty
-	 * 
-	 * @param lang language of the current user session
-	 * @return a set of films
-	 * @throws ServiceException
-	 */
-	//todo: remove if it's unnecessary
-	List<Film> getAllFilms(String lang) throws ServiceException;
-	
+
 	/**
 	 * Receives a particular set of all present films from the DAO layer depending on the page and passes it back to the Controller layer or throws an exception if it is empty
 	 * 
 	 * @param pageNum number of current page which user is opening
 	 * @param lang language of the current user session
 	 * @return a set of films
-	 * @throws ServiceException
+	 * @throws ServiceException - if any input parameters are not valid or no entities found within this page
 	 */
-	List<Film> getAllFilmsPart(int pageNum, String lang) throws ServiceException;
+	List<Film> getAllPart(int pageNum, String lang) throws ServiceException;
 	
 	/**
 	 * Verifies input parameter and passes it to the DAO layer, received a set of found films back and returns it to the Controller layer
@@ -120,7 +110,7 @@ public interface IFilmService {
 	 * @param text the name of the film that user is searching for
 	 * @param lang language of the current user session
 	 * @return a set of found films
-	 * @throws ServiceException
+	 * @throws ServiceException - if no entities found
 	 */
 	List<Film> searchByName(String text, String lang) throws ServiceException;
 	
@@ -135,7 +125,7 @@ public interface IFilmService {
 	 * @param countries film countries array
 	 * @param lang language of the current user session
 	 * @return a set of found films or throws an exception if it is empty
-	 * @throws ServiceException
+	 * @throws ServiceException - if input parameters are not valid or no entities found
 	 */
 	List<Film> searchWidened(String name, String yearFrom, String yearTo, String[] genres, String[] countries, String lang) throws ServiceException;
 	
@@ -144,7 +134,7 @@ public interface IFilmService {
 	 * 
 	 * @param lang language of the current user session
 	 * @return String array of available film genres
-	 * @throws ServiceException if no genres found
+	 * @throws ServiceException - if no genres found
 	 */
 	String[] getAvailableGenres(String lang) throws ServiceException;
 
@@ -153,7 +143,7 @@ public interface IFilmService {
 	 * 
 	 * @param lang language of the current user session
 	 * @return String array of available film countries
-	 * @throws ServiceException if no countries found
+	 * @throws ServiceException - if no countries found
 	 */
 	String[] getAvailableCountries(String lang) throws ServiceException;
 	
@@ -161,7 +151,6 @@ public interface IFilmService {
 	 * Counts the number of pages needed to locate all films within the pagination.
 	 * 
 	 * @return number of pages
-	 * @throws ServiceException
 	 */
-	int getNumberOfAllFilmsPages() throws ServiceException;
+	int countPages();
 }

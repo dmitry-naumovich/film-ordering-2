@@ -51,7 +51,7 @@ public class DeleteReview implements Command {
 		}
 		else {
 			try {
-				reviewService.deleteReview(userID, filmID);
+				reviewService.delete(userID, filmID);
 				log.debug(String.format(LogMessages.REVIEW_DELETED, userID, filmID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.REVIEW_DELETED);
 				request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1").forward(request, response);

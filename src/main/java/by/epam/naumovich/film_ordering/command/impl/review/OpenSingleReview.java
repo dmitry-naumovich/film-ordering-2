@@ -53,11 +53,11 @@ public class OpenSingleReview implements Command {
 		int filmID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.FILM_ID));
 		
 		try {
-			Review rev = reviewService.getReviewByUserAndFilmId(userID, filmID);
+			Review rev = reviewService.getByUserAndFilmId(userID, filmID);
 			
 			String userLogin = userService.getLoginByID(userID);
 			
-			String filmName = filmService.getFilmByID(filmID, lang).getName();
+			String filmName = filmService.getByID(filmID, lang).getName();
 			
 			request.setAttribute(RequestAndSessionAttributes.REVIEW, rev);
 			request.setAttribute(RequestAndSessionAttributes.LOGIN, userLogin);

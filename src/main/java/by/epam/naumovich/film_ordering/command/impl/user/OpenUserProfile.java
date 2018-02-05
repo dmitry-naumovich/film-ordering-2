@@ -54,10 +54,10 @@ public class OpenUserProfile implements Command {
 		else {
 			int userID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.USER_ID));
 			try {
-				User user = userService.getUserByID(userID);
+				User user = userService.getByID(userID);
 				request.setAttribute(RequestAndSessionAttributes.USER, user);
 				
-				if (userService.userIsInBan(userID)) {
+				if (userService.isBanned(userID)) {
 					request.setAttribute(RequestAndSessionAttributes.BANNED, true);
 				} else {
 					request.setAttribute(RequestAndSessionAttributes.BANNED, false);

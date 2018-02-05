@@ -51,7 +51,7 @@ public class OpenFilmEditPage implements Command {
 		}
 		else {
 			try {
-				Film film = filmService.getFilmByID(filmID, lang);
+				Film film = filmService.getByID(filmID, lang);
 				String[] genres = filmService.getAvailableGenres(lang);
 				String[] countries = filmService.getAvailableCountries(lang);
 				

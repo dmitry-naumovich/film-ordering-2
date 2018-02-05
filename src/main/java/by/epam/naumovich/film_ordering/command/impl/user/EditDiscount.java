@@ -54,7 +54,7 @@ public class EditDiscount implements Command {
 			String endTime = request.getParameter(RequestAndSessionAttributes.END_TIME);
 			
 			try {
-				discountService.editDiscount(discountID, amount, endDate, endTime);
+				discountService.update(discountID, amount, endDate, endTime);
 				log.debug(String.format(LogMessages.DISCOUNT_DELETED, discountID, userID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.DISCOUNT_EDITED);
 				Thread.sleep(1000);

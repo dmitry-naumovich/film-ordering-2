@@ -38,8 +38,8 @@ public class FilmServiceImpl implements IFilmService {
     }
 
     @Override
-	public int addNewFilm(String name, String year, String director, String cast, String[] countries, String composer,
-			String[] genres, String length, String price, String description) throws ServiceException {
+	public int create(String name, String year, String director, String cast, String[] countries, String composer,
+                      String[] genres, String length, String price, String description) throws ServiceException {
 		
 		if (!Validator.validateStrings(name, year, director, length, price)) {
 			throw new AddFilmServiceException(ExceptionMessages.CORRUPTED_FILM_REQUIRED_FIELDS);
@@ -101,7 +101,7 @@ public class FilmServiceImpl implements IFilmService {
 	}
 	
 	@Override
-	public void deleteFilm(int id) throws ServiceException {
+	public void delete(int id) throws ServiceException {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
@@ -109,8 +109,8 @@ public class FilmServiceImpl implements IFilmService {
 	}
 
 	@Override
-	public void editFilm(int id, String name, String year, String director, String cast, String[] countries,
-			String composer, String[] genres, String length, String price, String description) throws ServiceException {
+	public void update(int id, String name, String year, String director, String cast, String[] countries,
+                       String composer, String[] genres, String length, String price, String description) throws ServiceException {
 		if (!Validator.validateInt(id)) {
 			throw new EditFilmServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
@@ -182,18 +182,7 @@ public class FilmServiceImpl implements IFilmService {
 	}
 
 	@Override
-	public List<Film> getAllFilms(String lang) throws ServiceException {
-		List<Film> films = filmDAO.getAll(lang);
-			
-        if (films.isEmpty()) {
-            throw new GetFilmServiceException(ExceptionMessages.NO_FILMS_IN_DB);
-        }
-		
-		return films;
-	}
-
-	@Override
-	public Film getFilmByID(int id, String lang) throws ServiceException {
+	public Film getByID(int id, String lang) throws ServiceException {
 		if (!Validator.validateInt(id)) {
 			throw new GetFilmServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
@@ -207,7 +196,7 @@ public class FilmServiceImpl implements IFilmService {
 	
 
 	@Override
-	public String getFilmNameByID(int id, String lang) throws ServiceException {
+	public String getNameByID(int id, String lang) throws ServiceException {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
@@ -355,7 +344,7 @@ public class FilmServiceImpl implements IFilmService {
 	}
 
 	@Override
-	public List<Film> getAllFilmsPart(int pageNum, String lang) throws ServiceException {
+	public List<Film> getAllPart(int pageNum, String lang) throws ServiceException {
 		if (!Validator.validateInt(pageNum)) {
 			throw new GetFilmServiceException(ExceptionMessages.CORRUPTED_PAGE_NUM);
 		}
@@ -370,7 +359,7 @@ public class FilmServiceImpl implements IFilmService {
 	}
 
 	@Override
-	public int getNumberOfAllFilmsPages() throws ServiceException {
+	public int countPages() {
 		int numOfFilms = (int)filmDAO.count(); //todo: return long everywhere
 		if (numOfFilms % FILMS_AMOUNT_ON_PAGE == 0) {
 			return numOfFilms / FILMS_AMOUNT_ON_PAGE;

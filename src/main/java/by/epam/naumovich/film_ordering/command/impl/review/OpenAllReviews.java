@@ -54,16 +54,16 @@ public class OpenAllReviews implements Command {
 		int pageNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.PAGE_NUM));
 		
 		try {
-			List<Review> reviews = reviewService.getAllReviewsPart(pageNum);
+			List<Review> reviews = reviewService.getAllPart(pageNum);
 			
 			List<String> reviewLogins = new ArrayList<>();
 			List<String> reviewFilmNames = new ArrayList<>();
 			for (Review r : reviews) {
 				reviewLogins.add(userService.getLoginByID(r.getAuthor()));
-				reviewFilmNames.add(filmService.getFilmByID(r.getFilmId(), lang).getName());
+				reviewFilmNames.add(filmService.getByID(r.getFilmId(), lang).getName());
 			}
 			
-			int totalPageAmount = reviewService.getNumberOfAllReviewsPages();
+			int totalPageAmount = reviewService.countPages();
 			request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 			request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 			

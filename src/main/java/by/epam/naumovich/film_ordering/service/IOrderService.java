@@ -27,7 +27,7 @@ public interface IOrderService {
 	 * @return order number of newly added order
 	 * @throws ServiceException
 	 */
-	int addOrder(int filmID, int userID, String price, String discount, String payment) throws ServiceException;
+	int create(int filmID, int userID, String price, String discount, String payment) throws ServiceException;
 	
 	/**
 	 * Verifies the input parameter and either passes it to the DAO layer or throws an exception
@@ -35,7 +35,7 @@ public interface IOrderService {
 	 * @param orderNum order number of the order to be deleted
 	 * @throws ServiceException
 	 */
-	void deleteOrder(int orderNum) throws ServiceException;
+	void delete(int orderNum) throws ServiceException;
 	
 	/**
 	 * Verifies the input parameter and passes it to the DAO layer, receives the order entity, returns it back to the Controller layer
@@ -45,7 +45,7 @@ public interface IOrderService {
 	 * @return found order entity
 	 * @throws ServiceException
 	 */
-	Order getOrderByOrderNum(int orderNum) throws ServiceException;
+	Order getByOrderNum(int orderNum) throws ServiceException;
 	
 	/**
 	 * Verifies the input parameters and passes them to the DAO layer, receives the order entity, returns it back to the Controller layer
@@ -56,7 +56,7 @@ public interface IOrderService {
 	 * @return found order entity
 	 * @throws ServiceException
 	 */
-	Order getOrderByUserAndFilmId(int userID, int filmID) throws ServiceException;
+	Order getByUserAndFilmId(int userID, int filmID) throws ServiceException;
 	
 	/**
 	 * Verifies input parameter and passes it to the DAO layer, received a set of found orders back and returns it to the Controller layer
@@ -66,7 +66,7 @@ public interface IOrderService {
 	 * @return a set of found orders
 	 * @throws ServiceException
 	 */
-	List<Order> getOrdersByUserId(int id) throws ServiceException;
+	List<Order> getAllByUserId(int id) throws ServiceException;
 	
 	/**
 	 * Verifies input parameter and passes it to the DAO layer, received a particular set of found orders back and returns it to the Controller layer
@@ -77,7 +77,7 @@ public interface IOrderService {
 	 * @return a set of found orders
 	 * @throws ServiceException
 	 */
-	List<Order> getOrdersPartByUserId(int id, int pageNum) throws ServiceException;
+	List<Order> getAllPartByUserId(int id, int pageNum) throws ServiceException;
 	
 	/**
 	 * Verifies input parameter and passes it to the DAO layer, received a set of found orders back and returns it to the Controller layer
@@ -87,7 +87,7 @@ public interface IOrderService {
 	 * @return a set of found orders
 	 * @throws ServiceException
 	 */
-	List<Order> getOrdersByFilmId(int id) throws ServiceException;
+	List<Order> getAllByFilmId(int id) throws ServiceException;
 	
 	/**
 	 * Verifies input parameter and passes it to the DAO layer, received a particular set of found orders back and returns it to the Controller layer
@@ -98,16 +98,8 @@ public interface IOrderService {
 	 * @return a set of found orders
 	 * @throws ServiceException
 	 */
-	List<Order> getOrdersPartByFilmId(int id, int pageNum) throws ServiceException;
-	
-	/**
-	 * Receives a set of all present orders from the DAO layer and passes it back to the Controller layer or throws an exception if it is empty
-	 * 
-	 * @return a set of orders
-	 * @throws ServiceException
-	 */
-	List<Order> getAllOrders() throws ServiceException;
-	
+	List<Order> getAllPartByFilmId(int id, int pageNum) throws ServiceException;
+
 	/**
 	 * Receives a particular set of all orders from the DAO layer depending on the current page
 	 * and passes it back to the Controller layer or throws an exception if it is empty
@@ -115,31 +107,30 @@ public interface IOrderService {
 	 * @return a set of orders
 	 * @throws ServiceException
 	 */
-	List<Order> getAllOrdersPart(int pageNum) throws ServiceException;
+	List<Order> getAllPart(int pageNum) throws ServiceException;
 	
 	/**
 	 * Counts the number of pages needed to locate all orders within the pagination.
 	 * 
 	 * @return number of pages
-	 * @throws ServiceException
 	 */
-	int getNumberOfAllOrdersPages() throws ServiceException;
+	int countPages();
 	
 	/**
 	 * Counts the number of pages needed to locate all user orders within the pagination.
 	 * 
-	 * @param userID ID of the user whose orders are searched
+	 * @param userId ID of the user whose orders are searched
 	 * @return number of pages
-	 * @throws ServiceException
+	 * @throws ServiceException - if userID is not valid
 	 */
-	int getNumberOfUserOrdersPages(int userID) throws ServiceException;
+	int countPagesByUserId(int userId) throws ServiceException;
 	
 	/**
 	 * Counts the number of pages needed to locate all film orders within the pagination.
 	 * 
-	 * @param filmID ID of the film which orders are searched
+	 * @param filmId ID of the film which orders are searched
 	 * @return number of pages
-	 * @throws ServiceException
+	 * @throws ServiceException - if filmId is not valid
 	 */
-	int getNumberOfFilmOrdersPages(int filmID) throws ServiceException;
+	int countPagesByFilmId(int filmId) throws ServiceException;
 }

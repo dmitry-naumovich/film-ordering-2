@@ -63,19 +63,19 @@ public class OpenAllOrders implements Command {
 		}
 		else {
 			try {
-				List<Order> orders = orderService.getAllOrdersPart(pageNum);
+				List<Order> orders = orderService.getAllPart(pageNum);
 				
 				List<String> filmNames = new ArrayList<>();
 				List<String> userLogins = new ArrayList<>();
 				for (Order o : orders) {
-					String filmName = filmService.getFilmNameByID(o.getFilmId(), lang);
+					String filmName = filmService.getNameByID(o.getFilmId(), lang);
 					filmNames.add(filmName);
 					
 					String userLogin = userService.getLoginByID(o.getUserId());
 					userLogins.add(userLogin);
 				}
 				
-				int totalPageAmount = orderService.getNumberOfAllOrdersPages();
+				int totalPageAmount = orderService.countPages();
 				request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 				request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 				

@@ -32,7 +32,7 @@ public class FilmServiceImplTest {
 	 */
 	@Test(expected=AddFilmServiceException.class)
 	public void addNewFilmWithWrongLength() throws ServiceException {
-		service.addNewFilm("testname", "2016", "testdirector", "testcast", null, null, null, "-120", "-120", "testdescription");
+		service.create("testname", "2016", "testdirector", "testcast", null, null, null, "-120", "-120", "testdescription");
 	}
 	
 	/**
@@ -42,7 +42,7 @@ public class FilmServiceImplTest {
 	 */
 	@Test(expected=AddFilmServiceException.class)
 	public void addNewFilmWithWrongYear() throws ServiceException {
-		service.addNewFilm("testname", "abc1", "testdirector", "testcast", null, null, null, "120", "10", "testdescription");
+		service.create("testname", "abc1", "testdirector", "testcast", null, null, null, "120", "10", "testdescription");
 	}
 	
 	/**
@@ -52,7 +52,7 @@ public class FilmServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void addNewFilmWithWrongGenre() throws ServiceException {
-		service.addNewFilm("testname", "1990", "testdirector", "testcast", null, null, new String[]{"UK", "Bilarus"}, "120", "10", "testdescription");
+		service.create("testname", "1990", "testdirector", "testcast", null, null, new String[]{"UK", "Bilarus"}, "120", "10", "testdescription");
 	}
 	
 	/**
@@ -62,7 +62,7 @@ public class FilmServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void deleteFilm() throws ServiceException {
-		service.deleteFilm(0);
+		service.delete(0);
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class FilmServiceImplTest {
 	 */
 	@Test(expected=EditFilmServiceException.class)
 	public void editFilm() throws ServiceException {
-		service.editFilm(1, "testname", "2010", null, null, null, null, null, "102", "1", null);
+		service.update(1, "testname", "2010", null, null, null, null, null, "102", "1", null);
 	}
 	
 
@@ -83,7 +83,7 @@ public class FilmServiceImplTest {
 	 */
 	@Test(expected=GetFilmServiceException.class)
 	public void getFilmByID() throws ServiceException {
-		service.getFilmByID(-1, EN_LANG);
+		service.getByID(-1, EN_LANG);
 	}
 	
 	/**
@@ -93,7 +93,7 @@ public class FilmServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void getFilmNameByID() throws ServiceException {
-		service.getFilmNameByID(0, EN_LANG);
+		service.getNameByID(0, EN_LANG);
 	}
 	
 	/**
@@ -133,6 +133,6 @@ public class FilmServiceImplTest {
 	 */
 	@Test(expected=GetFilmServiceException.class)
 	public void getAllFilmsPart() throws ServiceException {
-		service.getAllFilmsPart(0, EN_LANG);
+		service.getAllPart(0, EN_LANG);
 	}
 }

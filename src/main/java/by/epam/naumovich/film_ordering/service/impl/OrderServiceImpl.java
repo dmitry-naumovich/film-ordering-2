@@ -36,7 +36,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
-	public int addOrder(int filmID, int userID, String price, String discount, String payment) throws ServiceException {
+	public int create(int filmID, int userID, String price, String discount, String payment) throws ServiceException {
 		if (!Validator.validateInt(filmID) || !Validator.validateInt(userID) || !Validator.validateStrings(price, discount, payment)) {
 			throw new AddOrderServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
@@ -68,7 +68,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
-	public void deleteOrder(int orderNum) throws ServiceException {
+	public void delete(int orderNum) throws ServiceException {
 		if (!Validator.validateInt(orderNum)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
@@ -76,7 +76,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 	
 	@Override
-	public Order getOrderByOrderNum(int orderNum) throws ServiceException {
+	public Order getByOrderNum(int orderNum) throws ServiceException {
 		if (!Validator.validateInt(orderNum)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
@@ -90,7 +90,7 @@ public class OrderServiceImpl implements IOrderService {
 
 
 	@Override
-	public Order getOrderByUserAndFilmId(int userID, int filmID) throws ServiceException {
+	public Order getByUserAndFilmId(int userID, int filmID) throws ServiceException {
 		if (!Validator.validateInt(userID) || !Validator.validateInt(filmID)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
@@ -103,7 +103,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 	
 	@Override
-	public List<Order> getOrdersByUserId(int id) throws ServiceException {
+	public List<Order> getAllByUserId(int id) throws ServiceException {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
@@ -117,7 +117,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
-	public List<Order> getOrdersByFilmId(int id) throws ServiceException {
+	public List<Order> getAllByFilmId(int id) throws ServiceException {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
@@ -130,16 +130,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
-	public List<Order> getAllOrders() throws ServiceException {
-		List<Order> orders = orderDAO.findAllByOrderByDateDescTimeDesc();
-        if (orders.isEmpty()) {
-            throw new GetOrderServiceException(ExceptionMessages.NO_ORDERS_IN_DB);
-        }
-		return orders;
-	}
-
-	@Override
-	public List<Order> getAllOrdersPart(int pageNum) throws ServiceException {
+	public List<Order> getAllPart(int pageNum) throws ServiceException {
 		if (!Validator.validateInt(pageNum)) {
 			throw new GetOrderServiceException(ExceptionMessages.CORRUPTED_PAGE_NUM);
 		}
@@ -154,18 +145,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
-	public int getNumberOfAllOrdersPages() throws ServiceException {
-        int numOfOrders = (int)orderDAO.count(); //todo: return long everywhere
-        if (numOfOrders % ORDERS_AMOUNT_ON_PAGE == 0) {
-            return numOfOrders / ORDERS_AMOUNT_ON_PAGE;
-        }
-        else {
-            return numOfOrders / ORDERS_AMOUNT_ON_PAGE + 1;
-        }
-	}
-
-	@Override
-	public List<Order> getOrdersPartByUserId(int id, int pageNum) throws ServiceException {
+	public List<Order> getAllPartByUserId(int id, int pageNum) throws ServiceException {
 		if (!Validator.validateInt(pageNum) || !Validator.validateInt(id)) {
 			throw new GetOrderServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
@@ -181,7 +161,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
-	public List<Order> getOrdersPartByFilmId(int id, int pageNum) throws ServiceException {
+	public List<Order> getAllPartByFilmId(int id, int pageNum) throws ServiceException {
 		if (!Validator.validateInt(pageNum) || !Validator.validateInt(id)) {
 			throw new GetOrderServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
@@ -196,13 +176,24 @@ public class OrderServiceImpl implements IOrderService {
         return orders;
 	}
 
+    @Override
+    public int countPages() {
+        int numOfOrders = (int)orderDAO.count(); //todo: return long everywhere
+        if (numOfOrders % ORDERS_AMOUNT_ON_PAGE == 0) {
+            return numOfOrders / ORDERS_AMOUNT_ON_PAGE;
+        }
+        else {
+            return numOfOrders / ORDERS_AMOUNT_ON_PAGE + 1;
+        }
+    }
+
 	@Override
-	public int getNumberOfUserOrdersPages(int userID) throws ServiceException {
-		if (!Validator.validateInt(userID)) {
+	public int countPagesByUserId(int userId) throws ServiceException {
+		if (!Validator.validateInt(userId)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
 		
-        int numOfOrders = (int)orderDAO.countByUserId(userID); //todo: long
+        int numOfOrders = (int)orderDAO.countByUserId(userId); //todo: long
         if (numOfOrders % ORDERS_AMOUNT_ON_PAGE == 0) {
             return numOfOrders / ORDERS_AMOUNT_ON_PAGE;
         }
@@ -212,11 +203,11 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	@Override
-	public int getNumberOfFilmOrdersPages(int filmID) throws ServiceException {
-		if (!Validator.validateInt(filmID)) {
+	public int countPagesByFilmId(int filmId) throws ServiceException {
+		if (!Validator.validateInt(filmId)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
-        int numOfOrders = (int)orderDAO.countByFilmId(filmID); //todo: long
+        int numOfOrders = (int)orderDAO.countByFilmId(filmId); //todo: long
         if (numOfOrders % ORDERS_AMOUNT_ON_PAGE == 0) {
             return numOfOrders / ORDERS_AMOUNT_ON_PAGE;
         }

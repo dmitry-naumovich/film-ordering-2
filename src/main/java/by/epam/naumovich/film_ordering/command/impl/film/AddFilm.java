@@ -163,7 +163,7 @@ public class AddFilm implements Command {
 			    genresArray = genres.toArray(genresArray);
 		    }
 
-			int filmID = filmService.addNewFilm(name, year, director, cast, countriesArray, composer,
+			int filmID = filmService.create(name, year, director, cast, countriesArray, composer,
 					genresArray, length, price, description);
 			
 			//proceedFilmImages(filmID, session, posterItem, frameItem); //TODO: return file upload using Spring!

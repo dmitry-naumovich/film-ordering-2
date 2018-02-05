@@ -60,14 +60,14 @@ public class OpenUserReviews implements Command {
 			int userID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.USER_ID));
 
 			try {
-				List<Review> reviews = reviewService.getReviewsPartByUserId(userID, pageNum);
+				List<Review> reviews = reviewService.getAllPartByUserId(userID, pageNum);
 				
 				List<String> reviewFilmNames = new ArrayList<>();
 				for (Review r : reviews) {
-					reviewFilmNames.add(filmService.getFilmNameByID(r.getFilmId(), lang));
+					reviewFilmNames.add(filmService.getNameByID(r.getFilmId(), lang));
 				}
 				
-				int totalPageAmount = reviewService.getNumberOfUserReviewsPages(userID);
+				int totalPageAmount = reviewService.countByUserId(userID);
 				request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 				request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 				

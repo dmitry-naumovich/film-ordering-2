@@ -39,7 +39,7 @@ public class NewsServiceImpl implements INewsService {
     }
 
     @Override
-	public int addNews(String title, String text) throws ServiceException {
+	public int create(String title, String text) throws ServiceException {
 		if (!Validator.validateStrings(title, text)) {
 			throw new AddNewsServiceException(ExceptionMessages.INVALID_NEWS_TITLE_OR_TEXT);
 		}
@@ -58,7 +58,7 @@ public class NewsServiceImpl implements INewsService {
 	}
 
 	@Override
-	public void deleteNews(int id) throws ServiceException {
+	public void delete(int id) throws ServiceException {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_NEWS_ID);
 		}
@@ -67,7 +67,7 @@ public class NewsServiceImpl implements INewsService {
 
 
 	@Override
-	public void editNews(int id, String title, String text) throws ServiceException {
+	public void update(int id, String title, String text) throws ServiceException {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_NEWS_ID);
 		}
@@ -88,18 +88,9 @@ public class NewsServiceImpl implements INewsService {
         news.setText(text);
         newsDAO.save(news);
 	}
-	
-	@Override
-	public List<News> getAllNews() throws ServiceException {
-		List<News> news = newsDAO.findAllByOrderByDateDescTimeDesc();
-        if (news.isEmpty()) {
-            throw new GetNewsServiceException(ExceptionMessages.NO_NEWS_IN_DB);
-        }
-		return news;
-	}
 
 	@Override
-	public List<News> getNewsByYear(int year) throws ServiceException {
+	public List<News> getByYear(int year) throws ServiceException {
 		List<News> news = newsDAO.findByYear(year);
         if (news.isEmpty()) {
             throw new GetNewsServiceException(String.format(ExceptionMessages.NO_NEWS_WITHIN_YEAR, year));
@@ -108,7 +99,7 @@ public class NewsServiceImpl implements INewsService {
 	}
 
 	@Override
-	public List<News> getNewsByMonth(int month, int year) throws ServiceException {
+	public List<News> getByMonth(int month, int year) throws ServiceException {
 		List<News> set = newsDAO.findByMonthAndYear(month, year);
         if (set.isEmpty()) {
             throw new GetNewsServiceException(String.format(ExceptionMessages.NO_NEWS_WITHIN_MONTH, month, year));
@@ -129,7 +120,7 @@ public class NewsServiceImpl implements INewsService {
 	}
 
 	@Override
-	public News getNewsById(int id) throws ServiceException {
+	public News getById(int id) throws ServiceException {
 		News news = newsDAO.findOne(id);
         if (news == null) {
             throw new GetNewsServiceException(ExceptionMessages.NEWS_NOT_PRESENT);
@@ -138,7 +129,7 @@ public class NewsServiceImpl implements INewsService {
 	}
 
 	@Override
-	public List<News> getAllNewsPart(int pageNum) throws ServiceException {
+	public List<News> getAllPart(int pageNum) throws ServiceException {
 		if (!Validator.validateInt(pageNum)) {
 			throw new GetNewsServiceException(ExceptionMessages.CORRUPTED_PAGE_NUM);
 		}
@@ -152,7 +143,7 @@ public class NewsServiceImpl implements INewsService {
 	}
 
 	@Override
-	public int getNumberOfAllNewsPages() throws ServiceException {
+	public int countPages() {
         int numOfNews = (int) newsDAO.count(); //todo: return long everywhere
         if (numOfNews % NEWS_AMOUNT_ON_PAGE == 0) {
             return numOfNews / NEWS_AMOUNT_ON_PAGE;

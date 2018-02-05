@@ -42,9 +42,7 @@ public interface IReviewDAO extends CrudRepository<Review, ReviewPK> {
 	 * @param author author ID
 	 * @return a set of found reviews
 	 */
-	//todo: does it work without @query?
-	@Query(value = "SELECT * FROM reviews WHERE r_author = :author ORDER BY r_date DESC, r_time DESC", nativeQuery = true)
-	List<Review> findByUserId(@Param("author") int author);
+	List<Review> findByIdAuthorOrderByDateDescTimeDesc(int author);
 	
 	/**
 	 * Searches for the reviews in the data source by author ID and returns the necessary part of them

@@ -25,7 +25,7 @@ public class ReviewServiceImplTest {
 	 */
 	@Test(expected=AddReviewServiceException.class)
 	public void addReviewWithInvalidUserID() throws ServiceException {
-		service.addReview(0, 1, "1", "ng", "test review text");
+		service.create(0, 1, "1", "ng", "test review text");
 	}
 	
 	/**
@@ -35,7 +35,7 @@ public class ReviewServiceImplTest {
 	 */
 	@Test(expected=AddReviewServiceException.class)
 	public void addReviewWithInvalidMark() throws ServiceException {
-		service.addReview(0, 1, "-1", "ng", "test review text");
+		service.create(0, 1, "-1", "ng", "test review text");
 	}
 	
 	/**
@@ -45,7 +45,7 @@ public class ReviewServiceImplTest {
 	 */
 	@Test(expected=AddReviewServiceException.class)
 	public void addReviewWithInvalidReviewText() throws ServiceException {
-		service.addReview(0, 1, "1", "ng", null);
+		service.create(0, 1, "1", "ng", null);
 	}
 	
 	/**
@@ -55,7 +55,7 @@ public class ReviewServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void deleteReview() throws ServiceException {
-		service.deleteReview(0, -1);
+		service.delete(0, -1);
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class ReviewServiceImplTest {
 	 */
 	@Test(expected=GetReviewServiceException.class)
 	public void getReviewsByUserId() throws ServiceException {
-		service.getReviewsByUserId(-1);
+		service.getAllByUserId(-1);
 	}
 	
 	/**
@@ -75,7 +75,7 @@ public class ReviewServiceImplTest {
 	 */
 	@Test(expected=GetReviewServiceException.class)
 	public void getReviewsByFilmId() throws ServiceException {
-		service.getReviewsByFilmId(-1);
+		service.getAllByFilmId(-1);
 	}
 	
 	/**
@@ -85,7 +85,7 @@ public class ReviewServiceImplTest {
 	 */
 	@Test(expected=GetReviewServiceException.class)
 	public void getReviewByUserAndFilmId()  throws ServiceException {
-		service.getReviewByUserAndFilmId(0, -1);
+		service.getByUserAndFilmId(0, -1);
 	}
 	
 	/**
@@ -95,7 +95,7 @@ public class ReviewServiceImplTest {
 	 */
 	@Test(expected=GetReviewServiceException.class)
 	public void getAllReviewsPart() throws ServiceException {
-		service.getAllReviewsPart(0);
+		service.getAllPart(0);
 	}
 	
 	/**
@@ -105,7 +105,7 @@ public class ReviewServiceImplTest {
 	 */
 	@Test(expected=GetReviewServiceException.class)
 	public void getReviewsPartByUserId() throws ServiceException {
-		service.getReviewsPartByUserId(-1, 0);
+		service.getAllPartByUserId(-1, 0);
 	}
 	
 	/**
@@ -115,7 +115,7 @@ public class ReviewServiceImplTest {
 	 */
 	@Test(expected=GetReviewServiceException.class)
 	public void getReviewsPartByFilmId() throws ServiceException {
-		service.getReviewsPartByFilmId(-1, 0);
+		service.getAllPartByFilmId(-1, 0);
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public class ReviewServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void getNumberOfUserReviewsPages() throws ServiceException {
-		service.getNumberOfUserReviewsPages(-1);
+		service.countByUserId(-1);
 	}
 	
 	/**
@@ -135,7 +135,7 @@ public class ReviewServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void getNumberOfFilmReviewsPages() throws ServiceException {
-		service.getNumberOfFilmReviewsPages(0);
+		service.countByFilmId(0);
 	}
 	
 }

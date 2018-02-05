@@ -53,7 +53,7 @@ public class AddDiscount implements Command {
 			String endTime = request.getParameter(RequestAndSessionAttributes.END_TIME);
 			
 			try {
-				discountService.addDiscount(userID, amount, endDate, endTime);
+				discountService.create(userID, amount, endDate, endTime);
 				log.debug(String.format(LogMessages.DISCOUNT_ADDED, userID, amount));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.DISCOUNT_ADDED);
 				Thread.sleep(1000);

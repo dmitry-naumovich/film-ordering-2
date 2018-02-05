@@ -40,7 +40,7 @@ public class OpenSingleNews implements Command {
 		
 		try {
 			int newsID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
-			News news = newsService.getNewsById(newsID);
+			News news = newsService.getById(newsID);
 			request.setAttribute(RequestAndSessionAttributes.NEWS, news);
 			request.getRequestDispatcher(JavaServerPageNames.SINGLE_NEWS_PAGE).forward(request, response);
 		} catch (GetNewsServiceException e) {	

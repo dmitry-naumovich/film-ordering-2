@@ -47,8 +47,8 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-	public int addUser(String login, String name, String surname, String password, String sex, String bDate,
-			String phone, String email, String about) throws ServiceException {
+	public int create(String login, String name, String surname, String password, String sex, String bDate,
+                      String phone, String email, String about) throws ServiceException {
 
         User existingUser = userDAO.findByLogin(login);
         if (existingUser != null) {
@@ -99,8 +99,8 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public void updateUser(int id, String name, String surname, String password, String sex, String bDate, String phone,
-			String email, String about) throws ServiceException {
+	public void update(int id, String name, String surname, String password, String sex, String bDate, String phone,
+                       String email, String about) throws ServiceException {
 
 		if (!Validator.validateInt(id)) {
 			throw new UserUpdateServiceException(ExceptionMessages.CORRUPTED_USER_ID);
@@ -147,7 +147,7 @@ public class UserServiceImpl implements IUserService {
 	}
 	
 	@Override
-	public void deleteUser(int id) throws ServiceException {
+	public void delete(int id) throws ServiceException {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
@@ -155,7 +155,7 @@ public class UserServiceImpl implements IUserService {
 	}
 	
 	@Override
-	public User getUserByLogin(String login) throws ServiceException {
+	public User getByLogin(String login) throws ServiceException {
 		if(!Validator.validateStrings(login)){
 			throw new ServiceAuthException(ExceptionMessages.CORRUPTED_LOGIN);
 		}
@@ -168,7 +168,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public User getUserByID(int id) throws ServiceException {
+	public User getByID(int id) throws ServiceException {
 		if(!Validator.validateInt(id)){
 			throw new GetUserServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
@@ -218,26 +218,8 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public List<User> getAllUsers() throws ServiceException {
-        List<User> users = userDAO.findAll();
-        if (users == null) {
-            throw new GetUserServiceException(ExceptionMessages.NO_USERS_IN_DB);
-        }
-        return users;
-	}
-
-	@Override
-	public List<User> getUsersInBanNow() throws ServiceException {
-        List<User> users = userDAO.findBanned();
-        if (users == null) {
-            throw new GetUserServiceException(ExceptionMessages.NO_USERS_IN_BAN_NOW);
-        }
-        return users;
-	}
-
-	@Override
-	public void banUser(int userID, String length, String reason) throws ServiceException {
-		if (!Validator.validateInt(userID)) {
+	public void banUser(int userId, String length, String reason) throws ServiceException {
+		if (!Validator.validateInt(userId)) {
 			throw new BanUserServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
 		if (!Validator.validateStrings(length, reason)) {
@@ -256,19 +238,19 @@ public class UserServiceImpl implements IUserService {
 		Date startDate = Date.valueOf(LocalDate.now());
 		Time startTime = Time.valueOf(LocalTime.now());
 		
-        userDAO.banUser(userID, startDate, startTime, bLength, reason);
+        userDAO.banUser(userId, startDate, startTime, bLength, reason);
 	}
 
 	@Override
-	public void unbanUser(int userID) throws ServiceException {
-		if (!Validator.validateInt(userID)) {
+	public void unbanUser(int userId) throws ServiceException {
+		if (!Validator.validateInt(userId)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
-        userDAO.unbanUser(userID);
+        userDAO.unbanUser(userId);
 	}
 
 	@Override
-	public boolean userIsInBan(int id) throws ServiceException {
+	public boolean isBanned(int id) throws ServiceException {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
@@ -289,17 +271,6 @@ public class UserServiceImpl implements IUserService {
         return users;
 	}
 
-	@Override
-	public int getNumberOfAllUsersPages() throws ServiceException {
-        int numOfUsers = (int)userDAO.count(); //todo: return long everywhere
-        if (numOfUsers % USERS_AMOUNT_ON_PAGE == 0) {
-            return numOfUsers / USERS_AMOUNT_ON_PAGE;
-        }
-        else {
-            return numOfUsers / USERS_AMOUNT_ON_PAGE + 1;
-        }
-	}
-
     private User validateAndSetBirthdate(User user, String bDate) throws ServiceException {
         if (Validator.validateStrings(bDate)) {
             try {
@@ -317,5 +288,16 @@ public class UserServiceImpl implements IUserService {
             }
         }
         return user;
+    }
+
+    @Override
+    public int countPages() {
+        int numOfUsers = (int)userDAO.count(); //todo: return long everywhere
+        if (numOfUsers % USERS_AMOUNT_ON_PAGE == 0) {
+            return numOfUsers / USERS_AMOUNT_ON_PAGE;
+        }
+        else {
+            return numOfUsers / USERS_AMOUNT_ON_PAGE + 1;
+        }
     }
 }

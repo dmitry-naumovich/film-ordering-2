@@ -91,7 +91,7 @@ public class AddNews implements Command {
 				    }
 				}
 			
-				int newsID = newsService.addNews(title, text);
+				int newsID = newsService.create(title, text);
 				
 				String absoluteFilePath = session.getServletContext().getRealPath(FileUploadConstants.NEWS_IMGS_UPLOAD_DIR + newsID + "/");
 				if (absoluteFilePath != null) {

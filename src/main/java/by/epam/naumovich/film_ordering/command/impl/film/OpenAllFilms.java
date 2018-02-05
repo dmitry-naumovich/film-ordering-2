@@ -57,10 +57,10 @@ public class OpenAllFilms implements Command {
 		
 		int pageNum = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.PAGE_NUM));
 		try {
-			List<Film> films = filmService.getAllFilmsPart(pageNum, lang);
+			List<Film> films = filmService.getAllPart(pageNum, lang);
 			request.setAttribute(RequestAndSessionAttributes.FILMS, films);
 			
-			int totalPageAmount = filmService.getNumberOfAllFilmsPages();
+			int totalPageAmount = filmService.countPages();
 			request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 			request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 			
@@ -68,7 +68,7 @@ public class OpenAllFilms implements Command {
 				if (!Boolean.parseBoolean(session.getAttribute(RequestAndSessionAttributes.IS_ADMIN).toString())) {
 					int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
 					try {
-						List<Order> orders = orderService.getOrdersByUserId(userID);
+						List<Order> orders = orderService.getAllByUserId(userID);
 						List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
 						request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
 					} catch (GetOrderServiceException e) {

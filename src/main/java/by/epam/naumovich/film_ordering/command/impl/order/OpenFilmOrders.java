@@ -66,16 +66,16 @@ public class OpenFilmOrders implements Command {
 		else {
 		
 			try {
-				List<Order> orders = orderService.getOrdersByFilmId(filmID);
+				List<Order> orders = orderService.getAllByFilmId(filmID);
 				
 				List<String> userLogins = new ArrayList<>();
 				for (Order o : orders) {
 					String userLogin = userService.getLoginByID(o.getUserId());
 					userLogins.add(userLogin);
 				}
-				String filmName = filmService.getFilmNameByID(filmID, lang);
+				String filmName = filmService.getNameByID(filmID, lang);
 				
-				int totalPageAmount = orderService.getNumberOfFilmOrdersPages(filmID);
+				int totalPageAmount = orderService.countPagesByFilmId(filmID);
 				request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 				request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 				

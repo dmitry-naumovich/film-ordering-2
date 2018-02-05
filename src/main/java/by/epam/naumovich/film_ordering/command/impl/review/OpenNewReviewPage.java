@@ -58,8 +58,8 @@ public class OpenNewReviewPage implements Command {
 			int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
 			Film film = null;
 			try {
-				film = filmService.getFilmByID(filmID, lang);
-				reviewService.getReviewByUserAndFilmId(userID, filmID);
+				film = filmService.getByID(filmID, lang);
+				reviewService.getByUserAndFilmId(userID, filmID);
 				request.setAttribute(RequestAndSessionAttributes.ERROR_MESSAGE, ErrorMessages.REVIEW_AMOUNT_RESTRICTION);
 				request.getRequestDispatcher("/Controller?command=open_single_review&userID=" + userID + "&filmID=" + filmID).forward(request, response);
 			} catch (GetFilmServiceException e) {

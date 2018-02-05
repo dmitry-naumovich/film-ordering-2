@@ -26,7 +26,7 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=AddNewsServiceException.class)
 	public void addNewsWithInvalidTitle() throws ServiceException {
-		service.addNews(null, "test news text");
+		service.create(null, "test news text");
 	}
 	
 	/**
@@ -36,7 +36,7 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=AddNewsServiceException.class)
 	public void addNewsWithInvalidText() throws ServiceException {
-		service.addNews("test news title", "");
+		service.create("test news title", "");
 	}
 	
 	/**
@@ -46,7 +46,7 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void deleteNews() throws ServiceException {
-		service.deleteNews(0);
+		service.delete(0);
 	}
 	
 	/**
@@ -56,7 +56,7 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void editNewsWithInvalidID() throws ServiceException {
-		service.editNews(0, "new title", "new text");
+		service.update(0, "new title", "new text");
 	}
 	
 	/**
@@ -66,7 +66,7 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=EditNewsServiceException.class)
 	public void editNewsWithInvalidTextAndTitle() throws ServiceException {
-		service.editNews(1, "", null);
+		service.update(1, "", null);
 	}
 	
 
@@ -77,7 +77,7 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=GetNewsServiceException.class)
 	public void getNewsById() throws ServiceException {
-		service.getNewsById(-1);
+		service.getById(-1);
 	}
 	
 	/**
@@ -87,7 +87,7 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=GetNewsServiceException.class)
 	public void getNewsByYear() throws ServiceException {
-		service.getNewsByYear(1001);
+		service.getByYear(1001);
 	}
 	
 	/**
@@ -97,7 +97,7 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=GetNewsServiceException.class)
 	public void getNewsByMonth() throws ServiceException {
-		service.getNewsByMonth(13, 2012);
+		service.getByMonth(13, 2012);
 	}
 	
 	/**
@@ -107,6 +107,6 @@ public class NewsServiceImplTest {
 	 */
 	@Test(expected=GetNewsServiceException.class)
 	public void getAllNewsPart() throws ServiceException {
-		service.getAllNewsPart(0);
+		service.getAllPart(0);
 	}
 }

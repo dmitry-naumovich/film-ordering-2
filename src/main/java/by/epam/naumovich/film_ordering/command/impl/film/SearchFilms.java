@@ -1,7 +1,6 @@
 package by.epam.naumovich.film_ordering.command.impl.film;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -66,7 +65,7 @@ public class SearchFilms implements Command {
 					if (!Boolean.parseBoolean(session.getAttribute(RequestAndSessionAttributes.IS_ADMIN).toString())) {
 						int userID = Integer.parseInt(session.getAttribute(RequestAndSessionAttributes.USER_ID).toString());
 						try {
-							List<Order> orders = orderService.getOrdersByUserId(userID);
+							List<Order> orders = orderService.getAllByUserId(userID);
 							List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
 							request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
 						} catch (GetOrderServiceException e) {

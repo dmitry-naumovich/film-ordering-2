@@ -46,7 +46,7 @@ public class DeleteFilm implements Command {
             request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1").forward(request, response);
         } else {
             try {
-                filmService.deleteFilm(filmID);
+                filmService.delete(filmID);
 
                 log.debug(String.format(LogMessages.FILM_DELETED, filmID));
                 request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.FILM_DELETED);

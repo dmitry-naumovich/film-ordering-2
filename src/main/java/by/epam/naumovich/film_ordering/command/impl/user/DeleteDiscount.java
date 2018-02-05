@@ -50,7 +50,7 @@ public class DeleteDiscount implements Command {
 		}
 		else {
 			try {
-				discountService.deleteDiscount(discountID);
+				discountService.delete(discountID);
 				log.debug(String.format(LogMessages.DISCOUNT_DELETED, discountID, userID));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.DISCOUNT_DELETED);
 				Thread.sleep(1000);

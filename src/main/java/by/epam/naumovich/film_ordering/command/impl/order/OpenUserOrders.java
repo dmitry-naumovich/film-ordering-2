@@ -71,16 +71,16 @@ public class OpenUserOrders implements Command {
 				userID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.USER_ID));
 			}
 			try {
-				List<Order> orders = orderService.getOrdersPartByUserId(userID, pageNum);
+				List<Order> orders = orderService.getAllPartByUserId(userID, pageNum);
 				
 				List<String> filmNames = new ArrayList<>();
 				for (Order o : orders) {
-					String filmName = filmService.getFilmNameByID(o.getFilmId(), lang);
+					String filmName = filmService.getNameByID(o.getFilmId(), lang);
 					filmNames.add(filmName);
 				}
 				String userLogin = userService.getLoginByID(userID);
 				
-				int totalPageAmount = orderService.getNumberOfUserOrdersPages(userID);
+				int totalPageAmount = orderService.countPagesByUserId(userID);
 				request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 				request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 				

@@ -28,7 +28,7 @@ public class UserServiceImplTest {
 	 */
 	@Test(expected=ServiceSignUpException.class)
 	public void addUserWithInvalidLogin() throws ServiceException {
-		service.addUser("00123", "Name", "Surname", "Test password", "m", null, null, "testemail@mail.test", null);
+		service.create("00123", "Name", "Surname", "Test password", "m", null, null, "testemail@mail.test", null);
 	}
 
 
@@ -39,7 +39,7 @@ public class UserServiceImplTest {
 	 */
 	@Test(expected=ServiceSignUpException.class)
 	public void addUserWithInvalidBirthdate() throws ServiceException {
-		service.addUser("testlogin1", "Name", "Surname", "Test password", "m", "2020-13-13", null, "testemail@mail.test", null);
+		service.create("testlogin1", "Name", "Surname", "Test password", "m", "2020-13-13", null, "testemail@mail.test", null);
 	}
 
 
@@ -50,7 +50,7 @@ public class UserServiceImplTest {
 	 */
 	@Test(expected=ServiceSignUpException.class)
 	public void addUserWithInvalidEmail() throws ServiceException {
-		service.addUser("testlogin2", "Name", "Surname", "Test password", "m", null, null, "invalid@mail", null);
+		service.create("testlogin2", "Name", "Surname", "Test password", "m", null, null, "invalid@mail", null);
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class UserServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void deleteUser() throws ServiceException {
-		service.deleteUser(0);
+		service.delete(0);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class UserServiceImplTest {
 	 */
 	@Test(expected=UserUpdateServiceException.class)
 	public void updateUserByInvalidID() throws ServiceException {
-		service.updateUser(0, "testname", "testsurname", "testpwd", "u", null, null, "testemail@mail.test", null);
+		service.update(0, "testname", "testsurname", "testpwd", "u", null, null, "testemail@mail.test", null);
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class UserServiceImplTest {
 	 */
 	@Test(expected=UserUpdateServiceException.class)
 	public void updateUserWithInvalidInput() throws ServiceException {
-		service.updateUser(1, "testname", null, null, "u", null, null, "testemail@mail.test", null);
+		service.update(1, "testname", null, null, "u", null, null, "testemail@mail.test", null);
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class UserServiceImplTest {
 	 */
 	@Test(expected=ServiceAuthException.class)
 	public void getUserByInvalidLogin() throws ServiceException {
-		service.getUserByLogin("l;k;ks;df;wlefkw;ea;daslda");
+		service.getByLogin("l;k;ks;df;wlefkw;ea;daslda");
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class UserServiceImplTest {
 	 */
 	@Test(expected=ServiceAuthException.class)
 	public void getUserByNullLogin() throws ServiceException {
-		service.getUserByLogin(null);
+		service.getByLogin(null);
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class UserServiceImplTest {
 	 */
 	@Test(expected=GetUserServiceException.class)
 	public void getUserByZeroID() throws ServiceException {
-		service.getUserByID(0);
+		service.getByID(0);
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class UserServiceImplTest {
 	 */
 	@Test(expected=GetUserServiceException.class)
 	public void getUserByNonexistentID() throws ServiceException {
-		service.getUserByID(999999999);
+		service.getByID(999999999);
 	}
 
 	/**
@@ -160,7 +160,7 @@ public class UserServiceImplTest {
 	 */
 	@Test(expected=ServiceException.class)
 	public void userIsInBan() throws ServiceException {
-		service.userIsInBan(0);
+		service.isBanned(0);
 	}
 
 	/**

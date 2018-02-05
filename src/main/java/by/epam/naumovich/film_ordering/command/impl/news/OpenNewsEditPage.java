@@ -49,7 +49,7 @@ public class OpenNewsEditPage implements Command {
 		}
 		else {
 			try {
-				News news = newsService.getNewsById(newsID);
+				News news = newsService.getById(newsID);
 				request.setAttribute(RequestAndSessionAttributes.NEWS, news);
 				request.getRequestDispatcher(JavaServerPageNames.EDIT_NEWS_JSP_PAGE).forward(request, response);	
 			} catch (ServiceException e) {

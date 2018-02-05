@@ -33,7 +33,7 @@ public interface IDiscountService {
      * @param endTime discount end time
      * @throws ServiceException
      */
-    void addDiscount(int userID, String amount, String endDate, String endTime) throws ServiceException;
+    void create(int userID, String amount, String endDate, String endTime) throws ServiceException;
 
     /**
      * Constructs an updated discount entity based on input parameters received from the Controller layer, verifies them
@@ -45,7 +45,7 @@ public interface IDiscountService {
      * @param endTime discount end time
      * @throws ServiceException
      */
-    void editDiscount(int discountID, String amount, String endDate, String endTime) throws ServiceException;
+    void update(int discountID, String amount, String endDate, String endTime) throws ServiceException;
 
     /**
      * Verifies the input parameter and either passes it to the DAO layer or throws an exception
@@ -53,5 +53,5 @@ public interface IDiscountService {
      * @param id ID of the discount that will be deleted
      * @throws ServiceException
      */
-    void deleteDiscount(int id) throws ServiceException;
+    void delete(int id) throws ServiceException;
 }
