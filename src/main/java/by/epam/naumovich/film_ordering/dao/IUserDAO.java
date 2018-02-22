@@ -83,7 +83,7 @@ public interface IUserDAO extends CrudRepository<User, Integer> {
 	/**
 	 * Bans user (adds ban entity to the data source)
 	 * 
-	 * @param userID ID of the user that will be banned
+	 * @param userId ID of the user that will be banned
 	 * @param startDate ban start date
 	 * @param startTime ban start time
 	 * @param length ban length (days)
@@ -91,41 +91,41 @@ public interface IUserDAO extends CrudRepository<User, Integer> {
 	 */
 	@Modifying
 	@Query(value = "INSERT INTO bans (b_user, b_stdate, b_sttime, b_length, b_reason) " +
-            "VALUES (:userID, :startDate, :startTime, :length, :reason)", nativeQuery = true)
-	void banUser(@Param("userID") int userID, @Param("startDate") Date startDate, @Param("startTime") Time startTime,
+            "VALUES (:userId, :startDate, :startTime, :length, :reason)", nativeQuery = true)
+	void banUser(@Param("userId") int userId, @Param("startDate") Date startDate, @Param("startTime") Time startTime,
                  @Param("length") int length, @Param("reason") String reason);
 	
 	/**
 	 * Unbans user immediately
 	 * 
-	 * @param userID ID of the user that will be unbanned
+	 * @param userId ID of the user that will be unbanned
 	 */
     @Modifying
-	@Query(value = "UPDATE bans SET b_active = 0 WHERE b_user = :userID", nativeQuery = true)
-	void unbanUser(@Param("userID") int userID);
+	@Query(value = "UPDATE bans SET b_active = 0 WHERE b_user = :userId", nativeQuery = true)
+	void unbanUser(@Param("userId") int userId);
 	
 	/**
 	 * Returns user ban end date and time
 	 * 
-	 * @param userID user ID
+	 * @param userId user ID
 	 * @return ban and date and time concatenated in one String object
 	 */
     @Query(value = "SELECT DATE_ADD(b_stdate, INTERVAL b_length DAY), b_sttime FROM bans " +
-            "WHERE b_user = :userID  AND b_active = 1 AND ((CURDATE() = b_stdate AND CURTIME() > b_sttime) " +
+            "WHERE b_user = :userId  AND b_active = 1 AND ((CURDATE() = b_stdate AND CURTIME() > b_sttime) " +
             "OR (CURDATE() = DATE_ADD(b_stdate, INTERVAL b_length DAY) AND CURTIME() < b_sttime) " +
             "OR (CURDATE() > b_stdate AND CURDATE() < DATE_ADD(b_stdate, INTERVAL b_length DAY)))", nativeQuery = true)
-	String getCurrentBanEnd(@Param("userID") int userID);
+	String getCurrentBanEnd(@Param("userId") int userId);
 	
 	/**
 	 * Returns ban reason for the user
 	 * 
-	 * @param userID user ID
+	 * @param userId user ID
 	 * @return ban reason or null if it was not found
 	 */
-    @Query(value = "SELECT b_reason FROM bans WHERE b_user = :userID AND ((CURDATE() = b_stdate AND CURTIME() > b_sttime) " +
+    @Query(value = "SELECT b_reason FROM bans WHERE b_user = :userId AND ((CURDATE() = b_stdate AND CURTIME() > b_sttime) " +
             "OR (CURDATE() = DATE_ADD(b_stdate, INTERVAL b_length DAY) AND CURTIME() < b_sttime) " +
             "OR (CURDATE() > b_stdate AND CURDATE() < DATE_ADD(b_stdate, INTERVAL b_length DAY))) " +
             "AND b_active = 1", nativeQuery = true)
-	String getCurrentBanReason(@Param("userID") int userID);
+	String getCurrentBanReason(@Param("userId") int userId);
 
 }

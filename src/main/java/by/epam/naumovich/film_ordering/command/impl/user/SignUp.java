@@ -48,14 +48,14 @@ public class SignUp implements Command {
 			throws IOException, ServletException, ServiceException {
 
 		if (isAuthorized(session)) {
-			int userID = fetchUserIdFromSession(session);
+			int userId = fetchUserIdFromSession(session);
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.LOG_OUT_FOR_SIGN_UP);
-			request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+			request.getRequestDispatcher("/Controller?command=open_user_profile&userId=" + userId)
                     .forward(request, response);
 		} else {
 			try {
-                Pair<Integer, String> userIdAndLogin = fileUploadService.storeFilesAndAddUser(request);
-                int userID = userIdAndLogin.getFirst();
+                Pair<Integer, String> userIdAndLogin = fileUploadService.storeFilesAndAddUser(request, session);
+                int userId = userIdAndLogin.getFirst();
                 String login = userIdAndLogin.getSecond();
 
 				User user = userService.getByLogin(login);
@@ -64,9 +64,9 @@ public class SignUp implements Command {
 				session.setAttribute(RequestAndSessionAttributes.USER_ID, user.getId());
 				session.setAttribute(RequestAndSessionAttributes.IS_ADMIN, 'a' == user.getType());
 
-				log.debug(String.format(LogMessages.USER_CREATED, login, userID));
+				log.debug(String.format(LogMessages.USER_CREATED, login, userId));
 				request.setAttribute(SUCCESS_MESSAGE, SuccessMessages.SUCCESSFUL_SIGN_UP);
-				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
+				request.getRequestDispatcher("/Controller?command=open_user_profile&userId=" + userId).forward(request, response);
 
 			} catch (ServiceSignUpException e) {
 				log.error(String.format(EXCEPTION_IN_COMMAND,

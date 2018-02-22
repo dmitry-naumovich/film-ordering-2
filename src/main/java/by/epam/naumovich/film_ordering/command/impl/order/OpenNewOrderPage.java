@@ -53,22 +53,22 @@ public class OpenNewOrderPage implements Command {
         setPrevQueryAttributeToSession(request, session, log);
 
         String lang = fetchLanguageFromSession(session);
-        int filmID = fetchFilmIdFromRequest(request);
+        int filmId = fetchFilmIdFromRequest(request);
 
         if (!isAuthorized(session)) {
             request.setAttribute(ERROR_MESSAGE, ErrorMessages.SIGN_IN_FOR_ORDERING);
             request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
         } else if (isAdmin(session)) {
             request.setAttribute(ERROR_MESSAGE, ErrorMessages.ADMIN_CAN_NOT_ORDER);
-            request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1")
+            request.getRequestDispatcher("/Controller?command=open_single_film&filmId=" + filmId + "&pageNum=1")
                     .forward(request, response);
         } else {
             boolean already = false;
-            int userID = fetchUserIdFromSession(session);
+            int userId = fetchUserIdFromSession(session);
             try {
-                List<Order> orders = orderService.getAllByUserId(userID);
+                List<Order> orders = orderService.getAllByUserId(userId);
                 for (Order o : orders) {
-                    if (o.getFilmId() == filmID) {
+                    if (o.getFilmId() == filmId) {
                         already = true;
                         request.setAttribute(ERROR_MESSAGE, ErrorMessages.FILM_ALREADY_ORDERED);
                         request.getRequestDispatcher("/Controller?command=open_single_order&orderNum=" + o.getOrdNum())
@@ -87,10 +87,10 @@ public class OpenNewOrderPage implements Command {
 
             if (!already) {
                 try {
-                    Film film = filmService.getByID(filmID, lang);
+                    Film film = filmService.getByID(filmId, lang);
                     int discount;
                     try {
-                        discount = discountService.getCurrentUserDiscountByID(userID).getAmount();
+                        discount = discountService.getCurrentUserDiscountByID(userId).getAmount();
                     } catch (GetDiscountServiceException e) {
                         discount = 0;
                     }

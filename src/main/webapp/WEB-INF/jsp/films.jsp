@@ -107,19 +107,19 @@
                       	<tr>
 	              			<c:choose> 
 	              				<c:when test="${sessionScope.isAdmin}">
-	              					<td><a class="btn btn-primary" href="<c:url value="/Controller?command=open_film_edit_page&filmID=${film.id}"/>" role="button">${editFilmBtn}</a></td>
-                  					<td><a class="btn btn-success" href="<c:url value="/Controller?command=open_single_film&filmID=${film.id}&pageNum=1"/>" role="button">${openFilmPage}</a></td>
+	              					<td><a class="btn btn-primary" href="<c:url value="/Controller?command=open_film_edit_page&filmId=${film.id}"/>" role="button">${editFilmBtn}</a></td>
+                  					<td><a class="btn btn-success" href="<c:url value="/Controller?command=open_single_film&filmId=${film.id}&pageNum=1"/>" role="button">${openFilmPage}</a></td>
 	              				</c:when>
 	              				<c:otherwise>
 	              					<c:choose>
-		              					<c:when test="${sessionScope.authUser!=null && !requestScope.userOrderFilmIDs.isEmpty() && requestScope.userOrderFilmIDs.contains(film.id)}">
+		              					<c:when test="${sessionScope.authUser!=null && !requestScope.userOrderFilmIds.isEmpty() && requestScope.userOrderFilmIds.contains(film.id)}">
 		              						<td><button type="button" class="btn btn-default disabledBtn">${purchased}</button></td>
 	                  					</c:when>
 	                  					<c:otherwise>
-	                  						<td><a class="btn btn-primary" href="<c:url value="/Controller?command=open_new_order_page&filmID=${film.id}"/>" role="button">${buyWithOneClickBtn}</a></td>
+	                  						<td><a class="btn btn-primary" href="<c:url value="/Controller?command=open_new_order_page&filmId=${film.id}"/>" role="button">${buyWithOneClickBtn}</a></td>
 	                  					</c:otherwise>
                   					</c:choose>
-                  					<td><a class="btn btn-success" href="<c:url value="/Controller?command=open_single_film&filmID=${film.id}&pageNum=1"/>" role="button">${openFilmPage}</a></td>
+                  					<td><a class="btn btn-success" href="<c:url value="/Controller?command=open_single_film&filmId=${film.id}&pageNum=1"/>" role="button">${openFilmPage}</a></td>
 	              				</c:otherwise>
 	              			</c:choose>
 	                      </tr>

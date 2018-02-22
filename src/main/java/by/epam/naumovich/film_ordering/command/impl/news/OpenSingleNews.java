@@ -38,10 +38,10 @@ public class OpenSingleNews implements Command {
 			throws IOException, ServletException, ServiceException {
 		setPrevQueryAttributeToSession(request, session, log);
 
-        int newsID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
+        int newsId = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
 
         try {
-			News news = newsService.getById(newsID);
+			News news = newsService.getById(newsId);
 			request.setAttribute(RequestAndSessionAttributes.NEWS, news);
 			request.getRequestDispatcher(JavaServerPageNames.SINGLE_NEWS_PAGE).forward(request, response);
 		} catch (GetNewsServiceException e) {

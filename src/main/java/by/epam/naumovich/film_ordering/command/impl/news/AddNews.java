@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 import static by.epam.naumovich.film_ordering.command.util.LogMessages.EXCEPTION_IN_COMMAND;
@@ -51,7 +52,7 @@ public class AddNews implements Command {
 		}
 		else {
 			try {
-				int newsId = fileUploadService.storeFilesAndAddNews(request);
+				int newsId = fileUploadService.storeFilesAndAddNews(request, session);
 				
 				log.debug(String.format(LogMessages.NEWS_CREATED, newsId));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.NEWS_ADDED);

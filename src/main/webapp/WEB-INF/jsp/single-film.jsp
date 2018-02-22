@@ -85,16 +85,16 @@
                   <br>
           			<c:choose> 
           				<c:when test="${sessionScope.isAdmin}">
-          					<a class="btn btn-primary center-block" href="<c:url value="/Controller?command=open_film_edit_page&filmID=${film.id}"/>" role="button">${editFilmBtn}</a>
+          					<a class="btn btn-primary center-block" href="<c:url value="/Controller?command=open_film_edit_page&filmId=${film.id}"/>" role="button">${editFilmBtn}</a>
           					<br>
-             				<a class="btn btn-warning center-block" href="<c:url value="/Controller?command=open_film_orders&filmID=${film.id}&pageNum=1"/>" role="button">${openFilmOrdersBtn}</a>
+             				<a class="btn btn-warning center-block" href="<c:url value="/Controller?command=open_film_orders&filmId=${film.id}&pageNum=1"/>" role="button">${openFilmOrdersBtn}</a>
              				<br>
-             				<a class="btn btn-danger center-block" href="<c:url value="/Controller?command=delete_film&filmID=${film.id}"/>" role="button">${deleteFilmBtn}</a>
+             				<a class="btn btn-danger center-block" href="<c:url value="/Controller?command=delete_film&filmId=${film.id}"/>" role="button">${deleteFilmBtn}</a>
           				</c:when>
           				<c:otherwise>
           				<c:choose>
           						<c:when test="${!requestScope.ownOrderExists}">
-          							<a class="btn btn-primary center-block" href="<c:url value="/Controller?command=open_new_order_page&filmID=${film.id}"/>" role="button">${buyWithOneClickBtn}</a>
+          							<a class="btn btn-primary center-block" href="<c:url value="/Controller?command=open_new_order_page&filmId=${film.id}"/>" role="button">${buyWithOneClickBtn}</a>
              					</c:when>
              					<c:otherwise>
 	             					<a class="btn btn-warning center-block" href="<c:url value="/Controller?command=open_single_order&orderNum=${requestScope.orderNum}"/>" role="button">${myOrderBtn}</a>
@@ -104,10 +104,10 @@
           					<br>
           					<c:choose>
           						<c:when test="${!requestScope.ownReviewExists}">
-          							<a class="btn btn-primary center-block" href="<c:url value="/Controller?command=open_new_review_page&filmID=${film.id}"/>" role="button">${writeReviewBtn}</a>
+          							<a class="btn btn-primary center-block" href="<c:url value="/Controller?command=open_new_review_page&filmId=${film.id}"/>" role="button">${writeReviewBtn}</a>
              					</c:when>
              					<c:otherwise>
-	             					<a class="btn btn-warning center-block" href="<c:url value="/Controller?command=open_single_review&userID=${sessionScope.userID}&filmID=${film.id}"/>" role="button">${myReviewBtn}</a>
+	             					<a class="btn btn-warning center-block" href="<c:url value="/Controller?command=open_single_review&userId=${sessionScope.userId}&filmId=${film.id}"/>" role="button">${myReviewBtn}</a>
 	          					</c:otherwise>
 	          				</c:choose>
           				</c:otherwise>
@@ -216,7 +216,7 @@
 		                        <div class="row panel-heading review-heading" style="background-color:${rColor}">
 		                        	<h4 class=" text-left"> 
 					                	${reviewBy} 
-					                	<a href="<c:url value="/Controller?command=open_user_profile&userID=${review.author}" />" > ${authorLogin} </a>
+					                	<a href="<c:url value="/Controller?command=open_user_profile&userId=${review.author}" />" > ${authorLogin} </a>
 					                </h4>
 		                        </div> 
 		                    	<div class="row panel-body">
@@ -233,7 +233,7 @@
 		                        	</div>
 		                        	<div class="col-md-4 col-sm-4 col-xs-4 col-lg-4">
 		                        		<h5 class="text-center">
-		                        			<a href="<c:url value="/Controller?command=open_single_review&userID=${review.author}&filmID=${review.filmId}" />"  >${openSingleReviewBtn}</a>
+		                        			<a href="<c:url value="/Controller?command=open_single_review&userId=${review.author}&filmId=${review.filmId}" />"  >${openSingleReviewBtn}</a>
 		                        		</h5>
 		                        	</div>
 		                        	<div class="col-md-4 col-sm-4 col-xs-4 col-lg-4">
@@ -252,10 +252,10 @@
 			  <c:forEach begin="1" end="${requestScope.numOfPages}" step="1" var="pageNum">
 			  	<c:choose> 
 			  		<c:when test="${pageNum eq requestScope.curPage}">
-			  			 <li class="active"><a href="<c:url value="/Controller?command=open_single_film&filmID=${film.id}&pageNum=${pageNum}" />" >${pageNum}</a></li>
+			  			 <li class="active"><a href="<c:url value="/Controller?command=open_single_film&filmId=${film.id}&pageNum=${pageNum}" />" >${pageNum}</a></li>
 			  		</c:when>
 			  		<c:otherwise>
-			  			<li><a href="<c:url value="/Controller?command=open_single_film&filmID=${film.id}&pageNum=${pageNum}" />" >${pageNum}</a></li>
+			  			<li><a href="<c:url value="/Controller?command=open_single_film&filmId=${film.id}&pageNum=${pageNum}" />" >${pageNum}</a></li>
 			  		</c:otherwise>
 			  	</c:choose>
 			  </c:forEach>

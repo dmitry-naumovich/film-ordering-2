@@ -72,8 +72,8 @@
           <div class="row panel-footer">
           	<div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
           		<h5 class="text-right">
-          		<a href="<c:url value="/Controller?command=open_news_edit_page&newsID=${news.id}" />" >${editNewsBtn}</a> |
-            		<a href="<c:url value="/Controller?command=delete_news&newsID=${news.id}" />" >${deleteNewsBtn}</a>
+          		<a href="<c:url value="/Controller?command=open_news_edit_page&newsId=${news.id}" />" >${editNewsBtn}</a> |
+            		<a href="<c:url value="/Controller?command=delete_news&newsId=${news.id}" />" >${deleteNewsBtn}</a>
 	            </h5>
           	</div>
           </div>

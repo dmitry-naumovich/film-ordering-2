@@ -51,15 +51,15 @@ public class OpenUserProfile implements Command {
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else {
-			int userID = fetchUserIdFromRequest(request);
+			int userId = fetchUserIdFromRequest(request);
 			try {
-				User user = userService.getByID(userID);
+				User user = userService.getByID(userId);
 
 				request.setAttribute(RequestAndSessionAttributes.USER, user);
-				request.setAttribute(RequestAndSessionAttributes.BANNED, userService.isBanned(userID));
+				request.setAttribute(RequestAndSessionAttributes.BANNED, userService.isBanned(userId));
 
 				try {
-					Discount discount = discountService.getCurrentUserDiscountByID(userID);
+					Discount discount = discountService.getCurrentUserDiscountByID(userId);
 					request.setAttribute(RequestAndSessionAttributes.USER_DISCOUNT, discount);
 				} catch (GetDiscountServiceException e) {}
 				

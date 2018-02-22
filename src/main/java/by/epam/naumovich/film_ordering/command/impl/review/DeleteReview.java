@@ -39,23 +39,23 @@ public class DeleteReview implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
 			throws IOException, ServletException, ServiceException {
 
-		int userID = Integer.valueOf(request.getParameter(RequestAndSessionAttributes.USER_ID));
-		int filmID = Integer.valueOf(request.getParameter(RequestAndSessionAttributes.FILM_ID));
+		int userId = Integer.valueOf(request.getParameter(RequestAndSessionAttributes.USER_ID));
+		int filmId = Integer.valueOf(request.getParameter(RequestAndSessionAttributes.FILM_ID));
 		 
 		if (!isAuthorized(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.DELETE_REVIEW_RESTRICTION);
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
-		else if (!isAdmin(session) && userID != fetchUserIdFromSession(session)) {
+		else if (!isAdmin(session) && userId != fetchUserIdFromSession(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.DELETE_REVIEW_RESTRICTION);
-			request.getRequestDispatcher("/Controller?command=open_single_review&userID=" + userID + "&filmID=" + filmID).forward(request, response);
+			request.getRequestDispatcher("/Controller?command=open_single_review&userId=" + userId + "&filmId=" + filmId).forward(request, response);
 		}
 		else {
-			reviewService.delete(userID, filmID);
+			reviewService.delete(userId, filmId);
 
-			log.debug(String.format(REVIEW_DELETED, userID, filmID));
+			log.debug(String.format(REVIEW_DELETED, userId, filmId));
 			request.setAttribute(SUCCESS_MESSAGE, SuccessMessages.REVIEW_DELETED);
-			request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1")
+			request.getRequestDispatcher("/Controller?command=open_single_film&filmId=" + filmId + "&pageNum=1")
 					.forward(request, response);
 		}
 	}

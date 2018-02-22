@@ -41,7 +41,7 @@ public class BanUser implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
 			throws IOException, ServletException, ServiceException {
 
-		int userID = fetchUserIdFromRequest(request);
+		int userId = fetchUserIdFromRequest(request);
 		
 		if (!isAuthorized(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.BAN_USER_RESTRICTION);
@@ -49,7 +49,7 @@ public class BanUser implements Command {
 		}
 		else if (!isAdmin(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.BAN_USER_RESTRICTION);
-			request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+			request.getRequestDispatcher("/Controller?command=open_user_profile&userId=" + userId)
                     .forward(request, response);
 		}
 		else {
@@ -57,18 +57,18 @@ public class BanUser implements Command {
 			String reason = request.getParameter(RequestAndSessionAttributes.BAN_REASON);
 			
 			try {
-				userService.banUser(userID, length, reason);
+				userService.banUser(userId, length, reason);
 
-				log.debug(String.format(LogMessages.USER_BANNED, userID, reason));
+				log.debug(String.format(LogMessages.USER_BANNED, userId, reason));
 				request.setAttribute(SUCCESS_MESSAGE, SuccessMessages.USER_BANNED);
 				//Thread.sleep(1000);
-				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+				request.getRequestDispatcher("/Controller?command=open_user_profile&userId=" + userId)
                         .forward(request, response);
 			} catch (BanUserServiceException e) {
                 log.error(String.format(EXCEPTION_IN_COMMAND,
                         e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
                 request.setAttribute(ERROR_MESSAGE, e.getMessage());
-                request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+                request.getRequestDispatcher("/Controller?command=open_user_profile&userId=" + userId)
                         .forward(request, response);
             }
 		}

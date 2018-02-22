@@ -47,7 +47,7 @@ public class EditFilm implements Command {
 		}
 		else {
 			try {
-				fileUploadService.storeFilesAndUpdateFilm(filmId, request);
+				fileUploadService.storeFilesAndUpdateFilm(filmId, request, session);
 
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.FILM_EDITED);
 				request.getRequestDispatcher("/Controller?command=open_single_film&filmId=" + filmId + "&pageNum=1")

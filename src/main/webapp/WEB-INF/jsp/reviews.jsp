@@ -73,10 +73,10 @@
 									  <c:forEach begin="1" end="${requestScope.numOfPages}" step="1" var="pageNum">
 									  	<c:choose> 
 									  		<c:when test="${pageNum eq requestScope.curPage}">
-									  			 <li class="active"><a href="<c:url value="/Controller?command=open_user_reviews&userID=${requestScope.userID}&pageNum=${pageNum}" />" >${pageNum}</a></li>
+									  			 <li class="active"><a href="<c:url value="/Controller?command=open_user_reviews&userId=${requestScope.userId}&pageNum=${pageNum}" />" >${pageNum}</a></li>
 									  		</c:when>
 									  		<c:otherwise>
-									  			<li><a href="<c:url value="/Controller?command=open_user_reviews&userID=${requestScope.userID}&pageNum=${pageNum}" />" >${pageNum}</a></li>
+									  			<li><a href="<c:url value="/Controller?command=open_user_reviews&userId=${requestScope.userId}&pageNum=${pageNum}" />" >${pageNum}</a></li>
 									  		</c:otherwise>
 									  	</c:choose>
 									  </c:forEach>
@@ -122,14 +122,14 @@
                         <div class="row panel-heading review-heading" style="background-color:${rColor}">
                         	<div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
                         		<h4 class=" text-left"> 
-			                    	<a href="<c:url value="/Controller?command=open_single_film&filmID=${review.filmId}&pageNum=1" />" >${filmName} </a>
+			                    	<a href="<c:url value="/Controller?command=open_single_film&filmId=${review.filmId}&pageNum=1" />" >${filmName} </a>
 			                    </h4>
                         	</div>
                         	<div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
                         		<c:if test="${sessionScope.isAdmin && authorLogin != null}">
 	                        			<h4 class=" text-right">
 	                        			${author}:  
-				                    	<a href="<c:url value="/Controller?command=open_user_profile&userID=${review.author}" />" >${authorLogin} </a>
+				                    	<a href="<c:url value="/Controller?command=open_user_profile&userId=${review.author}" />" >${authorLogin} </a>
 				                    </h4>
 			                    </c:if>
                         	</div>
@@ -148,7 +148,7 @@
                         	</div>
                         	<div class="col-md-4 col-sm-4 col-xs-4 col-lg-4">
                         		<h5 class="text-center">
-                        			<a href="<c:url value="/Controller?command=open_single_review&userID=${review.author}&filmID=${review.filmId}" />"  >${openSingleReviewBtn}</a>
+                        			<a href="<c:url value="/Controller?command=open_single_review&userId=${review.author}&filmId=${review.filmId}" />"  >${openSingleReviewBtn}</a>
                         		</h5>
                         	</div>
                         	<div class="col-md-4 col-sm-4 col-xs-4 col-lg-4">
@@ -184,10 +184,10 @@
 			  <c:forEach begin="1" end="${requestScope.numOfPages}" step="1" var="pageNum">
 			  	<c:choose> 
 			  		<c:when test="${pageNum eq requestScope.curPage}">
-			  			 <li class="active"><a href="<c:url value="/Controller?command=open_user_reviews&userID=${requestScope.userID}&pageNum=${pageNum}" />" >${pageNum}</a></li>
+			  			 <li class="active"><a href="<c:url value="/Controller?command=open_user_reviews&userId=${requestScope.userId}&pageNum=${pageNum}" />" >${pageNum}</a></li>
 			  		</c:when>
 			  		<c:otherwise>
-			  			<li><a href="<c:url value="/Controller?command=open_user_reviews&userID=${requestScope.userID}&pageNum=${pageNum}" />" >${pageNum}</a></li>
+			  			<li><a href="<c:url value="/Controller?command=open_user_reviews&userId=${requestScope.userId}&pageNum=${pageNum}" />" >${pageNum}</a></li>
 			  		</c:otherwise>
 			  	</c:choose>
 			  </c:forEach>

@@ -81,7 +81,7 @@
 				
 <c:set var="news" value="${requestScope.news}" />
 
-	<form  name="editNewsForm" class="form-horizontal" method="post" action="Controller?command=edit_news&newsID=${news.id}" enctype="multipart/form-data" onSubmit="return validateForm(event);">
+	<form  name="editNewsForm" class="form-horizontal" method="post" action="Controller?command=edit_news&newsId=${news.id}" enctype="multipart/form-data" onSubmit="return validateForm(event);">
 	  	<div class="form-group">
 	      <label class="col-md-2 col-sm-2 col-xs-2 col-lg-2 control-label">${newsTitle}</label>
 	      <div class="col-md-10 col-sm-10 col-xs-10 col-lg-10">

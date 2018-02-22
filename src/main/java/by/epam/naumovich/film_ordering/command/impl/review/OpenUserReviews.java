@@ -54,22 +54,22 @@ public class OpenUserReviews implements Command {
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else {
-			int userID = fetchUserIdFromRequest(request);
+			int userId = fetchUserIdFromRequest(request);
 
 			try {
-				List<Review> reviews = reviewService.getAllPartByUserId(userID, pageNum);
+				List<Review> reviews = reviewService.getAllPartByUserId(userId, pageNum);
 				
 				List<String> reviewFilmNames = new ArrayList<>();
 				for (Review r : reviews) {
 					reviewFilmNames.add(filmService.getNameByID(r.getFilmId(), lang));
 				}
 
-				long totalPageAmount = reviewService.countByUserId(userID);
+				long totalPageAmount = reviewService.countByUserId(userId);
 				request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 				request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 				
 				request.setAttribute(RequestAndSessionAttributes.REVIEW_VIEW_TYPE, RequestAndSessionAttributes.VIEW_TYPE_USER);
-				request.setAttribute(RequestAndSessionAttributes.USER_ID, userID);
+				request.setAttribute(RequestAndSessionAttributes.USER_ID, userId);
 				request.setAttribute(RequestAndSessionAttributes.REVIEWS, reviews);
 				request.setAttribute(RequestAndSessionAttributes.FILM_NAMES, reviewFilmNames);
 				request.getRequestDispatcher(JavaServerPageNames.REVIEWS_PAGE).forward(request, response);
@@ -78,7 +78,7 @@ public class OpenUserReviews implements Command {
 				log.error(String.format(EXCEPTION_IN_COMMAND,
 						e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID).forward(request, response);
+				request.getRequestDispatcher("/Controller?command=open_user_profile&userId=" + userId).forward(request, response);
 			}
 		}
 		

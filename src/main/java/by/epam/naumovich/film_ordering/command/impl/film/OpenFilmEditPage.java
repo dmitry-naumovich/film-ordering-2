@@ -39,15 +39,15 @@ public class OpenFilmEditPage implements Command {
 
         setPrevQueryAttributeToSession(request, session, log);
         String lang = fetchLanguageFromSession(session);
-		int filmID = fetchFilmIdFromRequest(request);
+		int filmId = fetchFilmIdFromRequest(request);
 
 		if (!isAuthorized(session) || !isAdmin(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.EDIT_FILM_RESTRICTION);
-			request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1")
+			request.getRequestDispatcher("/Controller?command=open_single_film&filmId=" + filmId + "&pageNum=1")
                     .forward(request, response);
 		}
 		else {
-            Film film = filmService.getByID(filmID, lang);
+            Film film = filmService.getByID(filmId, lang);
             String[] genres = filmService.getAvailableGenres(lang);
             String[] countries = filmService.getAvailableCountries(lang);
 

@@ -96,7 +96,7 @@
 	                        <th>
 	                          <a href="#" onclick="history.back();" class="btn btn-danger" role="button">${cancelBtn}</a>
 	                        </th>
-	                        <td> <a href="<c:url value="/Controller?command=add_order&filmID=${film.id}&userID=${sessionScope.userID}&price=${film.price}&discount=${discountAmount}&payment=${payment}" />" class="btn btn-primary" role="button">${buyBtn}</a></td>
+	                        <td> <a href="<c:url value="/Controller?command=add_order&filmId=${film.id}&userId=${sessionScope.userId}&price=${film.price}&discount=${discountAmount}&payment=${payment}" />" class="btn btn-primary" role="button">${buyBtn}</a></td>
 	                      </tr>
 	                    </tbody>
 	                </table>

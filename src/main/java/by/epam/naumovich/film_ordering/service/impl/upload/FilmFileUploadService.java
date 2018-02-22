@@ -1,265 +1,152 @@
 package by.epam.naumovich.film_ordering.service.impl.upload;
 
-import by.epam.naumovich.film_ordering.command.util.ErrorMessages;
-import by.epam.naumovich.film_ordering.command.util.FileNotUploadedException;
 import by.epam.naumovich.film_ordering.command.util.FileUploadConstants;
 import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.IFilmFileUploadService;
 import by.epam.naumovich.film_ordering.service.IFilmService;
-import java.io.File;
-import java.nio.file.Files;
+import by.epam.naumovich.film_ordering.service.util.FileUploader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 import static by.epam.naumovich.film_ordering.command.util.FileUploadConstants.FILM_IMGS_UPLOAD_DIR;
+import static by.epam.naumovich.film_ordering.command.util.FileUploadConstants.FRAME_FILE_NAME;
+import static by.epam.naumovich.film_ordering.command.util.FileUploadConstants.POSTER_FILE_NAME;
 
 @Slf4j
 @Service
 public class FilmFileUploadService implements IFilmFileUploadService {
 
     private final IFilmService filmService;
+    private final ServletFileUpload servletFileUpload;
 
     @Autowired
-    public FilmFileUploadService(IFilmService filmService) {
+    public FilmFileUploadService(IFilmService filmService, ServletFileUpload servletFileUpload) {
         this.filmService = filmService;
+        this.servletFileUpload = servletFileUpload;
     }
 
     @Override
-    public int storeFilesAndAddFilm(HttpServletRequest request) throws Exception {
-        String name = null;
-        String year = null;
-        String director = null;
-        String cast = null;
-        String[] countriesArray = null;
-        List<String> countries = new ArrayList<>();
-        String composer = null;
-        String[] genresArray = null;
-        List<String> genres = new ArrayList<>();
-        String length = null;
-        String price = null;
-        String description = null;
-        FileItem posterItem = null;
-        FileItem frameItem = null;
+    public int storeFilesAndAddFilm(HttpServletRequest request, HttpSession session) throws Exception {
+        FilmDTO filmDTO = parseMultipartRequestForFilm(request);
 
-        if (ServletFileUpload.isMultipartContent(request)) {
-            DiskFileItemFactory factory = new DiskFileItemFactory();
-            factory.setSizeThreshold(FileUploadConstants.MAX_MEMORY_SIZE);
-            factory.setRepository(new File(System.getProperty(FileUploadConstants.REPOSITORY)));
-            ServletFileUpload fileUpload = new ServletFileUpload(factory);
-            fileUpload.setSizeMax(FileUploadConstants.MAX_REQUEST_SIZE);
-            List<FileItem> items = fileUpload.parseRequest(request);
+        int filmID = filmService.create(filmDTO.getName(), filmDTO.getYear(), filmDTO.getDirector(), filmDTO.getCast(),
+                filmDTO.getCountriesArray(), filmDTO.getComposer(), filmDTO.getGenresArray(), filmDTO.getLength(),
+                filmDTO.getPrice(), filmDTO.getDescription());
 
-            for (FileItem item : items) {
-                if (!item.isFormField() && item.getName() != null && !item.getName().isEmpty()) {
-                    switch (item.getFieldName()) {
-                        case RequestAndSessionAttributes.FOLDER:
-                            posterItem = item;
-                            break;
-                        case RequestAndSessionAttributes.FRAME:
-                            frameItem = item;
-                            break;
-                        default:
-                            break;
-                    }
+        FileUploader.loadImage(session, filmDTO.getPosterItem(), POSTER_FILE_NAME, FILM_IMGS_UPLOAD_DIR + filmID + "/", true);
+        FileUploader.loadImage(session, filmDTO.getFrameItem(), FRAME_FILE_NAME, FILM_IMGS_UPLOAD_DIR + filmID + "/", true);
 
-                } else {
-                    switch (item.getFieldName()) {
-                        case RequestAndSessionAttributes.NAME:
-                            name = item.getString(FileUploadConstants.UTF_8);
-                            break;
-                        case RequestAndSessionAttributes.YEAR:
-                            year = item.getString();
-                            break;
-                        case RequestAndSessionAttributes.DIRECTOR:
-                            director = item.getString(FileUploadConstants.UTF_8);
-                            break;
-                        case RequestAndSessionAttributes.CAST:
-                            cast = item.getString(FileUploadConstants.UTF_8);
-                            break;
-                        case RequestAndSessionAttributes.COUNTRY:
-                            countries.add(item.getString());
-                            break;
-                        case RequestAndSessionAttributes.COMPOSER:
-                            composer = item.getString();
-                            break;
-                        case RequestAndSessionAttributes.GENRE:
-                            genres.add(item.getString());
-                            break;
-                        case RequestAndSessionAttributes.LENGTH:
-                            length = item.getString();
-                            break;
-                        case RequestAndSessionAttributes.PRICE:
-                            price = item.getString();
-                            break;
-                        case RequestAndSessionAttributes.DESCRIPTION:
-                            description = item.getString(FileUploadConstants.UTF_8);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        }
-        if (!countries.isEmpty()) {
-            countriesArray = new String[countries.size()];
-            countriesArray = countries.toArray(countriesArray);
-        }
-        if (!genres.isEmpty()) {
-            genresArray = new String[genres.size()];
-            genresArray = genres.toArray(genresArray);
-        }
-
-        int filmID = filmService.create(name, year, director, cast, countriesArray, composer,
-                genresArray, length, price, description);
-
-        HttpSession session = request.getSession(true);
-        proceedFilmImages(filmID, session, posterItem, frameItem); //TODO: use Spring for file upload!
-        log.debug(String.format(LogMessages.FILM_CREATED, name, filmID));
+        log.debug(String.format(LogMessages.FILM_CREATED, filmDTO.getName(), filmID));
         return filmID;
     }
 
     @Override
-    public void storeFilesAndUpdateFilm(int filmId, HttpServletRequest request) throws Exception {
-        String name = null;
-        String year = null;
-        String director = null;
-        String cast = null;
-        String[] countriesArray = null;
+    public void storeFilesAndUpdateFilm(int filmId, HttpServletRequest request, HttpSession session) throws Exception {
+        FilmDTO filmDTO = parseMultipartRequestForFilm(request);
+
+        filmService.update(filmId, filmDTO.getName(), filmDTO.getYear(), filmDTO.getDirector(), filmDTO.getCast(),
+                filmDTO.getCountriesArray(), filmDTO.getComposer(), filmDTO.getGenresArray(), filmDTO.getLength(),
+                filmDTO.getPrice(), filmDTO.getDescription());
+
+        FileUploader.writeFileItem(session, filmId, filmDTO.getPosterItem(), POSTER_FILE_NAME, FILM_IMGS_UPLOAD_DIR);
+        FileUploader.writeFileItem(session, filmId, filmDTO.getFrameItem(), FRAME_FILE_NAME, FILM_IMGS_UPLOAD_DIR);
+
+        log.debug(String.format(LogMessages.FILM_UPDATED, filmDTO.getName(), filmId));
+    }
+
+    private FilmDTO parseMultipartRequestForFilm(HttpServletRequest request)
+            throws FileUploadException, UnsupportedEncodingException {
+
+        FilmDTO filmDTO = new FilmDTO();
         List<String> countries = new ArrayList<>();
-        String composer = null;
-        String[] genresArray = null;
         List<String> genres = new ArrayList<>();
-        String length = null;
-        String price = null;
-        String description = null;
-        FileItem posterItem = null;
-        FileItem frameItem = null;
+
         if (ServletFileUpload.isMultipartContent(request)) {
-            DiskFileItemFactory factory = new DiskFileItemFactory();
-            factory.setSizeThreshold(FileUploadConstants.MAX_MEMORY_SIZE);
-            factory.setRepository(new File(System.getProperty(FileUploadConstants.REPOSITORY)));
-            ServletFileUpload fileUpload = new ServletFileUpload(factory);
-            fileUpload.setSizeMax(FileUploadConstants.MAX_REQUEST_SIZE);
-            List<FileItem> items = fileUpload.parseRequest(request);
+            List<FileItem> items = servletFileUpload.parseRequest(request);
 
             for (FileItem item : items) {
                 if (!item.isFormField() && item.getName() != null && !item.getName().isEmpty()) {
                     switch (item.getFieldName()) {
                         case RequestAndSessionAttributes.FOLDER:
-                            posterItem = item;
+                            filmDTO.setPosterItem(item);
                             break;
                         case RequestAndSessionAttributes.FRAME:
-                            frameItem = item;
+                            filmDTO.setFrameItem(item);
                             break;
                     }
-
                 } else {
                     switch (item.getFieldName()) {
                         case RequestAndSessionAttributes.NAME:
-                            name = item.getString(FileUploadConstants.UTF_8);
+                            filmDTO.setName(item.getString(FileUploadConstants.UTF_8));
                             break;
                         case RequestAndSessionAttributes.YEAR:
-                            year = item.getString();
+                            filmDTO.setYear(item.getString());
                             break;
                         case RequestAndSessionAttributes.DIRECTOR:
-                            director = item.getString(FileUploadConstants.UTF_8);
+                            filmDTO.setDirector(item.getString(FileUploadConstants.UTF_8));
                             break;
                         case RequestAndSessionAttributes.CAST:
-                            cast = item.getString(FileUploadConstants.UTF_8);
+                            filmDTO.setCast(item.getString(FileUploadConstants.UTF_8));
                             break;
                         case RequestAndSessionAttributes.COUNTRY:
                             countries.add(item.getString());
                             break;
                         case RequestAndSessionAttributes.COMPOSER:
-                            composer = item.getString();
+                            filmDTO.setComposer(item.getString());
                             break;
                         case RequestAndSessionAttributes.GENRE:
                             genres.add(item.getString());
                             break;
                         case RequestAndSessionAttributes.LENGTH:
-                            length = item.getString();
+                            filmDTO.setLength(item.getString());
                             break;
                         case RequestAndSessionAttributes.PRICE:
-                            price = item.getString();
+                            filmDTO.setPrice(item.getString());
                             break;
                         case RequestAndSessionAttributes.DESCRIPTION:
-                            description = item.getString(FileUploadConstants.UTF_8);
+                            filmDTO.setDescription(item.getString(FileUploadConstants.UTF_8));
                             break;
                     }
                 }
             }
         }
+
         if (!countries.isEmpty()) {
-            countriesArray = new String[countries.size()];
-            countriesArray = countries.toArray(countriesArray);
+            String[] countriesArray = new String[countries.size()];
+            filmDTO.setCountriesArray(countries.toArray(countriesArray));
         }
         if (!genres.isEmpty()) {
-            genresArray = new String[genres.size()];
-            genresArray = genres.toArray(genresArray);
+            String[] genresArray = new String[genres.size()];
+            filmDTO.setGenresArray(genres.toArray(genresArray));
         }
-        filmService.update(filmId, name, year, director, cast, countriesArray, composer, genresArray,
-                length, price, description);
-
-        HttpSession session = request.getSession(true);
-
-        if (posterItem != null) {
-            writeFileItem(session, filmId, posterItem, FileUploadConstants.POSTER_FILE_NAME);
-        }
-        if (frameItem != null) {
-            writeFileItem(session, filmId, frameItem, FileUploadConstants.FRAME_FILE_NAME);
-        }
-
-        log.debug(String.format(LogMessages.FILM_UPDATED, name, filmId));
+        return filmDTO;
     }
 
-    private void proceedFilmImages(int filmID, HttpSession session, FileItem posterItem, FileItem frameItem)
-            throws FileNotUploadedException {
-
-        String absoluteFilePath = session.getServletContext()
-                .getRealPath(FileUploadConstants.FILM_IMGS_UPLOAD_DIR + filmID + "/");
-        if (absoluteFilePath != null) {
-            new File(absoluteFilePath).mkdir();
-        }
-
-        if (posterItem != null) {
-            loadImage(posterItem, FileUploadConstants.POSTER_FILE_NAME, absoluteFilePath);
-        }
-
-        if (frameItem != null) {
-            loadImage(frameItem, FileUploadConstants.FRAME_FILE_NAME, absoluteFilePath);
-        }
-    }
-
-    private void loadImage(FileItem imgItem, String fileName, String absoluteFilePath) throws FileNotUploadedException {
-        String systemFileName = new File(fileName).getName();
-        File frame = new File(absoluteFilePath, systemFileName);
-        try {
-            imgItem.write(frame);
-        } catch (Exception e) {
-            throw new FileNotUploadedException(ErrorMessages.FILE_NOT_UPLOADED, e);
-        }
-    }
-
-    private void writeFileItem(HttpSession session, int filmID, FileItem item, String fileName) throws Exception {
-        String frameFileName = new File(fileName).getName();
-        String absoluteFilePath = session.getServletContext().getRealPath(FILM_IMGS_UPLOAD_DIR);
-        File image = new File(absoluteFilePath, frameFileName);
-
-        item.write(image);
-
-        String absTargetFilePath = session.getServletContext().getRealPath(FILM_IMGS_UPLOAD_DIR + filmID + "/");
-        File targetImg = new File(absTargetFilePath, frameFileName);
-
-        Files.move(image.toPath(), targetImg.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+    @Data
+    private class FilmDTO {
+        private String name;
+        private String year;
+        private String director;
+        private String cast;
+        private String[] countriesArray;
+        private String composer;
+        private String[] genresArray;
+        private String length;
+        private String price;
+        private String description;
+        private FileItem posterItem;
+        private FileItem frameItem;
     }
 }

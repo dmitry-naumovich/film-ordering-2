@@ -90,22 +90,22 @@
 		              <br> <br>
 		              <c:if test="${film.description != null}">
 		              	<p style="text-align:justify">${fn:substring(film.description, 0,60)}... 
-		              	<a class="btn btn-link" href="<c:url value="/Controller?command=open_single_film&filmID=${film.id}&pageNum=1"/>" role="button"> ${readMore} &raquo;</a>
+		              	<a class="btn btn-link" href="<c:url value="/Controller?command=open_single_film&filmId=${film.id}&pageNum=1"/>" role="button"> ${readMore} &raquo;</a>
 		              	</p>
 		              </c:if>
 		              
 		              <p>
 		              	<c:choose> 
               				<c:when test="${sessionScope.isAdmin}">
-              					<a class="btn btn-info" href="<c:url value="/Controller?command=open_film_edit_page&filmID=${film.id}"/>" role="button">${editFilmBtn}</a>
+              					<a class="btn btn-info" href="<c:url value="/Controller?command=open_film_edit_page&filmId=${film.id}"/>" role="button">${editFilmBtn}</a>
               				</c:when>
               				<c:otherwise>
               					<c:choose>
-	             					<c:when test="${sessionScope.authUser!=null && !empty requestScope.userOrderFilmIDs && fn:contains(requestScope.userOrderFilmIDs, film.id)}">
+	             					<c:when test="${sessionScope.authUser!=null && !empty requestScope.userOrderFilmIds && fn:contains(requestScope.userOrderFilmIds, film.id)}">
 	             						<button type="button" class="btn btn-default disabledBtn">${purchased}</button>
 	               					</c:when>
 	               					<c:otherwise>
-	               						<a class="btn btn-info" href="<c:url value="/Controller?command=open_new_order_page&filmID=${film.id}"/>" role="button">${film.price} ${rublesShorten}</a>
+	               						<a class="btn btn-info" href="<c:url value="/Controller?command=open_new_order_page&filmId=${film.id}"/>" role="button">${film.price} ${rublesShorten}</a>
 	               					</c:otherwise>
                					</c:choose>
               					

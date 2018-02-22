@@ -38,7 +38,7 @@ public class UnbanUser implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
 			throws IOException, ServletException, ServiceException {
 
-		int userID = fetchUserIdFromRequest(request);
+		int userId = fetchUserIdFromRequest(request);
 		
 		if (!isAuthorized(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.UNBAN_USER_RESTRICTION);
@@ -46,16 +46,16 @@ public class UnbanUser implements Command {
 		}
 		else if (!isAdmin(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.UNBAN_USER_RESTRICTION);
-			request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+			request.getRequestDispatcher("/Controller?command=open_user_profile&userId=" + userId)
                     .forward(request, response);
 		}
 		else {
-            userService.unbanUser(userID);
+            userService.unbanUser(userId);
 
-            log.debug(String.format(LogMessages.USER_UNBANNED, userID));
+            log.debug(String.format(LogMessages.USER_UNBANNED, userId));
             request.setAttribute(SUCCESS_MESSAGE, SuccessMessages.USER_UNBANNED);
             //Thread.sleep(1000);
-            request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+            request.getRequestDispatcher("/Controller?command=open_user_profile&userId=" + userId)
                     .forward(request, response);
 		}
 	}

@@ -46,24 +46,24 @@ public class AddReview implements Command {
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else {
-			int userID = fetchUserIdFromRequest(request);
-			int filmID = fetchFilmIdFromRequest(request);
+			int userId = fetchUserIdFromRequest(request);
+			int filmId = fetchFilmIdFromRequest(request);
 			String mark = request.getParameter(RequestAndSessionAttributes.REVIEW_MARK);
 			String type = request.getParameter(RequestAndSessionAttributes.REVIEW_TYPE);
 			String text = request.getParameter(RequestAndSessionAttributes.REVIEW_TEXT);
 			
 			try {
-				reviewService.create(userID, filmID, mark, type, text);
+				reviewService.create(userId, filmId, mark, type, text);
 
-				log.debug(String.format(REVIEW_CREATED, userID, filmID));
+				log.debug(String.format(REVIEW_CREATED, userId, filmId));
 				request.setAttribute(SUCCESS_MESSAGE, SuccessMessages.REVIEW_ADDED);
-				request.getRequestDispatcher("/Controller?command=open_single_review&userID=" + userID + "&filmID=" + filmID).forward(request, response);
+				request.getRequestDispatcher("/Controller?command=open_single_review&userId=" + userId + "&filmId=" + filmId).forward(request, response);
 
 			} catch (AddReviewServiceException e) {
 				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
 						e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher("/Controller?command=open_new_review_page&filmID=" + filmID).forward(request, response);
+				request.getRequestDispatcher("/Controller?command=open_new_review_page&filmId=" + filmId).forward(request, response);
 			}
 		}
 	}

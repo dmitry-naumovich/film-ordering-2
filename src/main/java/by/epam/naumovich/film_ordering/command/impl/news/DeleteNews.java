@@ -37,16 +37,16 @@ public class DeleteNews implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
 			throws IOException, ServletException, ServiceException {
 
-		int newsID = Integer.valueOf(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
+		int newsId = Integer.valueOf(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
 		 
 		if (!isAuthorized(session) || !isAdmin(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.DELETE_NEWS_RESTRICTION);
-			request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID)
+			request.getRequestDispatcher("/Controller?command=open_single_news&newsId=" + newsId)
 					.forward(request, response);
 		}
 		else {
-            newsService.delete(newsID);
-            log.debug(String.format(LogMessages.NEWS_DELETED, newsID));
+            newsService.delete(newsId);
+            log.debug(String.format(LogMessages.NEWS_DELETED, newsId));
             request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.NEWS_DELETED);
             request.getRequestDispatcher("/Controller?command=open_all_news&pageNum=1").forward(request, response);
 		}

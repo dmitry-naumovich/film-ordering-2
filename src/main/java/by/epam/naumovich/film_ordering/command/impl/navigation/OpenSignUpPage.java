@@ -30,9 +30,9 @@ public class OpenSignUpPage implements Command {
         setPrevQueryAttributeToSession(request, session, log);
 		
 		if (isAuthorized(session)) {
-			int userID = fetchUserIdFromSession(session);
+			int userId = fetchUserIdFromSession(session);
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.LOG_OUT_FOR_SIGN_UP);
-			request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+			request.getRequestDispatcher("/Controller?command=open_user_profile&userId=" + userId)
                     .forward(request, response);
 		} else {
 			request.getRequestDispatcher(JavaServerPageNames.SIGN_UP_PAGE).forward(request, response);

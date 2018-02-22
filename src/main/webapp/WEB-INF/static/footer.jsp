@@ -44,16 +44,16 @@
         <ul>
       		<c:choose> 
       			<c:when test="${sessionScope.isAdmin}">
-      				 <li><a href="<c:url value="/Controller?command=open_user_profile&userID=${sessionScope.userID}"/>" >${profile}</a></li>
+      				 <li><a href="<c:url value="/Controller?command=open_user_profile&userId=${sessionScope.userId}"/>" >${profile}</a></li>
       				 <li><a href="<c:url value="/Controller?command=open_all_reviews&pageNum=1"/>">${reviews}</a></li>
       				 <li><a href="<c:url value="/Controller?command=open_all_orders&pageNum=1"/>">${orders}</a></li>
       				 <li><a href="<c:url value="/Controller?command=open_all_users&pageNum=1"/>">${userList}</a></li>
       			</c:when>
       			<c:otherwise> 
-      				 <li><a href="<c:url value="/Controller?command=open_user_profile&userID=${sessionScope.userID}"/>" >${profile}</a></li>
-      				 <li><a href="<c:url value="/Controller?command=open_user_reviews&userID=${sessionScope.userID}&pageNum=1"/>">${myReviews}</a></li>
-      				 <li><a href="<c:url value="/Controller?command=open_user_orders&userID=${sessionScope.userID}&pageNum=1"/>">${myOrders}</a></li>
-      				 <li><a href="<c:url value="/Controller?command=open_user_settings&userID=${sessionScope.userID}"/>">${settings}</a></li>
+      				 <li><a href="<c:url value="/Controller?command=open_user_profile&userId=${sessionScope.userId}"/>" >${profile}</a></li>
+      				 <li><a href="<c:url value="/Controller?command=open_user_reviews&userId=${sessionScope.userId}&pageNum=1"/>">${myReviews}</a></li>
+      				 <li><a href="<c:url value="/Controller?command=open_user_orders&userId=${sessionScope.userId}&pageNum=1"/>">${myOrders}</a></li>
+      				 <li><a href="<c:url value="/Controller?command=open_user_settings&userId=${sessionScope.userId}"/>">${settings}</a></li>
       			</c:otherwise>
       		</c:choose> 
         </ul>

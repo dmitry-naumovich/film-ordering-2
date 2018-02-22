@@ -75,7 +75,7 @@
                         <div class="row panel-heading news-heading" >
                         	<div class="col-md-9 col-sm-9 col-xs-9 col-lg-9">
                         		<h4 class="text-left">
-                        			<a href="<c:url value="/Controller?command=open_single_news&newsID=${news.id}"/>" > ${news.title} </a>
+                        			<a href="<c:url value="/Controller?command=open_single_news&newsId=${news.id}"/>" > ${news.title} </a>
                         		</h4>
                         	</div>
                         	<div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">

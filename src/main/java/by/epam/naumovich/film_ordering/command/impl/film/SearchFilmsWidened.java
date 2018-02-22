@@ -61,9 +61,9 @@ public class SearchFilmsWidened implements Command {
 			request.setAttribute(RequestAndSessionAttributes.FILMS, foundFilms);
 			if (isAuthorized(session)) {
 				if (!isAdmin(session)) {
-					int userID = fetchUserIdFromSession(session);
+					int userId = fetchUserIdFromSession(session);
 					try {
-						List<Order> orders = orderService.getAllByUserId(userID);
+						List<Order> orders = orderService.getAllByUserId(userId);
 						List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
 						request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
 					} catch (GetOrderServiceException e) {

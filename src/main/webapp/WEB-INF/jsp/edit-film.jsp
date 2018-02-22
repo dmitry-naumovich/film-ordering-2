@@ -102,7 +102,7 @@
 					</div>
 				</c:if>
 				
-	<form  name="editFilmForm" class="form-horizontal" method="post" action="Controller?command=edit_film&filmID=${film.id}" enctype="multipart/form-data" onSubmit="return validateForm(event);">
+	<form  name="editFilmForm" class="form-horizontal" method="post" action="Controller?command=edit_film&filmId=${film.id}" enctype="multipart/form-data" onSubmit="return validateForm(event);">
 	  	<div class="form-group">
       <label class="col-md-3 col-sm-3 col-xs-3 col-lg-3 control-label">${name}*:</label>
       <div class="col-md-9 col-sm-9 col-xs-9 col-lg-9">

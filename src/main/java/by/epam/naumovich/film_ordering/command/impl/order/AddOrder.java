@@ -46,19 +46,19 @@ public class AddOrder implements Command {
 		}
 		else if (isAdmin(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.ADMIN_CAN_NOT_ORDER);
-			request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" +
+			request.getRequestDispatcher("/Controller?command=open_single_film&filmId=" +
                     Integer.parseInt(request.getParameter(RequestAndSessionAttributes.FILM_ID)) + "&pageNum=1");
 		}
 		else {
-			int filmID = fetchFilmIdFromRequest(request);
-			int userID = fetchUserIdFromRequest(request);
+			int filmId = fetchFilmIdFromRequest(request);
+			int userId = fetchUserIdFromRequest(request);
 
 			String price = request.getParameter(RequestAndSessionAttributes.PRICE);
 			String discount = request.getParameter(RequestAndSessionAttributes.DISCOUNT);
 			String payment = request.getParameter(RequestAndSessionAttributes.PAYMENT);
 			
 			try {
-				int orderNum = orderService.create(filmID, userID, price, discount, payment);
+				int orderNum = orderService.create(filmId, userId, price, discount, payment);
 				log.debug(String.format(LogMessages.ORDER_CREATED, orderNum, payment));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.ORDER_ADDED);
 				request.getRequestDispatcher("/Controller?command=open_single_order&orderNum=" + orderNum)
@@ -67,7 +67,7 @@ public class AddOrder implements Command {
 				log.error(String.format(EXCEPTION_IN_COMMAND,
                         e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher("/Controller?command=open_new_order_page&filmID=" + filmID)
+				request.getRequestDispatcher("/Controller?command=open_new_order_page&filmId=" + filmId)
                         .forward(request, response);
 			}
 		}

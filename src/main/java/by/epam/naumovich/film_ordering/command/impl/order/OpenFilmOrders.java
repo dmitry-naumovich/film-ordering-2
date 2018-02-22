@@ -50,7 +50,7 @@ public class OpenFilmOrders implements Command {
 		setPrevQueryAttributeToSession(request, session, log);
 
 		String lang = fetchLanguageFromSession(session);
-		int filmID = fetchFilmIdFromRequest(request);
+		int filmId = fetchFilmIdFromRequest(request);
 		int pageNum = fetchPageNumberFromRequest(request);
 		
 		if (!isAuthorized(session)) {
@@ -59,36 +59,36 @@ public class OpenFilmOrders implements Command {
 		}
 		else if (!isAdmin(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.FILM_ORDERS_RESTRICTION);
-			request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1")
+			request.getRequestDispatcher("/Controller?command=open_single_film&filmId=" + filmId + "&pageNum=1")
                     .forward(request, response);
 		}
 		else {
 		
 			try {
-				List<Order> orders = orderService.getAllByFilmId(filmID);
+				List<Order> orders = orderService.getAllByFilmId(filmId);
 				
 				List<String> userLogins = new ArrayList<>();
 				for (Order o : orders) {
 					String userLogin = userService.getLoginByID(o.getUserId());
 					userLogins.add(userLogin);
 				}
-				String filmName = filmService.getNameByID(filmID, lang);
+				String filmName = filmService.getNameByID(filmId, lang);
 
-				long totalPageAmount = orderService.countPagesByFilmId(filmID);
+				long totalPageAmount = orderService.countPagesByFilmId(filmId);
 				request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 				request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 				
 				request.setAttribute(RequestAndSessionAttributes.ORDERS, orders);
 				request.setAttribute(RequestAndSessionAttributes.FILM_NAME, filmName);
 				request.setAttribute(RequestAndSessionAttributes.USER_LOGINS, userLogins);
-				request.setAttribute(RequestAndSessionAttributes.FILM_ID, filmID);
+				request.setAttribute(RequestAndSessionAttributes.FILM_ID, filmId);
 				request.setAttribute(RequestAndSessionAttributes.ORDER_VIEW_TYPE, RequestAndSessionAttributes.VIEW_TYPE_FILM);
 				request.getRequestDispatcher(JavaServerPageNames.ORDERS_PAGE).forward(request, response);
 			} catch (GetOrderServiceException e) {
 				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
                         e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1")
+				request.getRequestDispatcher("/Controller?command=open_single_film&filmId=" + filmId + "&pageNum=1")
                         .forward(request, response);
 			}
 		}

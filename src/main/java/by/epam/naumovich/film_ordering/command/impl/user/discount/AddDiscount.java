@@ -41,7 +41,7 @@ public class AddDiscount implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
             throws IOException, ServletException, ServiceException {
 
-		int userID = fetchUserIdFromRequest(request);
+		int userId = fetchUserIdFromRequest(request);
 		
 		if (!isAuthorized(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.ADD_DISCOUNT_RESTRICTION);
@@ -49,7 +49,7 @@ public class AddDiscount implements Command {
 		}
 		else if (!isAdmin(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.ADD_DISCOUNT_RESTRICTION);
-			request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+			request.getRequestDispatcher("/Controller?command=open_user_profile&userId=" + userId)
                     .forward(request, response);
 		}
 		else {
@@ -58,17 +58,17 @@ public class AddDiscount implements Command {
 			String endTime = request.getParameter(RequestAndSessionAttributes.END_TIME);
 			
 			try {
-				discountService.create(userID, amount, endDate, endTime);
-				log.debug(String.format(LogMessages.DISCOUNT_CREATED, userID, amount));
+				discountService.create(userId, amount, endDate, endTime);
+				log.debug(String.format(LogMessages.DISCOUNT_CREATED, userId, amount));
 				request.setAttribute(SUCCESS_MESSAGE, SuccessMessages.DISCOUNT_ADDED);
 				//Thread.sleep(1000);
-				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+				request.getRequestDispatcher("/Controller?command=open_user_profile&userId=" + userId)
                         .forward(request, response);
 			} catch (DiscountServiceException e) {
 				log.error(String.format(EXCEPTION_IN_COMMAND,
                         e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+				request.getRequestDispatcher("/Controller?command=open_user_profile&userId=" + userId)
                         .forward(request, response);
 			}
 		}

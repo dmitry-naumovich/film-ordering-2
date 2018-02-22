@@ -4,175 +4,122 @@ import by.epam.naumovich.film_ordering.command.util.FileUploadConstants;
 import by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes;
 import by.epam.naumovich.film_ordering.service.IUserFileUploadService;
 import by.epam.naumovich.film_ordering.service.IUserService;
-import java.io.File;
-import java.io.IOException;
+import by.epam.naumovich.film_ordering.service.util.FileUploader;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 
-import static by.epam.naumovich.film_ordering.command.util.LogMessages.EXCEPTION_IN_COMMAND;
-import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
+import static by.epam.naumovich.film_ordering.command.util.FileUploadConstants.AVATARS_UPLOAD_DIR;
+import static by.epam.naumovich.film_ordering.command.util.FileUploadConstants.AVATAR_FILE_EXTENSION;
+import static by.epam.naumovich.film_ordering.command.util.FileUploadConstants.AVATAR_FILE_NAME_TEMPLATE;
 
 @Slf4j
 @Service
 public class UserFileUploadService implements IUserFileUploadService {
 
     private final IUserService userService;
+    private final ServletFileUpload servletFileUpload;
 
     @Autowired
-    public UserFileUploadService(IUserService userService) {
+    public UserFileUploadService(IUserService userService, ServletFileUpload servletFileUpload) {
         this.userService = userService;
+        this.servletFileUpload = servletFileUpload;
     }
 
     @Override
-    public Pair<Integer, String> storeFilesAndAddUser(HttpServletRequest request) throws Exception {
-        HttpSession session = request.getSession(true);
+    public Pair<Integer, String> storeFilesAndAddUser(HttpServletRequest request, HttpSession session) throws Exception {
+        UserDTO userDTO = parseMultipartRequestForUser(request);
 
-        String login = null;
-        String name = null;
-        String surname = null;
-        String pwd = null;
-        String sex = null;
-        String bDate = null;
-        String phone = null;
-        String email = null;
-        String about = null;
-        FileItem avatarItem = null;
+        int userId = userService.create(userDTO.getLogin(), userDTO.getName(), userDTO.getSurname(), userDTO.getPwd(),
+                userDTO.getSex(), userDTO.getBDate(), userDTO.getPhone(), userDTO.getEmail(), userDTO.getAbout());
+
+        FileUploader.loadImage(session, userDTO.getAvatarItem(), buildAvatarFileName(userId), AVATARS_UPLOAD_DIR, false);
+
+        return Pair.of(userId, userDTO.getLogin());
+    }
+
+    @Override
+    public void storeFilesAndUpdateUser(int userId, HttpServletRequest request, HttpSession session) throws Exception {
+        UserDTO userDTO = parseMultipartRequestForUser(request);
+
+        FileUploader.loadImage(session, userDTO.getAvatarItem(), buildAvatarFileName(userId), AVATARS_UPLOAD_DIR, false);
+
+        userService.update(userId, userDTO.getName(), userDTO.getSurname(), userDTO.getPwd(), userDTO.getSex(),
+                userDTO.getBDate(), userDTO.getPhone(), userDTO.getEmail(), userDTO.getAbout());
+    }
+
+    private UserDTO parseMultipartRequestForUser(HttpServletRequest request) throws FileUploadException,
+            UnsupportedEncodingException {
+
+        UserDTO userDTO = new UserDTO();
+
         if (ServletFileUpload.isMultipartContent(request)) {
-            DiskFileItemFactory factory = new DiskFileItemFactory();
-            factory.setSizeThreshold(FileUploadConstants.MAX_MEMORY_SIZE);
-            factory.setRepository(new File(System.getProperty(FileUploadConstants.REPOSITORY)));
-            ServletFileUpload  fileUpload = new ServletFileUpload(factory);
-            fileUpload.setSizeMax(FileUploadConstants.MAX_REQUEST_SIZE);
-            List<FileItem> items = fileUpload.parseRequest(request);
+            List<FileItem> items = servletFileUpload.parseRequest(request);
 
             for (FileItem item : items) {
                 if (!item.isFormField() && item.getName() != null && !item.getName().isEmpty()) {
-                    avatarItem = item;
+                    userDTO.setAvatarItem(item);
                 } else {
                     switch (item.getFieldName()) {
                         case RequestAndSessionAttributes.LOGIN:
-                            login = item.getString(FileUploadConstants.UTF_8);
+                            userDTO.setLogin(item.getString(FileUploadConstants.UTF_8));
                             break;
                         case RequestAndSessionAttributes.NAME:
-                            name = item.getString(FileUploadConstants.UTF_8);
+                            userDTO.setName(item.getString(FileUploadConstants.UTF_8));
                             break;
                         case RequestAndSessionAttributes.SURNAME:
-                            surname = item.getString(FileUploadConstants.UTF_8);
+                            userDTO.setSurname(item.getString(FileUploadConstants.UTF_8));
                             break;
                         case RequestAndSessionAttributes.PASSWORD:
-                            pwd = item.getString(FileUploadConstants.UTF_8);
+                            userDTO.setPwd(item.getString(FileUploadConstants.UTF_8));
                             break;
                         case RequestAndSessionAttributes.SEX:
-                            sex = item.getString();
+                            userDTO.setSex(item.getString());
                             break;
                         case RequestAndSessionAttributes.BDATE:
-                            bDate = item.getString();
+                            userDTO.setBDate(item.getString());
                             break;
                         case RequestAndSessionAttributes.PHONE:
-                            phone = item.getString();
+                            userDTO.setPhone(item.getString());
                             break;
                         case RequestAndSessionAttributes.EMAIL:
-                            email = item.getString();
+                            userDTO.setEmail(item.getString());
                             break;
                         case RequestAndSessionAttributes.ABOUT:
-                            about = item.getString(FileUploadConstants.UTF_8);
+                            userDTO.setAbout(item.getString(FileUploadConstants.UTF_8));
                             break;
                     }
                 }
             }
         }
-
-
-        int userID = userService.create(login, name, surname, pwd, sex, bDate, phone, email, about);
-
-        if (avatarItem != null) {
-            try {
-                String fileName = new File(FileUploadConstants.AVATAR_FILE_NAME_TEMPLATE + userID +
-                        FileUploadConstants.AVATAR_FILE_EXTENSION).getName();
-                String absoluteFilePath = session.getServletContext()
-                        .getRealPath(FileUploadConstants.AVATARS_UPLOAD_DIR);
-                File avatar = new File(absoluteFilePath, fileName);
-                avatarItem.write(avatar);
-            } catch (IOException e) {
-                log.error(String.format(EXCEPTION_IN_COMMAND,
-                        e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
-                request.setAttribute(ERROR_MESSAGE, e.getMessage());
-            }
-        }
-
-        return Pair.of(userID, login);
+        return userDTO;
     }
 
-    @Override
-    public void storeFilesAndUpdateUser(int userId, HttpServletRequest request) throws Exception {
-        HttpSession session = request.getSession(true);
+    private String buildAvatarFileName(int userId) {
+        return AVATAR_FILE_NAME_TEMPLATE + userId + AVATAR_FILE_EXTENSION;
+    }
 
-        String name = null;
-        String surname = null;
-        String pwd = null;
-        String sex = null;
-        String bDate = null;
-        String phone = null;
-        String email = null;
-        String about = null;
-
-        if (ServletFileUpload.isMultipartContent(request)) {
-            DiskFileItemFactory factory = new DiskFileItemFactory();
-            factory.setSizeThreshold(FileUploadConstants.MAX_MEMORY_SIZE);
-            factory.setRepository(new File(System.getProperty(FileUploadConstants.REPOSITORY)));
-            ServletFileUpload  fileUpload = new ServletFileUpload(factory);
-            fileUpload.setSizeMax(FileUploadConstants.MAX_REQUEST_SIZE);
-            List<FileItem> items = fileUpload.parseRequest(request);
-
-            for (FileItem item : items) {
-                if (!item.isFormField()) {
-                    String fileName = new File(FileUploadConstants.AVATAR_FILE_NAME_TEMPLATE
-                            + userId + FileUploadConstants.AVATAR_FILE_EXTENSION).getName();
-                    String absoluteFilePath = session.getServletContext()
-                            .getRealPath(FileUploadConstants.AVATARS_UPLOAD_DIR);
-                    File uploadedFile = new File(absoluteFilePath, fileName);
-
-                    item.write(uploadedFile);
-                } else {
-                    switch (item.getFieldName()) {
-                        case RequestAndSessionAttributes.NAME:
-                            name = item.getString(FileUploadConstants.UTF_8);
-                            break;
-                        case RequestAndSessionAttributes.SURNAME:
-                            surname = item.getString(FileUploadConstants.UTF_8);
-                            break;
-                        case RequestAndSessionAttributes.PASSWORD:
-                            pwd = item.getString(FileUploadConstants.UTF_8);
-                            break;
-                        case RequestAndSessionAttributes.SEX:
-                            sex = item.getString();
-                            break;
-                        case RequestAndSessionAttributes.BDATE:
-                            bDate = item.getString();
-                            break;
-                        case RequestAndSessionAttributes.PHONE:
-                            phone = item.getString();
-                            break;
-                        case RequestAndSessionAttributes.EMAIL:
-                            email = item.getString();
-                            break;
-                        case RequestAndSessionAttributes.ABOUT:
-                            about = item.getString(FileUploadConstants.UTF_8);
-                            break;
-                    }
-                }
-            }
-        }
-
-        userService.update(userId, name, surname, pwd, sex, bDate, phone, email, about);
+    @Data
+    private class UserDTO {
+        private String login;
+        private String name;
+        private String surname;
+        private String pwd;
+        private String sex;
+        private String bDate;
+        private String phone;
+        private String email;
+        private String about;
+        private FileItem avatarItem;
     }
 }

@@ -46,13 +46,13 @@ public class OpenSingleReview implements Command {
 		setPrevQueryAttributeToSession(request, session, log);
 
 		String lang = fetchLanguageFromSession(session);
-		int userID = fetchUserIdFromRequest(request);
-		int filmID = fetchFilmIdFromRequest(request);
+		int userId = fetchUserIdFromRequest(request);
+		int filmId = fetchFilmIdFromRequest(request);
 		
 		try {
-			Review rev = reviewService.getByUserAndFilmId(userID, filmID);
-			String userLogin = userService.getLoginByID(userID);
-			String filmName = filmService.getByID(filmID, lang).getName();
+			Review rev = reviewService.getByUserAndFilmId(userId, filmId);
+			String userLogin = userService.getLoginByID(userId);
+			String filmName = filmService.getByID(filmId, lang).getName();
 			
 			request.setAttribute(RequestAndSessionAttributes.REVIEW, rev);
 			request.setAttribute(RequestAndSessionAttributes.LOGIN, userLogin);

@@ -50,7 +50,7 @@ public class EditNews implements Command {
 		}
 		else {
 			try {
-				fileUploadService.storeFilesAndUpdateNews(newsId, request);
+				fileUploadService.storeFilesAndUpdateNews(newsId, request, session);
 				
 				log.debug(String.format(LogMessages.NEWS_UPDATED, newsId));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.NEWS_EDITED);

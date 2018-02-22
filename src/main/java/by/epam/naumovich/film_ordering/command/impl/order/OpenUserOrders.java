@@ -59,31 +59,30 @@ public class OpenUserOrders implements Command {
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else {
-			int userID = 0;
-			if (!session.getAttribute(USER_ID).toString().equals(request.getParameter(USER_ID)) && !isAdmin(session)) {
-				userID = Integer.parseInt(session.getAttribute(USER_ID).toString());
-			}
-			else {
-				userID = Integer.parseInt(request.getParameter(USER_ID));
-			}
+            int userId = fetchUserIdFromSession(session);
+
+			if (isAdmin(session)) {
+			  userId = fetchUserIdFromRequest(request);
+            }
+
 			try {
-				List<Order> orders = orderService.getAllPartByUserId(userID, pageNum);
+				List<Order> orders = orderService.getAllPartByUserId(userId, pageNum);
 				
 				List<String> filmNames = new ArrayList<>();
 				for (Order o : orders) {
 					String filmName = filmService.getNameByID(o.getFilmId(), lang);
 					filmNames.add(filmName);
 				}
-				String userLogin = userService.getLoginByID(userID);
+				String userLogin = userService.getLoginByID(userId);
 
-				long totalPageAmount = orderService.countPagesByUserId(userID);
+				long totalPageAmount = orderService.countPagesByUserId(userId);
 				request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 				request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 				
 				request.setAttribute(RequestAndSessionAttributes.ORDERS, orders);
 				request.setAttribute(RequestAndSessionAttributes.FILM_NAMES, filmNames);
 				request.setAttribute(RequestAndSessionAttributes.USER_LOGIN, userLogin);
-				request.setAttribute(USER_ID, userID);
+				request.setAttribute(USER_ID, userId);
 				request.setAttribute(RequestAndSessionAttributes.ORDER_VIEW_TYPE, RequestAndSessionAttributes.VIEW_TYPE_USER);
 				request.getRequestDispatcher(JavaServerPageNames.ORDERS_PAGE).forward(request, response);
 				
@@ -91,7 +90,7 @@ public class OpenUserOrders implements Command {
 				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
 						e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+				request.getRequestDispatcher("/Controller?command=open_user_profile&userId=" + userId)
 						.forward(request, response);
 			}
 		}

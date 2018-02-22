@@ -27,7 +27,7 @@ public final class RequestAndSessionAttributes {
 	public static final String DIRECTOR = "director";
 	public static final String DISCOUNT = "discount";
 	public static final String DISCOUNT_AMOUNT = "discountAmount";
-	public static final String DISCOUNT_ID = "discountID";
+	public static final String DISCOUNT_ID = "discountId";
 	public static final String DISCOUNT_LIST = "discountList";
 	public static final String EMAIL = "email";
 	public static final String EMPTY_STRING = "";
@@ -35,7 +35,7 @@ public final class RequestAndSessionAttributes {
 	public static final String END_DATE = "endDate";
 	public static final String END_TIME = "endTime";
 	public static final String ERROR_MESSAGE = "errorMessage";
-	public static final String FILM_ID = "filmID";
+	public static final String FILM_ID = "filmId";
 	public static final String FILM_NAME = "filmName";
 	public static final String FILM_NAMES = "filmNames";
 	public static final String FILM = "film";
@@ -51,7 +51,7 @@ public final class RequestAndSessionAttributes {
 	public static final String LOGINS = "logins";
 	public static final String NAME = "name";
 	public static final String NEWS = "news";
-	public static final String NEWS_ID = "newsID";
+	public static final String NEWS_ID = "newsId";
 	public static final String NEWS_TITLE = "newsTitle";
 	public static final String NEWS_TEXT = "newsText";
 	public static final String NOVELTY_LIST = "noveltyList";
@@ -82,10 +82,10 @@ public final class RequestAndSessionAttributes {
 	public static final String SUCCESS_MESSAGE = "successMessage";
 	public static final String SURNAME = "surname";
 	public static final String USER_DISCOUNT = "userDiscount";
-	public static final String USER_ID = "userID";
+	public static final String USER_ID = "userId";
 	public static final String USER_LOGIN = "userLogin";
 	public static final String USER_LOGINS = "userLogins";
-	public static final String USER_ORDER_FILM_IDS = "userOrderFilmIDs";
+	public static final String USER_ORDER_FILM_IDS = "userOrderFilmIds";
 	public static final String USER = "user";
 	public static final String USERS = "users";
 	public static final String VIEW_TYPE_ALL = "all";

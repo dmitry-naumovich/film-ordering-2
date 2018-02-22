@@ -51,25 +51,25 @@ public class OpenSingleFilm implements Command {
         setPrevQueryAttributeToSession(request, session, log);
 
 		String lang = fetchLanguageFromSession(session);
-		int filmID = fetchFilmIdFromRequest(request);
+		int filmId = fetchFilmIdFromRequest(request);
 		int pageNum = fetchPageNumberFromRequest(request);
 		
 		try {
-			Film film = filmService.getByID(filmID, lang);
+			Film film = filmService.getByID(filmId, lang);
 			request.setAttribute(RequestAndSessionAttributes.FILM, film);
 			
 			if (isAuthorized(session)) {
 				if (!isAdmin(session)) {
-					int userID = fetchUserIdFromSession(session);
+					int userId = fetchUserIdFromSession(session);
 					try {
-						reviewService.getByUserAndFilmId(userID, filmID);
+						reviewService.getByUserAndFilmId(userId, filmId);
 						request.setAttribute(RequestAndSessionAttributes.OWN_REVIEW_EXISTS, true);
 					} catch (GetReviewServiceException e) {
 						request.setAttribute(RequestAndSessionAttributes.OWN_REVIEW_EXISTS, false);
 					}
 					
 					try {
-						Order order = orderService.getByUserAndFilmId(userID, filmID);
+						Order order = orderService.getByUserAndFilmId(userId, filmId);
 						request.setAttribute(RequestAndSessionAttributes.OWN_ORDER_EXISTS, true);
 						request.setAttribute(RequestAndSessionAttributes.ORDER_NUM, order.getOrdNum());
 					} catch (GetOrderServiceException e) {
@@ -79,11 +79,11 @@ public class OpenSingleFilm implements Command {
 				}
 			}
 			
-			List<Review> reviews = reviewService.getAllPartByFilmId(filmID, pageNum);
+			List<Review> reviews = reviewService.getAllPartByFilmId(filmId, pageNum);
 			request.setAttribute(RequestAndSessionAttributes.REVIEWS, reviews);
 			request.setAttribute(RequestAndSessionAttributes.REVIEW_VIEW_TYPE, RequestAndSessionAttributes.VIEW_TYPE_FILM);
 			
-			long totalPageAmount = reviewService.countByFilmId(filmID);
+			long totalPageAmount = reviewService.countByFilmId(filmId);
 			request.setAttribute(RequestAndSessionAttributes.NUMBER_OF_PAGES, totalPageAmount);
 			request.setAttribute(RequestAndSessionAttributes.CURRENT_PAGE, pageNum);
 			

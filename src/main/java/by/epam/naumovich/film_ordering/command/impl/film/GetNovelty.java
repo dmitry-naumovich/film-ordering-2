@@ -54,9 +54,9 @@ public class GetNovelty implements Command {
             session.setAttribute(RequestAndSessionAttributes.NOVELTY_LIST, filmSet);
 
             if (isAuthorized(session) && !isAdmin(session)) {
-                int userID = fetchUserIdFromSession(session);
+                int userId = fetchUserIdFromSession(session);
                 try {
-                    List<Order> orders = orderService.getAllByUserId(userID);
+                    List<Order> orders = orderService.getAllByUserId(userId);
                     List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
                     request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
                 } catch (GetOrderServiceException e) {

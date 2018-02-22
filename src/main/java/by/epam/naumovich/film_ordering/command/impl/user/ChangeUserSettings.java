@@ -6,7 +6,6 @@ import by.epam.naumovich.film_ordering.command.util.JavaServerPageNames;
 import by.epam.naumovich.film_ordering.command.util.LogMessages;
 import by.epam.naumovich.film_ordering.command.util.SuccessMessages;
 import by.epam.naumovich.film_ordering.service.IUserFileUploadService;
-import by.epam.naumovich.film_ordering.service.IUserService;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.user.UserUpdateServiceException;
 import java.io.IOException;
@@ -51,19 +50,19 @@ public class ChangeUserSettings implements Command {
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else {
-			int userID = fetchUserIdFromSession(session);
+			int userId = fetchUserIdFromSession(session);
 			try {
-				fileUploadService.storeFilesAndUpdateUser(userID, request);
+				fileUploadService.storeFilesAndUpdateUser(userId, request, session);
 
-				log.debug(String.format(LogMessages.USER_SETTINGS_UPDATED, userID));
+				log.debug(String.format(LogMessages.USER_SETTINGS_UPDATED, userId));
 				request.setAttribute(SUCCESS_MESSAGE, SuccessMessages.SETTINGS_UPDATED);
-				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+				request.getRequestDispatcher("/Controller?command=open_user_profile&userId=" + userId)
                         .forward(request, response);
 			} catch (UserUpdateServiceException e) {
 				log.error(String.format(EXCEPTION_IN_COMMAND,
                         e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher("/Controller?command=open_user_settings&userID=" + userID)
+				request.getRequestDispatcher("/Controller?command=open_user_settings&userId=" + userId)
                         .forward(request, response);
 			} catch (Exception e) {
 				log.error(String.format(EXCEPTION_IN_COMMAND,

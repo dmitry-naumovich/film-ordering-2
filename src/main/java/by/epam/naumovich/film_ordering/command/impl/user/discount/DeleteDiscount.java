@@ -40,8 +40,8 @@ public class DeleteDiscount implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
             throws IOException, ServletException, ServiceException {
 
-		int discountID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.DISCOUNT_ID));
-		int userID = fetchUserIdFromRequest(request);
+		int discountId = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.DISCOUNT_ID));
+		int userId = fetchUserIdFromRequest(request);
 		
 		if (!isAuthorized(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.DELETE_DISCOUNT_RESTRICTION);
@@ -49,22 +49,22 @@ public class DeleteDiscount implements Command {
 		}
 		else if (!isAdmin(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.DELETE_DISCOUNT_RESTRICTION);
-			request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+			request.getRequestDispatcher("/Controller?command=open_user_profile&userId=" + userId)
                     .forward(request, response);
 		}
 		else {
 			try {
-				discountService.delete(discountID);
-				log.debug(String.format(LogMessages.DISCOUNT_DELETED, discountID, userID));
+				discountService.delete(discountId);
+				log.debug(String.format(LogMessages.DISCOUNT_DELETED, discountId, userId));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.DISCOUNT_DELETED);
 				//Thread.sleep(1000);
-				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+				request.getRequestDispatcher("/Controller?command=open_user_profile&userId=" + userId)
                         .forward(request, response);
 			} catch (DiscountServiceException e) {
 				log.error(String.format(EXCEPTION_IN_COMMAND,
                         e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher("/Controller?command=open_user_profile&userID=" + userID)
+				request.getRequestDispatcher("/Controller?command=open_user_profile&userId=" + userId)
                         .forward(request, response);
 			}
 		}

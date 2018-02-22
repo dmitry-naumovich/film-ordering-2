@@ -39,14 +39,14 @@ public class OpenNewsEditPage implements Command {
 
         setPrevQueryAttributeToSession(request, session, log);
 		
-		int newsID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
+		int newsId = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
 		if (!isAuthorized(session) || !isAdmin(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.EDIT_NEWS_RESTRICTION);
-			request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID)
+			request.getRequestDispatcher("/Controller?command=open_single_news&newsId=" + newsId)
 					.forward(request, response);
 		}
 		else {
-            News news = newsService.getById(newsID);
+            News news = newsService.getById(newsId);
             request.setAttribute(RequestAndSessionAttributes.NEWS, news);
             request.getRequestDispatcher(JavaServerPageNames.EDIT_NEWS_JSP_PAGE).forward(request, response);
 		}

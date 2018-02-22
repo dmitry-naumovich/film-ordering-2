@@ -48,14 +48,14 @@ public class OpenUserSettings implements Command {
 			
 		}
 		else {
-			int userID; //todo: consider
+			int userId; //todo: consider
 			if (!session.getAttribute(USER_ID).toString().equals(request.getParameter(USER_ID))) {
-				userID = fetchUserIdFromSession(session);
+				userId = fetchUserIdFromSession(session);
 			}
 			else {
-				userID = fetchUserIdFromRequest(request);
+				userId = fetchUserIdFromRequest(request);
 			}
-			User user = userService.getByLogin(userService.getLoginByID(userID));
+			User user = userService.getByLogin(userService.getLoginByID(userId));
 			request.setAttribute(RequestAndSessionAttributes.USER, user);
 			request.getRequestDispatcher(JavaServerPageNames.PROFILE_SETTINGS_PAGE).forward(request, response);
 		}

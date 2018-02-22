@@ -114,10 +114,10 @@
                       </tr>
                       <tr>
 	                      <td> 
-	                      	<a class="btn btn-success" href="<c:url value="/Controller?command=open_single_film&filmID=${order.filmId}&pageNum=1"/>" role="button" >${openFilmPage}</a>
+	                      	<a class="btn btn-success" href="<c:url value="/Controller?command=open_single_film&filmId=${order.filmId}&pageNum=1"/>" role="button" >${openFilmPage}</a>
 	                      </td>
 	                      <td> 
-	                      	<a class="btn btn-info" href="<c:url value="/Controller?command=open_user_profile&userID=${order.userId}"/>" role="button" >${userProfile}</a>
+	                      	<a class="btn btn-info" href="<c:url value="/Controller?command=open_user_profile&userId=${order.userId}"/>" role="button" >${userProfile}</a>
 	                      </td>
                       </tr>
                       <tr>

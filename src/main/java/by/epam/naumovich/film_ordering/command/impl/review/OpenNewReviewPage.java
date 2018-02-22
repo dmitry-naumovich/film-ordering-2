@@ -51,15 +51,15 @@ public class OpenNewReviewPage implements Command {
 			request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
 		}
 		else {
-			int filmID = fetchFilmIdFromRequest(request);
-			int userID = fetchUserIdFromSession(session);
+			int filmId = fetchFilmIdFromRequest(request);
+			int userId = fetchUserIdFromSession(session);
 			Film film = null;
 			try {
-				film = filmService.getByID(filmID, lang);
-				reviewService.getByUserAndFilmId(userID, filmID);
+				film = filmService.getByID(filmId, lang);
+				reviewService.getByUserAndFilmId(userId, filmId);
 
 				request.setAttribute(ERROR_MESSAGE, ErrorMessages.REVIEW_AMOUNT_RESTRICTION);
-				request.getRequestDispatcher("/Controller?command=open_single_review&userID=" + userID + "&filmID=" + filmID).forward(request, response);
+				request.getRequestDispatcher("/Controller?command=open_single_review&userId=" + userId + "&filmId=" + filmId).forward(request, response);
 			} catch (GetFilmServiceException e) {
 				log.error(String.format(EXCEPTION_IN_COMMAND,
 						e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);

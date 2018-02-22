@@ -183,11 +183,11 @@
                           
                         </div>
                         <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12 text-center">
-                        	<a href="<c:url value="/Controller?command=open_user_profile&userID=${user.id}"/>" class="btn btn-primary" role="button">${userProfile}</a>
+                        	<a href="<c:url value="/Controller?command=open_user_profile&userId=${user.id}"/>" class="btn btn-primary" role="button">${userProfile}</a>
                           <c:choose>
-                           	<c:when test="${sessionScope.isAdmin && user.id != sessionScope.userID}">
-	                          	<a href="<c:url value="/Controller?command=open_user_orders&userID=${user.id}&pageNum=1"/>" class="btn btn-default" role="button">${userOrders}</a> 
-	                          	<a href="<c:url value="/Controller?command=open_user_reviews&userID=${user.id}&pageNum=1"/>" class="btn btn-info" role="button">${userReviews}</a>
+                           	<c:when test="${sessionScope.isAdmin && user.id != sessionScope.userId}">
+	                          	<a href="<c:url value="/Controller?command=open_user_orders&userId=${user.id}&pageNum=1"/>" class="btn btn-default" role="button">${userOrders}</a>
+	                          	<a href="<c:url value="/Controller?command=open_user_reviews&userId=${user.id}&pageNum=1"/>" class="btn btn-info" role="button">${userReviews}</a>
 	                          	<c:choose>
 	                          		<c:when test="${requestScope.discountList[status.index] == null}">
 	                          			<a data-toggle="modal" data-target="#setDiscountModal${user.id}" class="btn btn-warning" role="button">${setDiscount}</a>
@@ -206,8 +206,8 @@
 	                          		</c:otherwise>
 	                          	</c:choose>
 	                        </c:when>
-	                        <c:when test="${sessionScope.isAdmin && user.id == sessionScope.userID}"> 
-	                        	<a href="<c:url value="/Controller?command=open_user_settings&userID=${sessionScope.userID}"/>" class="btn btn-danger" role="button">${editProfile}</a>
+	                        <c:when test="${sessionScope.isAdmin && user.id == sessionScope.userId}">
+	                        	<a href="<c:url value="/Controller?command=open_user_settings&userId=${sessionScope.userId}"/>" class="btn btn-danger" role="button">${editProfile}</a>
 	                        </c:when>
 	                        
                       	 </c:choose>
@@ -229,7 +229,7 @@
 										    	<input type="hidden" name="command" value="ban_user"/>
 										  	</div>
 										  	<div class="form-group">
-										    	<input type="hidden" name="userID" value="${user.id}"/>
+										    	<input type="hidden" name="userId" value="${user.id}"/>
 										  	</div>
 										  	
 							          		<div class="form-group">
@@ -265,7 +265,7 @@
 							        </div>
 							        
 							        <div class="modal-footer">
-							        	<a href="<c:url value="/Controller?command=unban_user&userID=${user.id}"/>" class="btn btn-default" role="button">${unbanBtn}</a>
+							        	<a href="<c:url value="/Controller?command=unban_user&userId=${user.id}"/>" class="btn btn-default" role="button">${unbanBtn}</a>
 							          	<button type="button" class="btn btn-default" data-dismiss="modal">${closeBtn}</button>
 							        </div>
 							      </div>
@@ -285,7 +285,7 @@
 							        	
 							          		<div class="form-group">
 										    	<input type="hidden" name="command" value="add_discount"/>
-										    	<input type="hidden" name="userID" value="${user.id}"/>
+										    	<input type="hidden" name="userId" value="${user.id}"/>
 										  	</div>
 										  	
 							          		<div class="form-group">
@@ -333,8 +333,8 @@
 							        		
 							          		<div class="form-group">
 										    	<input type="hidden" name="command" value="edit_discount">
-										    	<input type="hidden" name="discountID" value="${discount.id}">
-										    	<input type="hidden" name="userID" value="${user.id}">
+										    	<input type="hidden" name="discountId" value="${discount.id}">
+										    	<input type="hidden" name="userId" value="${user.id}">
 										  	</div>
 										  	
 							          		<div class="form-group">
@@ -363,7 +363,7 @@
 							          		<button type="submit" class="btn btn-success">${editDiscount}</button>
 							          	</div>
 							        	<div class="text-center col-md-4">
-							          		<a href="<c:url value="/Controller?command=delete_discount&discountID=${discount.id}&userID=${user.id}"/>" class="btn btn-danger" role="button">${deleteDiscountBtn}</a>
+							          		<a href="<c:url value="/Controller?command=delete_discount&discountId=${discount.id}&userId=${user.id}"/>" class="btn btn-danger" role="button">${deleteDiscountBtn}</a>
 							          	</div>
 							          	<div class="text-right col-md-4">
 							          		<button type="button" class="btn btn-default" data-dismiss="modal">${closeBtn}</button>
