@@ -4,10 +4,13 @@ import by.epam.naumovich.film_ordering.command.impl.user.discount.AddDiscount;
 import by.epam.naumovich.film_ordering.command.impl.user.discount.DeleteDiscount;
 import by.epam.naumovich.film_ordering.command.impl.user.discount.EditDiscount;
 import by.epam.naumovich.film_ordering.service.IDiscountService;
+import by.epam.naumovich.film_ordering.service.IFilmFileUploadService;
 import by.epam.naumovich.film_ordering.service.IFilmService;
+import by.epam.naumovich.film_ordering.service.INewsFileUploadService;
 import by.epam.naumovich.film_ordering.service.INewsService;
 import by.epam.naumovich.film_ordering.service.IOrderService;
 import by.epam.naumovich.film_ordering.service.IReviewService;
+import by.epam.naumovich.film_ordering.service.IUserFileUploadService;
 import by.epam.naumovich.film_ordering.service.IUserService;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,22 +43,30 @@ public class CommandHelper {
 	private IReviewService reviewService;
 	private IUserService userService;
 	private IDiscountService discountService;
+	private IFilmFileUploadService filmFileUploadService;
+	private INewsFileUploadService newsFileUploadService;
+	private IUserFileUploadService userFileUploadService;
 
     private Map<CommandName, Command> commands = new HashMap<>();
 
-	@Autowired
-    public CommandHelper(IFilmService filmService, INewsService newsService, IOrderService orderService,
-                         IReviewService reviewService, IUserService userService, IDiscountService discountService) {
-        this.filmService = filmService;
-        this.newsService = newsService;
-        this.orderService = orderService;
-        this.reviewService = reviewService;
-        this.userService = userService;
-        this.discountService = discountService;
-        putCommands();
-    }
+    @Autowired
+	public CommandHelper(IFilmService filmService, INewsService newsService, IOrderService orderService,
+						 IReviewService reviewService, IUserService userService, IDiscountService discountService,
+						 IFilmFileUploadService filmFileUploadService, INewsFileUploadService newsFileUploadService,
+						 IUserFileUploadService userFileUploadService) {
+		this.filmService = filmService;
+		this.newsService = newsService;
+		this.orderService = orderService;
+		this.reviewService = reviewService;
+		this.userService = userService;
+		this.discountService = discountService;
+		this.filmFileUploadService = filmFileUploadService;
+		this.newsFileUploadService = newsFileUploadService;
+		this.userFileUploadService = userFileUploadService;
+		putCommands();
+	}
 
-    /**
+	/**
      * Takes CommandName object by command name string and defines relevant Command interface implementation to be returned
      * @param name command name
      * @return Command interface implementation
@@ -70,20 +81,20 @@ public class CommandHelper {
 	 */
 	private void putCommands() {
         commands.put(CommandName.ADD_DISCOUNT, new AddDiscount(discountService));
-        commands.put(CommandName.ADD_FILM, new AddFilm(filmService));
-        commands.put(CommandName.ADD_NEWS, new AddNews(newsService));
+        commands.put(CommandName.ADD_FILM, new AddFilm(filmFileUploadService));
+        commands.put(CommandName.ADD_NEWS, new AddNews(newsFileUploadService));
 		commands.put(CommandName.ADD_ORDER, new AddOrder(orderService));
 		commands.put(CommandName.ADD_REVIEW, new AddReview(reviewService));
 		commands.put(CommandName.BAN_USER, new BanUser(userService));
 		commands.put(CommandName.CHANGE_LANGUAGE, new ChangeLanguage());
-		commands.put(CommandName.CHANGE_USER_SETTINGS, new ChangeUserSettings(userService));
+		commands.put(CommandName.CHANGE_USER_SETTINGS, new ChangeUserSettings(userFileUploadService));
 		commands.put(CommandName.DELETE_DISCOUNT, new DeleteDiscount(discountService));
 		commands.put(CommandName.DELETE_FILM, new DeleteFilm(filmService));
 		commands.put(CommandName.DELETE_NEWS, new DeleteNews(newsService));
 		commands.put(CommandName.DELETE_REVIEW, new DeleteReview(reviewService));
 		commands.put(CommandName.EDIT_DISCOUNT, new EditDiscount(discountService));
-		commands.put(CommandName.EDIT_FILM, new EditFilm(filmService));
-		commands.put(CommandName.EDIT_NEWS, new EditNews(newsService));
+		commands.put(CommandName.EDIT_FILM, new EditFilm(filmFileUploadService));
+		commands.put(CommandName.EDIT_NEWS, new EditNews(newsFileUploadService));
 		commands.put(CommandName.GET_NOVELTY, new GetNovelty(filmService, orderService));
 		commands.put(CommandName.GET_SIDEBAR_NEWS, new GetSidebarNews(newsService));
 		commands.put(CommandName.LOGIN, new Login(userService));
@@ -114,7 +125,7 @@ public class CommandHelper {
 		commands.put(CommandName.OPEN_USER_ORDERS, new OpenUserOrders(filmService, orderService, userService));
 		commands.put(CommandName.OPEN_USER_REVIEWS, new OpenUserReviews(filmService, reviewService));
 		commands.put(CommandName.OPEN_WIDENED_SEARCH_PAGE, new OpenWidenedSearchPage(filmService));
-		commands.put(CommandName.SIGN_UP, new SignUp(userService));
+		commands.put(CommandName.SIGN_UP, new SignUp(userService, userFileUploadService));
 		commands.put(CommandName.SEARCH_FILMS, new SearchFilms(filmService, orderService));
 		commands.put(CommandName.SEARCH_FILMS_WIDENED, new SearchFilmsWidened(filmService, orderService));
 		commands.put(CommandName.UNBAN_USER, new UnbanUser(userService));
