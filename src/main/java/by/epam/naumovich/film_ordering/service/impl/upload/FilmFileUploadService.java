@@ -10,7 +10,6 @@ import by.epam.naumovich.film_ordering.service.IFilmService;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -59,10 +58,8 @@ public class FilmFileUploadService implements IFilmFileUploadService {
             ServletFileUpload fileUpload = new ServletFileUpload(factory);
             fileUpload.setSizeMax(FileUploadConstants.MAX_REQUEST_SIZE);
             List<FileItem> items = fileUpload.parseRequest(request);
-            Iterator<FileItem> iter = items.iterator();
 
-            while (iter.hasNext()) {
-                FileItem item = iter.next();
+            for (FileItem item : items) {
                 if (!item.isFormField() && item.getName() != null && !item.getName().isEmpty()) {
                     switch (item.getFieldName()) {
                         case RequestAndSessionAttributes.FOLDER:
@@ -132,9 +129,7 @@ public class FilmFileUploadService implements IFilmFileUploadService {
     }
 
     @Override
-    public void storeFilesAndUpdateFilm(HttpServletRequest request) throws Exception {
-        int filmID = Integer.parseInt(request.getAttribute("entityId").toString());
-
+    public void storeFilesAndUpdateFilm(int filmId, HttpServletRequest request) throws Exception {
         String name = null;
         String year = null;
         String director = null;
@@ -156,10 +151,8 @@ public class FilmFileUploadService implements IFilmFileUploadService {
             ServletFileUpload fileUpload = new ServletFileUpload(factory);
             fileUpload.setSizeMax(FileUploadConstants.MAX_REQUEST_SIZE);
             List<FileItem> items = fileUpload.parseRequest(request);
-            Iterator<FileItem> iter = items.iterator();
 
-            while (iter.hasNext()) {
-                FileItem item = iter.next();
+            for (FileItem item : items) {
                 if (!item.isFormField() && item.getName() != null && !item.getName().isEmpty()) {
                     switch (item.getFieldName()) {
                         case RequestAndSessionAttributes.FOLDER:
@@ -214,19 +207,19 @@ public class FilmFileUploadService implements IFilmFileUploadService {
             genresArray = new String[genres.size()];
             genresArray = genres.toArray(genresArray);
         }
-        filmService.update(filmID, name, year, director, cast, countriesArray, composer, genresArray,
+        filmService.update(filmId, name, year, director, cast, countriesArray, composer, genresArray,
                 length, price, description);
 
         HttpSession session = request.getSession(true);
 
         if (posterItem != null) {
-            writeFileItem(session, filmID, posterItem, FileUploadConstants.POSTER_FILE_NAME);
+            writeFileItem(session, filmId, posterItem, FileUploadConstants.POSTER_FILE_NAME);
         }
         if (frameItem != null) {
-            writeFileItem(session, filmID, frameItem, FileUploadConstants.FRAME_FILE_NAME);
+            writeFileItem(session, filmId, frameItem, FileUploadConstants.FRAME_FILE_NAME);
         }
 
-        log.debug(String.format(LogMessages.FILM_UPDATED, name, filmID));
+        log.debug(String.format(LogMessages.FILM_UPDATED, name, filmId));
     }
 
     private void proceedFilmImages(int filmID, HttpSession session, FileItem posterItem, FileItem frameItem)

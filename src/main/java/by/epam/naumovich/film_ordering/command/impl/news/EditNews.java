@@ -42,26 +42,25 @@ public class EditNews implements Command {
 
 		setPrevQueryAttributeToSession(request, session, log);
 
-		int newsID = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
+		int newsId = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.NEWS_ID));
 		if (!isAuthorized(session) || !isAdmin(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.EDIT_NEWS_RESTRICTION);
-			request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID)
+			request.getRequestDispatcher("/Controller?command=open_single_news&newsId=" + newsId)
 					.forward(request, response);
 		}
 		else {
 			try {
-			    request.setAttribute("entityId", newsID);
-				fileUploadService.storeFilesAndUpdateNews(request);
+				fileUploadService.storeFilesAndUpdateNews(newsId, request);
 				
-				log.debug(String.format(LogMessages.NEWS_UPDATED, newsID));
+				log.debug(String.format(LogMessages.NEWS_UPDATED, newsId));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.NEWS_EDITED);
-				request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID)
+				request.getRequestDispatcher("/Controller?command=open_single_news&newsId=" + newsId)
                         .forward(request, response);
 			} catch (EditNewsServiceException e) {
 				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
                         e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher("/Controller?command=open_news_edit_page&newsID=" + newsID)
+				request.getRequestDispatcher("/Controller?command=open_news_edit_page&newsId=" + newsId)
                         .forward(request, response);
 			} catch (Exception e) {
 				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,

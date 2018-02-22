@@ -39,25 +39,24 @@ public class EditFilm implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
 			throws IOException, ServletException {
 
-		int filmID = fetchFilmIdFromRequest(request);
+		int filmId = fetchFilmIdFromRequest(request);
 		if (!isAuthorized(session) || !isAdmin(session)) {
 			request.setAttribute(ERROR_MESSAGE, ErrorMessages.EDIT_FILM_RESTRICTION);
-			request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1")
+			request.getRequestDispatcher("/Controller?command=open_single_film&filmId=" + filmId + "&pageNum=1")
                     .forward(request, response);
 		}
 		else {
 			try {
-                request.setAttribute("entityId", filmID);
-				fileUploadService.storeFilesAndUpdateFilm(request);
+				fileUploadService.storeFilesAndUpdateFilm(filmId, request);
 
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.FILM_EDITED);
-				request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1")
+				request.getRequestDispatcher("/Controller?command=open_single_film&filmId=" + filmId + "&pageNum=1")
                         .forward(request, response);
 			} catch (EditFilmServiceException e) {
 				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,
                         e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);
 				request.setAttribute(ERROR_MESSAGE, e.getMessage());
-				request.getRequestDispatcher("/Controller?command=open_film_edit_page&filmID=" + filmID)
+				request.getRequestDispatcher("/Controller?command=open_film_edit_page&filmId=" + filmId)
                         .forward(request, response);
 			} catch (Exception e) {
 				log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,

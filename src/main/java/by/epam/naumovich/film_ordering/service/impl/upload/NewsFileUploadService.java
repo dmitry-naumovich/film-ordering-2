@@ -8,7 +8,6 @@ import by.epam.naumovich.film_ordering.service.INewsService;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -49,10 +48,8 @@ public class NewsFileUploadService implements INewsFileUploadService {
             ServletFileUpload  fileUpload = new ServletFileUpload(factory);
             fileUpload.setSizeMax(FileUploadConstants.MAX_REQUEST_SIZE);
             List<FileItem> items = fileUpload.parseRequest(request);
-            Iterator<FileItem> iter = items.iterator();
 
-            while (iter.hasNext()) {
-                FileItem item = iter.next();
+            for (FileItem item : items) {
                 if (!item.isFormField()) {
                     if (item.getName() != null && !item.getName().isEmpty()) {
                         imgItem = item;
@@ -95,9 +92,8 @@ public class NewsFileUploadService implements INewsFileUploadService {
     }
 
     @Override
-    public void storeFilesAndUpdateNews(HttpServletRequest request) throws Exception {
+    public void storeFilesAndUpdateNews(int newsId, HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession(true);
-        int newsID = Integer.parseInt(request.getAttribute("entityId").toString());
 
         String title = null;
         String text = null;
@@ -110,10 +106,8 @@ public class NewsFileUploadService implements INewsFileUploadService {
             ServletFileUpload fileUpload = new ServletFileUpload(factory);
             fileUpload.setSizeMax(FileUploadConstants.MAX_REQUEST_SIZE);
             List<FileItem> items = fileUpload.parseRequest(request);
-            Iterator<FileItem> iter = items.iterator();
 
-            while (iter.hasNext()) {
-                FileItem item = iter.next();
+            for (FileItem item : items) {
                 if (!item.isFormField()) {
                     if (item.getName() != null && !item.getName().isEmpty()) {
                         imgItem = item;
@@ -132,7 +126,7 @@ public class NewsFileUploadService implements INewsFileUploadService {
             }
         }
 
-        newsService.update(newsID, title, text);
+        newsService.update(newsId, title, text);
 
         if (imgItem != null) {
             try {
@@ -143,7 +137,7 @@ public class NewsFileUploadService implements INewsFileUploadService {
                 imgItem.write(image);
 
                 String absTargetFilePath = session.getServletContext()
-                        .getRealPath(FileUploadConstants.NEWS_IMGS_UPLOAD_DIR + newsID + "/");
+                        .getRealPath(FileUploadConstants.NEWS_IMGS_UPLOAD_DIR + newsId + "/");
                 File targetImg = new File(absTargetFilePath, fileName);
 
                 Files.move(image.toPath(), targetImg.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);

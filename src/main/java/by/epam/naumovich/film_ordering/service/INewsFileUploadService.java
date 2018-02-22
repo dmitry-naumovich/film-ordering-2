@@ -6,5 +6,5 @@ public interface INewsFileUploadService {
 
     int storeFilesAndAddNews(HttpServletRequest request) throws Exception;
 
-    void storeFilesAndUpdateNews(HttpServletRequest request) throws Exception;
+    void storeFilesAndUpdateNews(int newsId, HttpServletRequest request) throws Exception;
 }

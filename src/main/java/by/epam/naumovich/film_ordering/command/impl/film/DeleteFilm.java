@@ -38,19 +38,19 @@ public class DeleteFilm implements Command {
     public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
             throws IOException, ServletException, ServiceException {
 
-        int filmID = fetchFilmIdFromRequest(request);
+        int filmId = fetchFilmIdFromRequest(request);
 
         if (!isAuthorized(session)) {
             request.setAttribute(ERROR_MESSAGE, ErrorMessages.DELETE_FILM_RESTRICTION);
             request.getRequestDispatcher(JavaServerPageNames.LOGIN_PAGE).forward(request, response);
         } else if (!isAdmin(session)) {
             request.setAttribute(ERROR_MESSAGE, ErrorMessages.DELETE_FILM_RESTRICTION);
-            request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1")
+            request.getRequestDispatcher("/Controller?command=open_single_film&filmId=" + filmId + "&pageNum=1")
                     .forward(request, response);
         } else {
-            filmService.delete(filmID);
+            filmService.delete(filmId);
 
-            log.debug(String.format(LogMessages.FILM_DELETED, filmID));
+            log.debug(String.format(LogMessages.FILM_DELETED, filmId));
             request.setAttribute(SUCCESS_MESSAGE, SuccessMessages.FILM_DELETED);
             request.getRequestDispatcher("/Controller?command=open_all_films&pageNum=1").forward(request, response);
         }

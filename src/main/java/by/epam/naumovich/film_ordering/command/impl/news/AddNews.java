@@ -51,11 +51,11 @@ public class AddNews implements Command {
 		}
 		else {
 			try {
-				int newsID = fileUploadService.storeFilesAndAddNews(request);
+				int newsId = fileUploadService.storeFilesAndAddNews(request);
 				
-				log.debug(String.format(LogMessages.NEWS_CREATED, newsID));
+				log.debug(String.format(LogMessages.NEWS_CREATED, newsId));
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.NEWS_ADDED);
-				request.getRequestDispatcher("/Controller?command=open_single_news&newsID=" + newsID).forward(request, response);
+				request.getRequestDispatcher("/Controller?command=open_single_news&newsId=" + newsId).forward(request, response);
 			} catch (AddNewsServiceException e) {
 				log.error(String.format(EXCEPTION_IN_COMMAND,
                         e.getClass().getSimpleName(), this.getClass().getSimpleName(), e.getMessage()), e);

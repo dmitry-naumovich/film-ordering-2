@@ -6,5 +6,5 @@ public interface IFilmFileUploadService {
 
     int storeFilesAndAddFilm(HttpServletRequest request) throws Exception;
 
-    void storeFilesAndUpdateFilm(HttpServletRequest request) throws Exception;
+    void storeFilesAndUpdateFilm(int filmId, HttpServletRequest request) throws Exception;
 }

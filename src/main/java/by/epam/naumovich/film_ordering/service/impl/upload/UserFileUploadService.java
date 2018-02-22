@@ -6,7 +6,6 @@ import by.epam.naumovich.film_ordering.service.IUserFileUploadService;
 import by.epam.naumovich.film_ordering.service.IUserService;
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -54,10 +53,8 @@ public class UserFileUploadService implements IUserFileUploadService {
             ServletFileUpload  fileUpload = new ServletFileUpload(factory);
             fileUpload.setSizeMax(FileUploadConstants.MAX_REQUEST_SIZE);
             List<FileItem> items = fileUpload.parseRequest(request);
-            Iterator<FileItem> iter = items.iterator();
 
-            while (iter.hasNext()) {
-                FileItem item = iter.next();
+            for (FileItem item : items) {
                 if (!item.isFormField() && item.getName() != null && !item.getName().isEmpty()) {
                     avatarItem = item;
                 } else {
@@ -116,7 +113,7 @@ public class UserFileUploadService implements IUserFileUploadService {
     }
 
     @Override
-    public void storeFilesAndUpdateUser(int userID, HttpServletRequest request) throws Exception {
+    public void storeFilesAndUpdateUser(int userId, HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession(true);
 
         String name = null;
@@ -135,13 +132,11 @@ public class UserFileUploadService implements IUserFileUploadService {
             ServletFileUpload  fileUpload = new ServletFileUpload(factory);
             fileUpload.setSizeMax(FileUploadConstants.MAX_REQUEST_SIZE);
             List<FileItem> items = fileUpload.parseRequest(request);
-            Iterator<FileItem> iter = items.iterator();
 
-            while (iter.hasNext()) {
-                FileItem item = iter.next();
+            for (FileItem item : items) {
                 if (!item.isFormField()) {
                     String fileName = new File(FileUploadConstants.AVATAR_FILE_NAME_TEMPLATE
-                            + userID + FileUploadConstants.AVATAR_FILE_EXTENSION).getName();
+                            + userId + FileUploadConstants.AVATAR_FILE_EXTENSION).getName();
                     String absoluteFilePath = session.getServletContext()
                             .getRealPath(FileUploadConstants.AVATARS_UPLOAD_DIR);
                     File uploadedFile = new File(absoluteFilePath, fileName);
@@ -178,6 +173,6 @@ public class UserFileUploadService implements IUserFileUploadService {
             }
         }
 
-        userService.update(userID, name, surname, pwd, sex, bDate, phone, email, about);
+        userService.update(userId, name, surname, pwd, sex, bDate, phone, email, about);
     }
 }

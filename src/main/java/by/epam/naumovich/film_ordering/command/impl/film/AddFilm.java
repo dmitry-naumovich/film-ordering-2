@@ -48,10 +48,10 @@ public class AddFilm implements Command {
             request.getRequestDispatcher("/Controller?command=open_all_films&pageNum=1").forward(request, response);
         } else {
             try {
-                int filmID = fileUploadService.storeFilesAndAddFilm(request);
+                int filmId = fileUploadService.storeFilesAndAddFilm(request);
 
                 request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.FILM_ADDED);
-                request.getRequestDispatcher("/Controller?command=open_single_film&filmID=" + filmID + "&pageNum=1")
+                request.getRequestDispatcher("/Controller?command=open_single_film&filmId=" + filmId + "&pageNum=1")
                         .forward(request, response);
             } catch (AddFilmServiceException e) {
                 log.error(String.format(EXCEPTION_IN_COMMAND,
