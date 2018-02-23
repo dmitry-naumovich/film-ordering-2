@@ -10,9 +10,7 @@ import by.epam.naumovich.film_ordering.service.IFilmService;
 import by.epam.naumovich.film_ordering.service.IOrderService;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.film.GetFilmServiceException;
-import by.epam.naumovich.film_ordering.service.exception.order.GetOrderServiceException;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
@@ -23,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 
 
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ERROR_MESSAGE;
+import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.SUCCESS_MESSAGE;
 
 /**
  * Performs the command that gets all films that satisfies search criterion from the service layer and passes it to the relevant JSP.
@@ -57,19 +56,13 @@ public class SearchFilmsWidened implements Command {
 		
 		try {
 			List<Film> foundFilms = filmService.searchWidened(name, yearFrom, yearTo, genres, countries, lang);
-			request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.FILMS_FOUND);
+			request.setAttribute(SUCCESS_MESSAGE, SuccessMessages.FILMS_FOUND);
 			request.setAttribute(RequestAndSessionAttributes.FILMS, foundFilms);
-			if (isAuthorized(session)) {
-				if (!isAdmin(session)) {
-					int userId = fetchUserIdFromSession(session);
-					try {
-						List<Order> orders = orderService.getAllByUserId(userId);
-						List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
-						request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
-					} catch (GetOrderServiceException e) {
-						request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, Collections.emptyList());
-					}
-				}
+			if (isAuthorized(session) && !isAdmin(session)) {
+				int userId = fetchUserIdFromSession(session);
+				List<Order> orders = orderService.getAllByUserId(userId);
+				List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
+				request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
 			}
 			request.getRequestDispatcher(JavaServerPageNames.FILMS_JSP_PAGE).forward(request, response);
 		} catch (GetFilmServiceException e) {
@@ -77,5 +70,4 @@ public class SearchFilmsWidened implements Command {
 			request.getRequestDispatcher("/Controller?command=open_widened_search_page").forward(request, response);
 		}
 	}
-
 }

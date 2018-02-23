@@ -10,9 +10,7 @@ import by.epam.naumovich.film_ordering.service.IFilmService;
 import by.epam.naumovich.film_ordering.service.IOrderService;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.film.GetFilmServiceException;
-import by.epam.naumovich.film_ordering.service.exception.order.GetOrderServiceException;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
@@ -55,13 +53,9 @@ public class GetNovelty implements Command {
 
             if (isAuthorized(session) && !isAdmin(session)) {
                 int userId = fetchUserIdFromSession(session);
-                try {
-                    List<Order> orders = orderService.getAllByUserId(userId);
-                    List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
-                    request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
-                } catch (GetOrderServiceException e) {
-                    request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, Collections.emptyList());
-                }
+                List<Order> orders = orderService.getAllByUserId(userId);
+                List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
+                session.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
             }
         } catch (GetFilmServiceException e) {
             log.error(String.format(LogMessages.EXCEPTION_IN_COMMAND,

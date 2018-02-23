@@ -101,7 +101,7 @@
               				</c:when>
               				<c:otherwise>
               					<c:choose>
-	             					<c:when test="${sessionScope.authUser!=null && !empty requestScope.userOrderFilmIds && fn:contains(requestScope.userOrderFilmIds, film.id)}">
+	             					<c:when test="${sessionScope.authUser!=null && !empty sessionScope.userOrderFilmIds && fn:contains(sessionScope.userOrderFilmIds, film.id)}">
 	             						<button type="button" class="btn btn-default disabledBtn">${purchased}</button>
 	               					</c:when>
 	               					<c:otherwise>

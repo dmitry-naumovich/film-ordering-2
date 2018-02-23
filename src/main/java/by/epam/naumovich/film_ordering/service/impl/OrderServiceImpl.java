@@ -1,11 +1,5 @@
 package by.epam.naumovich.film_ordering.service.impl;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
-
 import by.epam.naumovich.film_ordering.bean.Order;
 import by.epam.naumovich.film_ordering.dao.IOrderDAO;
 import by.epam.naumovich.film_ordering.service.IOrderService;
@@ -14,6 +8,11 @@ import by.epam.naumovich.film_ordering.service.exception.order.AddOrderServiceEx
 import by.epam.naumovich.film_ordering.service.exception.order.GetOrderServiceException;
 import by.epam.naumovich.film_ordering.service.util.ExceptionMessages;
 import by.epam.naumovich.film_ordering.service.util.Validator;
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -107,13 +106,7 @@ public class OrderServiceImpl implements IOrderService {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
-		
-		List<Order> orders = orderDAO.findByUserIdOrderByDateDescTimeDesc(id);
-        if (orders.isEmpty()) {
-            throw new GetOrderServiceException(ExceptionMessages.NO_USER_ORDERS_YET);
-        }
-		
-		return orders;
+		return orderDAO.findByUserIdOrderByDateDescTimeDesc(id);
 	}
 
 	@Override

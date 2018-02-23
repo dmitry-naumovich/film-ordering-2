@@ -11,9 +11,7 @@ import by.epam.naumovich.film_ordering.service.IFilmService;
 import by.epam.naumovich.film_ordering.service.IOrderService;
 import by.epam.naumovich.film_ordering.service.exception.ServiceException;
 import by.epam.naumovich.film_ordering.service.exception.film.GetFilmServiceException;
-import by.epam.naumovich.film_ordering.service.exception.order.GetOrderServiceException;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
@@ -59,17 +57,11 @@ public class SearchFilms implements Command {
 				request.setAttribute(RequestAndSessionAttributes.SUCCESS_MESSAGE, SuccessMessages.FILMS_FOUND);
 				request.setAttribute(RequestAndSessionAttributes.FILMS, foundFilms);
 				
-				if (isAuthorized(session)) {
-					if (!isAdmin(session)) {
-						int userId = fetchUserIdFromSession(session);
-						try {
-							List<Order> orders = orderService.getAllByUserId(userId);
-							List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
-							request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
-						} catch (GetOrderServiceException e) {
-							request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, Collections.emptyList());
-						}
-					}
+				if (isAuthorized(session) && !isAdmin(session)) {
+					int userId = fetchUserIdFromSession(session);
+					List<Order> orders = orderService.getAllByUserId(userId);
+					List<Integer> orderFilmIDs = orders.stream().map(Order::getFilmId).collect(Collectors.toList());
+					request.setAttribute(RequestAndSessionAttributes.USER_ORDER_FILM_IDS, orderFilmIDs);
 				}
 				request.getRequestDispatcher(JavaServerPageNames.FILMS_JSP_PAGE).forward(request, response);
 			} catch (GetFilmServiceException e) {
