@@ -1,0 +1,4 @@
+1. Create migration scripts for DB scheme and maybe initial data too
+2. Replace entities ID type (int -> long)
+3. Reformat code in JSPs
+4.
