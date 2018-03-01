@@ -1,10 +1,11 @@
 package by.epam.naumovich.film_ordering.service.impl;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -18,6 +19,9 @@ import by.epam.naumovich.film_ordering.service.exception.news.GetNewsServiceExce
 import by.epam.naumovich.film_ordering.service.util.ExceptionMessages;
 import by.epam.naumovich.film_ordering.service.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 /**
@@ -32,6 +36,8 @@ public class NewsServiceImpl implements INewsService {
 	private static final int NEWS_AMOUNT_ON_PAGE = 8;
 	
 	private final INewsDAO newsDAO;
+
+	private final static Sort DEFAULT_NEWS_SORT = new Sort(Sort.Direction.DESC, "date", "time");
 
 	@Autowired
     public NewsServiceImpl(INewsDAO newsDAO) {
@@ -108,12 +114,14 @@ public class NewsServiceImpl implements INewsService {
 	}
 
 	@Override
-	public List<News> getFourLastNews() throws ServiceException {
-		List<News> news = newsDAO.findAllByOrderByDateDescTimeDesc();
-        if (news.isEmpty()) {
+	public List<News> getLastNews(int amount) throws ServiceException {
+	    Pageable request = new PageRequest(0, amount, DEFAULT_NEWS_SORT);
+        Iterable<News> news = newsDAO.findAll(request);
+
+        if (Iterables.isEmpty(news)) {
             throw new GetNewsServiceException(ExceptionMessages.NO_NEWS_IN_DB);
         }
-		return news.subList(0, 4);
+		return Lists.newArrayList(news);
 	}
 
 	@Override
@@ -130,13 +138,14 @@ public class NewsServiceImpl implements INewsService {
 		if (!Validator.validateInt(pageNum)) {
 			throw new GetNewsServiceException(ExceptionMessages.CORRUPTED_PAGE_NUM);
 		}
-		int start = (pageNum - 1) * NEWS_AMOUNT_ON_PAGE;
+		Pageable pageable = new PageRequest(pageNum - 1, NEWS_AMOUNT_ON_PAGE, DEFAULT_NEWS_SORT);
+		Iterable<News> news = newsDAO.findAll(pageable);
 
-        List<News> news = newsDAO.findAllPart(start, NEWS_AMOUNT_ON_PAGE);
-        if (news == null) {
+        if (Iterables.isEmpty(news)) {
             throw new GetNewsServiceException(ExceptionMessages.NO_NEWS_IN_DB);
         }
-        return news;
+
+        return Lists.newArrayList(news);
 	}
 
 	@Override

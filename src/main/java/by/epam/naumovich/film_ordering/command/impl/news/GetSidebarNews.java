@@ -31,7 +31,9 @@ public class GetSidebarNews implements Command {
     @Override
 	public void execute(HttpServletRequest request, HttpServletResponse response, HttpSession session)
             throws IOException, ServletException, ServiceException {
-        List<News> newsSet = newsService.getFourLastNews();
+        int newsAmount = Integer.parseInt(request.getParameter(RequestAndSessionAttributes.NEWS_AMOUNT));
+        List<News> newsSet = newsService.getLastNews(newsAmount);
+
         //request.setAttribute(RequestAndSessionAttributes.SIDEBAR_NEWS, newsSet);
         session.setAttribute(RequestAndSessionAttributes.SIDEBAR_NEWS, newsSet);
 	}

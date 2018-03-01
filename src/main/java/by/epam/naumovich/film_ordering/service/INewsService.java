@@ -61,7 +61,7 @@ public interface INewsService {
 	 * @return a set of news
 	 * @throws ServiceException
 	 */
-	List<News> getFourLastNews() throws ServiceException;
+	List<News> getLastNews(int amount) throws ServiceException;
 	
 	/**
 	 * Verifies input parameter and passes it to the DAO layer, received a set of found news back and returns it to the Controller layer

@@ -1,19 +1,18 @@
 package by.epam.naumovich.film_ordering.dao.impl;
 
+import by.epam.naumovich.film_ordering.bean.News;
+import by.epam.naumovich.film_ordering.dao.INewsDAO;
+import com.google.common.collect.Iterables;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Calendar;
-import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import by.epam.naumovich.film_ordering.bean.News;
-import by.epam.naumovich.film_ordering.dao.INewsDAO;
+import org.springframework.data.domain.PageRequest;
 
 /**
  * Tests DAO layer methods overridden in MySQLNewsDAO class in a way of comparing expected and actual results with the help of JUnit 4 framework.
@@ -109,19 +108,6 @@ public class MySQLNewsDAOTest {
 		Assert.assertEquals(expectedNews.getTitle(), actualNews.getTitle());	
 		Assert.assertEquals(expectedNews.getText(), actualNews.getText());
 	}
-
-	/**
-	 * Gets all news in two different ways and compares results which must be equal.
-	 */
-	@Test
-	public void getAllNews() {
-		List<News> allNews1 = dao.findAllByOrderByDateDescTimeDesc();
-		List<News> allNews2 = new ArrayList<>();
-		for (int i = 2016; i < 2050; i++) {
-			allNews2.addAll(dao.findByYear(i));
-		}
-		Assert.assertEquals(allNews1, allNews2);
-	}
 	
 	/**
 	 * Gets news by year and iterates over all news finding news of same year, 
@@ -130,7 +116,7 @@ public class MySQLNewsDAOTest {
 	@Test
 	public void getNewsByYear()  {
 		List<News> yearNews = dao.findByYear(2016);
-		List<News> allNews = dao.findAllByOrderByDateDescTimeDesc();
+		Iterable<News> allNews = dao.findAll();
 		Calendar calendar = Calendar.getInstance();
 		for (News n : allNews) {
 			calendar.setTime(n.getDate());
@@ -149,7 +135,7 @@ public class MySQLNewsDAOTest {
 	@Test
 	public void getNewsByMonthAndYear()  {
 		List<News> yearNews = dao.findByMonthAndYear(8, 2016);
-		List<News> allNews = dao.findAllByOrderByDateDescTimeDesc();
+		Iterable<News> allNews = dao.findAll();
 		Calendar calendar = Calendar.getInstance();
 		for (News n : allNews) {
 			calendar.setTime(n.getDate());
@@ -167,8 +153,8 @@ public class MySQLNewsDAOTest {
 	@Test
 	public void getNumberOfNews()  {
 		int newsNum1 = (int)dao.count();
-		List<News> allNews = dao.findAllByOrderByDateDescTimeDesc();
-		int newsNum2 = allNews.size();
+		Iterable<News> allNews = dao.findAll();
+		int newsNum2 = Iterables.size(allNews);
 		
 		Assert.assertEquals(newsNum1, newsNum2);
 	}
@@ -178,10 +164,10 @@ public class MySQLNewsDAOTest {
 	 */
 	@Test
 	public void getAllNewsPart()  {
-		List<News> particularNews1 = dao.findAllPart(0, 6);
-		List<News> allNews = new ArrayList<>(dao.findAllByOrderByDateDescTimeDesc());
-		List<News> particularNews2 = new ArrayList<>(allNews.subList(0, 6));
-		
-		Assert.assertEquals(particularNews1, particularNews2);	
+		Iterable<News> particularNews1 = dao.findAll(new PageRequest(0, 6));
+		Iterable<News> allNews = dao.findAll();
+		Iterable<News> particualNews2 = Iterables.partition(allNews, 6).iterator().next();
+
+		Assert.assertEquals(particularNews1, particualNews2);
 	}
 }

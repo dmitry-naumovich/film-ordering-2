@@ -2,3 +2,4 @@
 2. Replace entities ID type (int -> long)
 3. Reformat code in JSPs
 4. Refactor all unit tests, better even completely rewrite.
+5. Use Pageable and Sortable interface

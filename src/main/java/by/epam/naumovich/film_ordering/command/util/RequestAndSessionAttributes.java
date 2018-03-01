@@ -51,6 +51,7 @@ public final class RequestAndSessionAttributes {
 	public static final String LOGINS = "logins";
 	public static final String NAME = "name";
 	public static final String NEWS = "news";
+	public static final String NEWS_AMOUNT = "newsAmount";
 	public static final String NEWS_ID = "newsId";
 	public static final String NEWS_TITLE = "newsTitle";
 	public static final String NEWS_TEXT = "newsText";
