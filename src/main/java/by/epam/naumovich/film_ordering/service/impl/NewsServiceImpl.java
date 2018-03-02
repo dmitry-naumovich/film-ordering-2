@@ -37,7 +37,7 @@ public class NewsServiceImpl implements INewsService {
 	
 	private final INewsDAO newsDAO;
 
-	private final static Sort DEFAULT_NEWS_SORT = new Sort(Sort.Direction.DESC, "date", "time");
+	private static final Sort DEFAULT_NEWS_SORT = new Sort(Sort.Direction.DESC, "date", "time");
 
 	@Autowired
     public NewsServiceImpl(INewsDAO newsDAO) {
