@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/filmordering?autoReconnect=true&useSSL=false&characterEncoding=UTF-8
-    username: root
-    password: s1t2a3t4i5c6x7
+    username: dmitry
+    password: 1234
     driver-class-name: org.gjt.mm.mysql.Driver
   mvc:
     view:
