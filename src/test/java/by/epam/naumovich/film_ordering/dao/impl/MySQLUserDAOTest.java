@@ -1,18 +1,17 @@
 package by.epam.naumovich.film_ordering.dao.impl;
 
+import by.epam.naumovich.film_ordering.bean.User;
+import by.epam.naumovich.film_ordering.dao.IUserDAO;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import by.epam.naumovich.film_ordering.bean.User;
-import by.epam.naumovich.film_ordering.dao.IUserDAO;
 
 /**
  * Tests DAO layer methods overridden in MySQLUserDAO class in a way of comparing expected and actual results with the help of JUnit 4 framework.
@@ -60,7 +59,7 @@ public class MySQLUserDAOTest {
 	@Test
 	public void addUser() {
         User actualUser = dao.save(expectedUser);
-		dao.delete(actualUser.getId());
+		dao.deleteById(actualUser.getId());
 		
 		Assert.assertEquals(expectedUser.getLogin(), actualUser.getLogin());
 		Assert.assertEquals(expectedUser.getName(), actualUser.getName());
@@ -85,8 +84,8 @@ public class MySQLUserDAOTest {
 		expectedUser.setPassword("new-password");
 		expectedUser.setSex('f');
 		dao.save(expectedUser);
-		User actualUser = dao.findOne(user.getId());
-		dao.delete(user.getId());
+		User actualUser = dao.findById(user.getId()).orElse(null);
+		dao.deleteById(user.getId());
 		
 		Assert.assertEquals(expectedUser.getLogin(), actualUser.getLogin());
 		Assert.assertEquals(expectedUser.getName(), actualUser.getName());
@@ -107,8 +106,8 @@ public class MySQLUserDAOTest {
 	@Test
 	public void deleteUser() {
         User user = dao.save(expectedUser);
-		dao.delete(user.getId());
-		User actualUser = dao.findOne(user.getId());
+		dao.deleteById(user.getId());
+		User actualUser = dao.findById(user.getId()).orElse(null);
 		
 		Assert.assertNull(actualUser);
 	}
@@ -137,8 +136,8 @@ public class MySQLUserDAOTest {
 	@Test
 	public void getUserByID() {
         User newUser = dao.save(expectedUser);
-        User actualUser = dao.findOne(newUser.getId());
-		dao.delete(actualUser.getId());
+        User actualUser = dao.findById(newUser.getId()).orElse(null);
+		dao.deleteById(actualUser.getId());
 		
 		Assert.assertEquals(expectedUser.getLogin(), actualUser.getLogin());
 		Assert.assertEquals(expectedUser.getName(), actualUser.getName());
@@ -160,7 +159,7 @@ public class MySQLUserDAOTest {
 	public void getUserByLogin() {
 		int id = dao.save(expectedUser).getId();
 		User actualUser = dao.findByLogin(expectedUser.getLogin());
-		dao.delete(id);
+		dao.deleteById(id);
 		
 		Assert.assertEquals(expectedUser.getLogin(), actualUser.getLogin());
 		Assert.assertEquals(expectedUser.getName(), actualUser.getName());
@@ -184,7 +183,7 @@ public class MySQLUserDAOTest {
 		
 		int id = dao.save(expectedUser).getId();
 		String actualPassword = dao.getPasswordByLogin(expectedUser.getLogin());
-		dao.delete(id);
+		dao.deleteById(id);
 		
 		Assert.assertEquals(expectedUser.getPassword(), actualPassword);
 	}

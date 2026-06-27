@@ -3,16 +3,17 @@ package by.epam.naumovich.film_ordering.dao.impl;
 import by.epam.naumovich.film_ordering.bean.News;
 import by.epam.naumovich.film_ordering.dao.INewsDAO;
 import com.google.common.collect.Iterables;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.data.domain.PageRequest;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.data.domain.PageRequest;
 
 /**
  * Tests DAO layer methods overridden in MySQLNewsDAO class in a way of comparing expected and actual results with the help of JUnit 4 framework.
@@ -51,8 +52,8 @@ public class MySQLNewsDAOTest {
 	@Test
 	public void addNews() {
 		int id = dao.save(expectedNews).getId();
-		News actualNews = dao.findOne(id);
-		dao.delete(id);
+		News actualNews = dao.findById(id).orElse(null);
+		dao.deleteById(id);
 		
 		Assert.assertEquals(expectedNews.getDate(), actualNews.getDate());
 		Assert.assertEquals(expectedNews.getTime(), actualNews.getTime());
@@ -67,8 +68,8 @@ public class MySQLNewsDAOTest {
 	@Test
 	public void deleteNews() {
 		int id = dao.save(expectedNews).getId();
-		dao.delete(id);
-		News actualNews = dao.findOne(id);
+		dao.deleteById(id);
+		News actualNews = dao.findById(id).orElse(null);
 		
 		Assert.assertNull(actualNews);
 	}
@@ -84,8 +85,8 @@ public class MySQLNewsDAOTest {
 		expectedNews.setTitle("updated title");
 		expectedNews.setText("updated news text");
 		dao.save(expectedNews);
-		News actualNews = dao.findOne(id);
-		dao.delete(id);
+		News actualNews = dao.findById(id).orElse(null);
+		dao.deleteById(id);
 		
 		Assert.assertEquals(expectedNews.getDate(), actualNews.getDate());
 		Assert.assertEquals(expectedNews.getTime(), actualNews.getTime());
@@ -100,8 +101,8 @@ public class MySQLNewsDAOTest {
 	@Test
 	public void getNewsById() {
 		int id = dao.save(expectedNews).getId();
-		News actualNews = dao.findOne(id);
-		dao.delete(id);
+		News actualNews = dao.findById(id).orElse(null);
+		dao.deleteById(id);
 		
 		Assert.assertEquals(expectedNews.getDate(), actualNews.getDate());
 		Assert.assertEquals(expectedNews.getTime(), actualNews.getTime());
@@ -164,7 +165,7 @@ public class MySQLNewsDAOTest {
 	 */
 	@Test
 	public void getAllNewsPart()  {
-		Iterable<News> particularNews1 = dao.findAll(new PageRequest(0, 6));
+		Iterable<News> particularNews1 = dao.findAll(PageRequest.of(0, 6));
 		Iterable<News> allNews = dao.findAll();
 		Iterable<News> particualNews2 = Iterables.partition(allNews, 6).iterator().next();
 

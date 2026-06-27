@@ -1,19 +1,18 @@
 package by.epam.naumovich.film_ordering.dao.impl;
 
+import by.epam.naumovich.film_ordering.bean.Review;
 import by.epam.naumovich.film_ordering.bean.ReviewPK;
+import by.epam.naumovich.film_ordering.dao.IReviewDAO;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import by.epam.naumovich.film_ordering.bean.Review;
-import by.epam.naumovich.film_ordering.dao.IReviewDAO;
-import org.junit.Assert;
 
 /**
  * Tests DAO layer methods overridden in MySQLReviewDAO class in a way of comparing expected and actual results with the help of JUnit 4 framework.
@@ -56,8 +55,8 @@ public class MySQLReviewDAOTest {
 	public void addReview() {
 		dao.save(expectedReview);
         ReviewPK reviewPK = new ReviewPK(expectedReview.getAuthor(), expectedReview.getFilmId());
-        Review actualReview = dao.findOne(reviewPK);
-		dao.delete(reviewPK);
+        Review actualReview = dao.findById(reviewPK).orElse(null);
+		dao.deleteById(reviewPK);
 
 		Assert.assertEquals(expectedReview.getAuthor(), actualReview.getAuthor());
 		Assert.assertEquals(expectedReview.getFilmId(), actualReview.getFilmId());
@@ -77,7 +76,7 @@ public class MySQLReviewDAOTest {
 		dao.save(expectedReview);
 		dao.delete(expectedReview);
         ReviewPK reviewPK = new ReviewPK(expectedReview.getAuthor(), expectedReview.getFilmId());
-        Review actualReview = dao.findOne(reviewPK);
+        Review actualReview = dao.findById(reviewPK).orElse(null);
 		
 		Assert.assertNull(actualReview);
 	}
@@ -123,8 +122,8 @@ public class MySQLReviewDAOTest {
 	public void getReviewByUserAndFilmId() {
 		dao.save(expectedReview);
 		ReviewPK reviewPK = new ReviewPK(expectedReview.getAuthor(), expectedReview.getFilmId());
-		Review actualReview = dao.findOne(reviewPK);
-		dao.delete(expectedReview.getId());
+		Review actualReview = dao.findById(reviewPK).orElse(null);
+		dao.deleteById(expectedReview.getId());
 		
 		Assert.assertEquals(expectedReview.getAuthor(), actualReview.getAuthor());
 		Assert.assertEquals(expectedReview.getFilmId(), actualReview.getFilmId());
@@ -228,5 +227,4 @@ public class MySQLReviewDAOTest {
 		Assert.assertEquals(reviewsNum1, reviewsNum2);
 	}
 }
-
 

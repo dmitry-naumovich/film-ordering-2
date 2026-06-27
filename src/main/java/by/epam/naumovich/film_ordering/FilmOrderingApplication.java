@@ -1,21 +1,22 @@
 package by.epam.naumovich.film_ordering;
 
 import by.epam.naumovich.film_ordering.command.util.FileUploadConstants;
-import java.io.File;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.io.File;
 
 @SpringBootApplication
 // excluded so that the application uses commons-fileupload instead of Servlet 3 Multipart support //todo: tmp
 @EnableAutoConfiguration(exclude = MultipartAutoConfiguration.class)
-public class FilmOrderingApplication extends WebMvcConfigurerAdapter {
+public class FilmOrderingApplication implements WebMvcConfigurer {
 
     /**
      * Forwards base url ("/") request to index page

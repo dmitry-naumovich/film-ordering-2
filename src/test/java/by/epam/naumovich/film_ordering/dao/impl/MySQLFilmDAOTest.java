@@ -1,14 +1,13 @@
 package by.epam.naumovich.film_ordering.dao.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import by.epam.naumovich.film_ordering.bean.Film;
+import by.epam.naumovich.film_ordering.dao.IFilmDAO;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import by.epam.naumovich.film_ordering.bean.Film;
-import by.epam.naumovich.film_ordering.dao.IFilmDAO;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Tests DAO layer methods overridden in MySQLFilmDAO class in a way of comparing expected and actual results with the help of JUnit 4 framework.
@@ -63,7 +62,7 @@ public class MySQLFilmDAOTest {
 	public void addFilm() {
 		Film film = filmDAO.save(expectedFilm);
         Film actualFilm = filmDAO.getById(film.getId(), EN_LANG);
-        filmDAO.delete(film);
+        filmDAO.deleteById(film.getId());
         
         Assert.assertEquals(expectedFilm.getName(), actualFilm.getName());
         Assert.assertEquals(expectedFilm.getYear(), actualFilm.getYear());
@@ -85,7 +84,7 @@ public class MySQLFilmDAOTest {
 	public void deleteFilm() {
 
 		Film film = filmDAO.save(expectedFilm);
-		filmDAO.delete(film);
+		filmDAO.deleteById(film.getId());
         Film deletedFilm = filmDAO.getById(film.getId(), EN_LANG);
 
         Assert.assertNull(deletedFilm);
@@ -105,7 +104,7 @@ public class MySQLFilmDAOTest {
 		expectedFilm.setPrice(12);
 		filmDAO.save(expectedFilm);
 		Film actualFilm = filmDAO.getById(film.getId(), EN_LANG);
-        filmDAO.delete(film.getId());
+        filmDAO.deleteById(film.getId());
 	    
         Assert.assertEquals(expectedFilm.getName(), actualFilm.getName());
         Assert.assertEquals(expectedFilm.getPrice(), actualFilm.getPrice(), 0.01f);
@@ -119,7 +118,7 @@ public class MySQLFilmDAOTest {
 	public void getFilmByID() {
 		Film film = filmDAO.save(expectedFilm);
 		Film actualFilm = filmDAO.getById(film.getId(), EN_LANG);
-		filmDAO.delete(film.getId());
+		filmDAO.deleteById(film.getId());
 		
 		Assert.assertEquals(expectedFilm.getName(), actualFilm.getName());
         Assert.assertEquals(expectedFilm.getYear(), actualFilm.getYear());
@@ -142,7 +141,7 @@ public class MySQLFilmDAOTest {
 	public void getFilmNameByID() {
 		Film film = filmDAO.save(expectedFilm);
 		String actualFilmName = filmDAO.getFilmNameByID(film.getId(), EN_LANG);
-		filmDAO.delete(film.getId());
+		filmDAO.deleteById(film.getId());
 		
 		Assert.assertEquals(expectedFilm.getName(), actualFilmName);
 	}
@@ -173,7 +172,7 @@ public class MySQLFilmDAOTest {
 			}
 		}
 		
-		filmDAO.delete(film.getId());
+		filmDAO.deleteById(film.getId());
 		Assert.assertEquals(filmsByName1, filmsByName2);
 	}
 	

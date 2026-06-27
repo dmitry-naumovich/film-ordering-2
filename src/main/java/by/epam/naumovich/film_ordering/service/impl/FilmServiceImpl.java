@@ -1,8 +1,5 @@
 package by.epam.naumovich.film_ordering.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import by.epam.naumovich.film_ordering.bean.Film;
 import by.epam.naumovich.film_ordering.dao.IFilmDAO;
 import by.epam.naumovich.film_ordering.service.IFilmService;
@@ -15,6 +12,8 @@ import by.epam.naumovich.film_ordering.service.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 
 import static by.epam.naumovich.film_ordering.command.util.RequestAndSessionAttributes.ENG_LANG;
 
@@ -105,7 +104,7 @@ public class FilmServiceImpl implements IFilmService {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_FILM_ID);
 		}
-		filmDAO.delete(id);
+		filmDAO.deleteById(id);
 	}
 
 	@Override

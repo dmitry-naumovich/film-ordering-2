@@ -53,3 +53,8 @@ Dmitry Naumovich, student. Feel free to contact:
 ## Acknowledgments
 
 The project was created and developed as the final web project for EPAM's Java Web Training. Development period: June - October of 2016.
+
+
+## How to run it
+Database scripts are located in the Dump directory, use the next command to run them on Windows
+Get-Content .\database\Dump20161126\filmordering_users.sql | docker exec -i mysql mysql -uroot -proot filmordering

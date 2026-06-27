@@ -2,13 +2,14 @@ package by.epam.naumovich.film_ordering.dao.impl;
 
 import by.epam.naumovich.film_ordering.bean.Discount;
 import by.epam.naumovich.film_ordering.dao.IDiscountDAO;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Tests DAO layer methods overridden in MySQLDiscountDAO class in a way of comparing expected and actual results with the help of JUnit 4 framework.
@@ -53,7 +54,7 @@ public class MySQLDiscountDAOTest {
         dao.save(expectedDiscount);
         Thread.sleep(1000);
         Discount actualDiscount = dao.findDiscountByUserId(expectedDiscount.getUserID()).get(0);
-        dao.delete(actualDiscount.getId());
+        dao.deleteById(actualDiscount.getId());
 
         Assert.assertEquals(expectedDiscount.getAmount(), actualDiscount.getAmount());
         Assert.assertEquals(expectedDiscount.getUserID(), actualDiscount.getUserID());

@@ -8,13 +8,14 @@ import by.epam.naumovich.film_ordering.service.exception.order.AddOrderServiceEx
 import by.epam.naumovich.film_ordering.service.exception.order.GetOrderServiceException;
 import by.epam.naumovich.film_ordering.service.util.ExceptionMessages;
 import by.epam.naumovich.film_ordering.service.util.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * IOrderService interface implementation that works with IOrderDAO implementation
@@ -71,7 +72,7 @@ public class OrderServiceImpl implements IOrderService {
 		if (!Validator.validateInt(orderNum)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
-        orderDAO.delete(orderNum);
+        orderDAO.deleteById(orderNum);
 	}
 	
 	@Override
@@ -80,7 +81,7 @@ public class OrderServiceImpl implements IOrderService {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
 
-        Order order = orderDAO.findOne(orderNum);
+        Order order = orderDAO.findById(orderNum).orElse(null);
         if (order == null) {
             throw new GetOrderServiceException(ExceptionMessages.ORDER_NOT_FOUND);
         }

@@ -1,22 +1,22 @@
 package by.epam.naumovich.film_ordering.service.impl;
 
+import by.epam.naumovich.film_ordering.bean.Review;
 import by.epam.naumovich.film_ordering.bean.ReviewPK;
+import by.epam.naumovich.film_ordering.dao.IReviewDAO;
+import by.epam.naumovich.film_ordering.service.IReviewService;
+import by.epam.naumovich.film_ordering.service.exception.ServiceException;
+import by.epam.naumovich.film_ordering.service.exception.review.AddReviewServiceException;
+import by.epam.naumovich.film_ordering.service.exception.review.GetReviewServiceException;
+import by.epam.naumovich.film_ordering.service.util.ExceptionMessages;
+import by.epam.naumovich.film_ordering.service.util.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-
-import by.epam.naumovich.film_ordering.bean.Review;
-import by.epam.naumovich.film_ordering.dao.IReviewDAO;
-import by.epam.naumovich.film_ordering.service.IReviewService;
-import by.epam.naumovich.film_ordering.service.exception.ServiceException;
-import by.epam.naumovich.film_ordering.service.exception.review.GetReviewServiceException;
-import by.epam.naumovich.film_ordering.service.exception.review.AddReviewServiceException;
-import by.epam.naumovich.film_ordering.service.util.ExceptionMessages;
-import by.epam.naumovich.film_ordering.service.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * IReviewService interface implementation that works with IReviewDAO implementation
@@ -77,7 +77,7 @@ public class ReviewServiceImpl implements IReviewService {
 		}
 
         ReviewPK reviewPK = new ReviewPK(userId, filmId);
-        reviewDAO.delete(reviewPK);
+        reviewDAO.deleteById(reviewPK);
         reviewDAO.updateFilmRating(filmId);
 	}
 
@@ -114,7 +114,7 @@ public class ReviewServiceImpl implements IReviewService {
 		if (!Validator.validateInt(userId) || !Validator.validateInt(filmId)) {
 			throw new GetReviewServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
 		}
-        Review review = reviewDAO.findOne(new ReviewPK(userId, filmId));
+        Review review = reviewDAO.findById(new ReviewPK(userId, filmId)).orElse(null);
 
         if (review == null) {
             throw new GetReviewServiceException(ExceptionMessages.NO_FILM_USER_REVIEW);

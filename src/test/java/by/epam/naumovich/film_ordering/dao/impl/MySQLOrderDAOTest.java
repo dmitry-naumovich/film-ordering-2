@@ -1,18 +1,17 @@
 package by.epam.naumovich.film_ordering.dao.impl;
 
+import by.epam.naumovich.film_ordering.bean.Order;
+import by.epam.naumovich.film_ordering.dao.IOrderDAO;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import by.epam.naumovich.film_ordering.bean.Order;
-import by.epam.naumovich.film_ordering.dao.IOrderDAO;
 
 /**
  * Tests DAO layer methods overridden in MySQLOrderDAO class in a way of comparing expected and actual results with the help of JUnit 4 framework.
@@ -54,8 +53,8 @@ public class MySQLOrderDAOTest {
 	@Test
 	public void addOrder() {
 		int orderNum = dao.save(expectedOrder).getOrdNum();
-        Order actualOrder = dao.findOne(orderNum);
-        dao.delete(orderNum);
+        Order actualOrder = dao.findById(orderNum).orElse(null);
+        dao.deleteById(orderNum);
 
         Assert.assertEquals(expectedOrder.getUserId(), actualOrder.getUserId());
         Assert.assertEquals(expectedOrder.getFilmId(), actualOrder.getFilmId());
@@ -73,8 +72,8 @@ public class MySQLOrderDAOTest {
 	@Test
 	public void deleteOrder() {
 		int orderNum = dao.save(expectedOrder).getOrdNum();
-        dao.delete(orderNum);
-        Order actualOrder = dao.findOne(orderNum);
+        dao.deleteById(orderNum);
+        Order actualOrder = dao.findById(orderNum).orElse(null);
 		
         Assert.assertNull(actualOrder);
 	}
@@ -86,8 +85,8 @@ public class MySQLOrderDAOTest {
 	@Test
 	public void getOrderByOrderNum() {
 		int orderNum = dao.save(expectedOrder).getOrdNum();
-        Order actualOrder = dao.findOne(orderNum);
-        dao.delete(orderNum);
+        Order actualOrder = dao.findById(orderNum).orElse(null);
+        dao.deleteById(orderNum);
         
         Assert.assertEquals(expectedOrder.getUserId(), actualOrder.getUserId());
         Assert.assertEquals(expectedOrder.getFilmId(), actualOrder.getFilmId());
@@ -107,7 +106,7 @@ public class MySQLOrderDAOTest {
 	public void getOrderByUserAndFilmId() {
 		int orderNum = dao.save(expectedOrder).getOrdNum();
         Order actualOrder = dao.findByUserIdAndFilmId(expectedOrder.getUserId(), expectedOrder.getFilmId());
-        dao.delete(orderNum);
+        dao.deleteById(orderNum);
         
         Assert.assertEquals(expectedOrder.getUserId(), actualOrder.getUserId());
         Assert.assertEquals(expectedOrder.getFilmId(), actualOrder.getFilmId());

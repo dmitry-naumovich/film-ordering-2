@@ -1,25 +1,21 @@
 package by.epam.naumovich.film_ordering.service.impl;
 
+import by.epam.naumovich.film_ordering.bean.User;
+import by.epam.naumovich.film_ordering.dao.IUserDAO;
+import by.epam.naumovich.film_ordering.service.IUserService;
+import by.epam.naumovich.film_ordering.service.exception.ServiceException;
+import by.epam.naumovich.film_ordering.service.exception.user.*;
+import by.epam.naumovich.film_ordering.service.util.ExceptionMessages;
+import by.epam.naumovich.film_ordering.service.util.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.List;
-
-import by.epam.naumovich.film_ordering.bean.User;
-import by.epam.naumovich.film_ordering.dao.IUserDAO;
-import by.epam.naumovich.film_ordering.service.IUserService;
-import by.epam.naumovich.film_ordering.service.exception.ServiceException;
-import by.epam.naumovich.film_ordering.service.exception.user.BanUserServiceException;
-import by.epam.naumovich.film_ordering.service.exception.user.GetUserServiceException;
-import by.epam.naumovich.film_ordering.service.exception.user.ServiceAuthException;
-import by.epam.naumovich.film_ordering.service.exception.user.ServiceSignUpException;
-import by.epam.naumovich.film_ordering.service.exception.user.UserUpdateServiceException;
-import by.epam.naumovich.film_ordering.service.util.ExceptionMessages;
-import by.epam.naumovich.film_ordering.service.util.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * IUserService interface implementation that works with IUserDAO implementation
@@ -117,7 +113,7 @@ public class UserServiceImpl implements IUserService {
 			throw new UserUpdateServiceException(ExceptionMessages.CORRUPTED_NAME_SURN_SEX);
 		}
 
-		User existingUser = userDAO.findOne(id);
+		User existingUser = userDAO.findById(id).orElse(null);
 		if (existingUser == null) {
 		    throw new UserUpdateServiceException(ExceptionMessages.USER_NOT_FOUND);
         }
@@ -151,7 +147,7 @@ public class UserServiceImpl implements IUserService {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
-		userDAO.delete(id);
+		userDAO.deleteById(id);
 	}
 	
 	@Override
@@ -172,7 +168,7 @@ public class UserServiceImpl implements IUserService {
 		if(!Validator.validateInt(id)){
 			throw new GetUserServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
-        User user = userDAO.findOne(id);
+        User user = userDAO.findById(id).orElse(null);
         if (user == null) {
             throw new GetUserServiceException(ExceptionMessages.USER_NOT_FOUND);
         }
@@ -210,7 +206,7 @@ public class UserServiceImpl implements IUserService {
 		if(!Validator.validateInt(id)){
 			throw new GetUserServiceException(ExceptionMessages.CORRUPTED_USER_ID);
 		}
-        User user = userDAO.findOne(id);
+        User user = userDAO.findById(id).orElse(null);
         if (user == null) {
             throw new GetUserServiceException(ExceptionMessages.USER_NOT_FOUND);
         }

@@ -8,13 +8,14 @@ import by.epam.naumovich.film_ordering.service.exception.user.DiscountServiceExc
 import by.epam.naumovich.film_ordering.service.exception.user.GetDiscountServiceException;
 import by.epam.naumovich.film_ordering.service.util.ExceptionMessages;
 import by.epam.naumovich.film_ordering.service.util.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class DiscountServiceImpl implements IDiscountService {
@@ -51,7 +52,7 @@ public class DiscountServiceImpl implements IDiscountService {
         if (!Validator.validateStrings(amount, endDate, endTime)) {
             throw new DiscountServiceException(ExceptionMessages.CORRUPTED_INPUT_PARAMETERS);
         }
-        Discount d = discountDAO.findOne(discountID);
+        Discount d = discountDAO.findById(discountID).orElse(null);
         if (d == null) {
             throw new DiscountServiceException(ExceptionMessages.DISCOUNT_NOT_FOUND);
         }
@@ -81,7 +82,7 @@ public class DiscountServiceImpl implements IDiscountService {
         if (!Validator.validateInt(discountID)) {
             throw new DiscountServiceException(ExceptionMessages.CORRUPTED_DISCOUNT_ID);
         }
-        discountDAO.delete(discountID);
+        discountDAO.deleteById(discountID);
     }
 
 

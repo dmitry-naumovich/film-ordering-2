@@ -1,14 +1,5 @@
 package by.epam.naumovich.film_ordering.service.impl;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import java.sql.Date;
-import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
-
-
 import by.epam.naumovich.film_ordering.bean.News;
 import by.epam.naumovich.film_ordering.dao.INewsDAO;
 import by.epam.naumovich.film_ordering.service.INewsService;
@@ -18,11 +9,19 @@ import by.epam.naumovich.film_ordering.service.exception.news.EditNewsServiceExc
 import by.epam.naumovich.film_ordering.service.exception.news.GetNewsServiceException;
 import by.epam.naumovich.film_ordering.service.util.ExceptionMessages;
 import by.epam.naumovich.film_ordering.service.util.Validator;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 
 /**
  * INewsService interface implementation that works with INewsDAO implementation
@@ -37,7 +36,7 @@ public class NewsServiceImpl implements INewsService {
 	
 	private final INewsDAO newsDAO;
 
-	private static final Sort DEFAULT_NEWS_SORT = new Sort(Sort.Direction.DESC, "date", "time");
+	private static final Sort DEFAULT_NEWS_SORT = Sort.by(Sort.Order.desc("date"), Sort.Order.desc("time"));
 
 	@Autowired
     public NewsServiceImpl(INewsDAO newsDAO) {
@@ -68,7 +67,7 @@ public class NewsServiceImpl implements INewsService {
 		if (!Validator.validateInt(id)) {
 			throw new ServiceException(ExceptionMessages.CORRUPTED_NEWS_ID);
 		}
-        newsDAO.delete(id);
+        newsDAO.deleteById(id);
 	}
 
 
@@ -81,7 +80,7 @@ public class NewsServiceImpl implements INewsService {
 			throw new EditNewsServiceException(ExceptionMessages.INVALID_NEWS_TITLE_OR_TEXT);
 		}
 
-        News existingNews = newsDAO.findOne(id);
+        News existingNews = newsDAO.findById(id).orElse(null);
         if (existingNews == null) {
             throw new EditNewsServiceException(ExceptionMessages.NEWS_NOT_PRESENT);
         }
@@ -115,7 +114,7 @@ public class NewsServiceImpl implements INewsService {
 
 	@Override
 	public List<News> getLastNews(int amount) throws ServiceException {
-	    Pageable request = new PageRequest(0, amount, DEFAULT_NEWS_SORT);
+	    Pageable request = PageRequest.of(0, amount, DEFAULT_NEWS_SORT);
         Iterable<News> news = newsDAO.findAll(request);
 
         if (Iterables.isEmpty(news)) {
@@ -126,7 +125,7 @@ public class NewsServiceImpl implements INewsService {
 
 	@Override
 	public News getById(int id) throws ServiceException {
-		News news = newsDAO.findOne(id);
+		News news = newsDAO.findById(id).orElse(null);
         if (news == null) {
             throw new GetNewsServiceException(ExceptionMessages.NEWS_NOT_PRESENT);
         }
@@ -138,7 +137,7 @@ public class NewsServiceImpl implements INewsService {
 		if (!Validator.validateInt(pageNum)) {
 			throw new GetNewsServiceException(ExceptionMessages.CORRUPTED_PAGE_NUM);
 		}
-		Pageable pageable = new PageRequest(pageNum - 1, NEWS_AMOUNT_ON_PAGE, DEFAULT_NEWS_SORT);
+		Pageable pageable = PageRequest.of(pageNum - 1, NEWS_AMOUNT_ON_PAGE, DEFAULT_NEWS_SORT);
 		Iterable<News> news = newsDAO.findAll(pageable);
 
         if (Iterables.isEmpty(news)) {
