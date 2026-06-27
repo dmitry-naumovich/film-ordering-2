@@ -17,7 +17,6 @@ The project is a small movie database which contains short information about fil
 
 Dmitry Naumovich, student. Feel free to contact:
 * email: dmitry.nmv@gmail.com
-* skype: dmitry_thrashed
 
 ## Project mandatory rights and abilities
 
